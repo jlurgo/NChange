@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "name": "hand-raiser",
+  "features": {
+		"cloud": "v1"
+	}
+}

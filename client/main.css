@@ -1,0 +1,133 @@
+/* CSS declarations go here */
+html{
+  background-image: url("free-space-seamless-pattern-background-vector.jpg");
+  background-color: #cccccc;
+  height: 100%;
+  width: 100%;
+}
+
+body{
+  background-color: transparent!important;
+}
+
+.app{
+  min-height: 100vh;
+  background-color: rgba(255,255,255,.5) !important;
+}
+
+header {
+  padding: 20px;
+  padding-top: 30px;
+  position: relative;
+  border-bottom: 2px black dashed;
+}
+
+header span{
+    margin-top: 10px;
+}
+
+#login-buttons {
+  display: block;
+}
+
+h1 {
+  font-size: 1.5em;
+  margin: 0;
+  margin-bottom: 10px;
+  display: inline-block;
+  margin-right: 1em;
+}
+
+form {
+  margin-top: 10px;
+  margin-bottom: -10px;
+  position: relative;
+}
+
+.login-buttons-landing{
+  position: fixed;
+  top: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  left: 0px;
+  zoom: 2;
+}
+
+.new-turn input {
+  box-sizing: border-box;
+  padding: 10px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid black;
+  width: 100%;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.new-turn input:hover{
+  background-color: rgba(0, 0, 0, 0.1);
+  -webkit-transition: background-color 100ms linear;
+  -ms-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+}
+
+.list-group-item:first-child{
+  border-top: 0px;
+}
+
+.delete {
+  float: right;
+  font-weight: bold;
+  background: none;
+  font-size: 2em;
+  border: none;
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+}
+
+li img{
+  height: 50px;
+  border-radius: 50%;
+}
+
+header .hide-completed {
+  float: right;
+}
+
+li .text{
+    margin-left: 10px;
+}
+
+li{
+  background-color: rgba(255,255,255,0.8)!important;
+}
+
+.toggle-private {
+  margin-left: 5px;
+}
+
+.select_users{
+  margin-top: 16px;
+}
+
+.user_in_select{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.user_in_select img{
+  height: 30px;
+  border-radius: 50%;
+}
+
+.user_in_select label{
+  position: absolute;
+  top: 0px;
+  left: 40px;
+  font-size: 14px;
+  width: 200px;
+}
