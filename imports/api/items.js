@@ -8,12 +8,7 @@ if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish items that are public or belong to the current user
   Meteor.publish('items', () => {
-    return Items.find({
-      $or: [
-        { private: { $ne: true } },
-        { owner: this.userId },
-      ],
-    });
+    return Items.find({});
   });
 }
 

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
+    "@material-ui/core": "^4.9.10",
     "bcrypt": "^4.0.1",
     "classnames": "^2.2.6",
     "history": "^4.7.2",
