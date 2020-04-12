@@ -14,22 +14,35 @@ export function withSubscriptions(subscriptions_data, props_getter, Component) {
     }
 
     componentDidMount() {
-      console.warn('mounting');
-      this.subs = _.map(subscriptions_data, (sub_data) => {
+      //console.warn('mounting');
+      Meteor.setTimeout(() => {
+        this.subs = _.map(subscriptions_data, (sub_data) => {
 
-        if(_.isFunction(sub_data)) {
-          console.warn(`starting custom subscription with function ${sub_data && sub_data.name}`);
-          return sub_data(this.props);
-        }
-        console.warn(`subscribing to ${sub_data}`);
-        return Meteor.subscribe(sub_data)
-      });
-      this.tracker = Tracker.autorun(() => {
-        console.warn('checking readiness: ', _.all(this.subs, sub => sub.ready()));
-        this.setState({
-          subsReady: _.all(this.subs, sub => sub.ready())
+          if(_.isFunction(sub_data)) {
+            //console.warn(`starting custom subscription with function ${sub_data && sub_data.name}`);
+            return sub_data(this.props);
+          }
+          //console.warn(`subscribing to ${sub_data}`);
+          return Meteor.subscribe(sub_data)
         });
+      }, 0);
+      this.tracker = Tracker.autorun(() => {
+        this.checkReadiness();
       });
+      // this.interval_handler = Meteor.setInterval(()=>{
+      //   this.checkReadiness();
+      // }, 500)
+    }
+
+    checkReadiness() {
+      const is_ready = _.all(this.subs, sub => sub.ready());
+      //console.warn('checking readiness: ', is_ready);
+      //if (is_ready) Meteor.clearInterval(this.interval_handler);
+      Meteor.setTimeout(() => {
+        this.setState({
+        subsReady: is_ready
+        });
+      }, 0);
     }
 
     componentWillUnmount() {
@@ -40,7 +53,7 @@ export function withSubscriptions(subscriptions_data, props_getter, Component) {
     }
 
     render() {
-      console.warn('rendering');
+      //console.warn('rendering');
       if (!this.state.subsReady) {
         return (<LoadingPane/>);
       }

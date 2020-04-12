@@ -25,7 +25,8 @@ const styles = {
     maxHeight: '300px',
     minHeight: '300px',
     margin: '5px',
-    border: '1px dashed black'
+    border: '1px dashed black',
+    cursor: 'pointer'
   }
 };
 

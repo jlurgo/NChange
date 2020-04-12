@@ -23,6 +23,6 @@ accounts-password@1.5.1
 
 meteortesting:mocha
 
-accounts-google
-google-config-ui
+# accounts-google
+# google-config-ui
 accounts-ui

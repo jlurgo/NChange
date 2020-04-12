@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
 import AccountsUIWrapper from './AccountsUIWrapper.js';
 import { withStyles } from '@material-ui/core/styles';
+import { Accounts } from 'meteor/accounts-base';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -38,7 +39,11 @@ class TopBar extends Component {
             <Typography variant="h6" className={classes.title}>
               Items
             </Typography>
-            <AccountsUIWrapper />
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={()=>{
+              Accounts.logout();
+            }}>
+              <MenuIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </div>

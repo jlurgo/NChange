@@ -6,9 +6,9 @@ export const Items = new Mongo.Collection('items');
 
 if (Meteor.isServer) {
   // This code only runs on the server
-  // Only publish items that are public or belong to the current user
   Meteor.publish('items', () => {
-    return Items.find({});
+    console.warn('subscribing to items');
+    return Items.find({ private: { $ne: true }});
   });
 }
 

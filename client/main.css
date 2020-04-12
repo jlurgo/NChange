@@ -1,8 +1,16 @@
-.loading-pane {
-  background-color: red;
+html {
+  padding: 5px;
 }
 
-html, body, #render-target{
+html, body {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  overflow: hidden;
+}
+
+#render-target {
   height: 100%;
-  width: 100%;
 }

@@ -6,41 +6,32 @@ import { withSubscriptions } from './WithSubscriptions.js';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Items } from '../api/items.js';
+import { Troks } from '../api/troks.js';
 
-import ItemList from './ItemList';
-import ItemFilterBar from './ItemFilterBar';
+// import ItemList from './TrokList';
 
 const styles = {
   root: {
     display: 'flex',
-    flexWrap: 'wrap',
     flexDirection: 'column',
-    overflow: 'hidden',
     backgroundColor: 'white',
+    paddingTop: '5px',
   },
   listRoot: {
     flexGrow: 1,
     flexShrink: 1,
+    height: '100px',
+    overflowY: 'auto',
   }
 };
 
 // App component - represents the whole app
-class ItemFinder extends Component {
-  state = {
-    filter: '',
-  }
-
-  setFilter = (new_filter) => {
-    this.setState({filter: new_filter});
-  }
+class TrokExplorer extends Component {
 
   render() {
     console.warn(this.props.classes);
     return (
       <div className={this.props.classes.root}>
-        <ItemFilterBar onFilterChange={this.setFilter} />
-        <ItemList items={this.props.filteredItems}
-          classes={{root: this.props.classes.listRoot}}/>
       </div>
     );
   }
@@ -48,6 +39,6 @@ class ItemFinder extends Component {
 
 export default withSubscriptions(['items'], (props) => {
   return {
-    filteredItems: Items.find({}, { sort: { createdAt: -1 } }).fetch(),
+    troks: Troks.find({}, { sort: { createdAt: -1 } }).fetch(),
   };
-}, withStyles(styles)(ItemFinder));
+}, withStyles(styles)(TrokExplorer));

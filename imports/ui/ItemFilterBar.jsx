@@ -8,7 +8,8 @@ import TextField from '@material-ui/core/TextField';
 const styles = {
   root: {
     height: '50px',
-    padding: '5px'
+    paddingTop: '5px',
+    paddingBottom: '5px'
   }
 };
 
