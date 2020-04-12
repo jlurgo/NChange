@@ -1,13 +1,24 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
+import GridList from '@material-ui/core/GridList';
+import { withStyles } from '@material-ui/core/styles';
 
 import { Items } from '../api/items.js';
 
 import ItemInList from './ItemInList';
 
+const styles = {
+  root: {
+  },
+  grid: {
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: 'translateZ(0)',
+  },
+};
+
 // App component - represents the whole app
-export default class ItemList extends Component {
+class ItemList extends Component {
   constructor(props) {
     super(props);
   }
@@ -24,12 +35,15 @@ export default class ItemList extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
-      <div>
-        <ul>
-          {this.renderItems()}
-        </ul>
+      <div className={classes.root}>
+        <GridList cellHeight={200} spacing={1} className={classes.grid}>
+        { this.renderItems() }
+        </GridList>
       </div>
     );
   }
 }
+
+export default withStyles(styles)(ItemList);
