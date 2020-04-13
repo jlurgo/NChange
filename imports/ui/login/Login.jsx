@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { browserHistory } from 'react-router';
-import { Redirect, Route} from 'react-router';
 import LoginBox from './LoginBox';
 import ResetPasswordBox from './ResetPasswordBox';
 import RegisterBox from './RegisterBox';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
+import { Redirect, Route, Switch, Link} from 'react-router-dom';
 
 const styles = {
   background: {
@@ -40,16 +39,24 @@ const styles = {
 class Login extends Component {
 
   render() {
-    if (this.props.currentUser) {
+    if (Meteor.user() || Meteor.loggingIn()) {
       return (<Redirect to='/' />);
     }
     return (
       <div className={this.props.classes.background}>
         <div className={this.props.classes.formItems}>
           <div>
-            <Route exact path="/login" component={LoginBox}/>
-            <Route path="/login/recover" component={ResetPasswordBox}/>
-            <Route path="/login/register" component={RegisterBox}/>
+            <Switch>
+              <Route exact path="/login">
+                <LoginBox/>
+              </Route>
+              <Route path="/login/register">
+                <RegisterBox/>
+              </Route>
+              <Route path="/login/recover">
+                <ResetPasswordBox/>
+              </Route>
+            </Switch>
           </div>
         </div>
       </div>
@@ -57,9 +64,4 @@ class Login extends Component {
   }
 };
 
-export default withTracker(() => {
-  return {
-    isLoggingIn: Meteor.loggingIn(),
-    currentUser: Meteor.user(),
-  }
-})(withStyles(styles)(Login));
+export default withStyles(styles)(Login);

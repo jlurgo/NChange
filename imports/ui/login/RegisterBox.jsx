@@ -4,8 +4,8 @@ import { withTracker } from 'meteor/react-meteor-data';
 import ErrorMessages from './ErrorMessages.jsx';
 import LoginForm from './LoginForm.jsx';
 import utils from './utils';
-import { Redirect } from 'react-router';
 import PasswordForm from './PasswordForm.jsx';
+import { Redirect } from 'react-router-dom';
 
 const styles = {
     title: {
@@ -27,10 +27,6 @@ export default class RegisterBox extends React.Component {
   }
 
   render() {
-    if (this.props.user) {
-      return <Redirect to='/'/>;
-    }
-
     return (
       <div>
         <div>

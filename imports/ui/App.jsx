@@ -8,7 +8,9 @@ import Login from './login/Login.jsx';
 import ItemExplorer from './ItemExplorer';
 import TrokExplorer from './TrokExplorer';
 
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Link, Redirect } from "react-router-dom";
+import { Route } from "react-router";
+
 
 const styles = {
   root: {
@@ -54,13 +56,16 @@ class PrivateRoute extends Component {
 class App extends Component {
   render() {
     if (this.props.isLoggingIn) {
-      return <div></div>
+      return <div>Loading...</div>
     }
     return (
       <Router>
         <div className={this.props.classes.root}>
           <TopBar/>
           <Switch>
+            <Route exact path="/">
+              <Redirect to='/items'/>
+            </Route>
             <Route path="/login">
               <Login/>
             </Route>
@@ -70,13 +75,6 @@ class App extends Component {
             <PrivateRoute user={this.props.currentUser} path="/troks">
               <TrokExplorer classes={{root: this.props.classes.section}}/>
             </PrivateRoute>
-            <Route exact path="/">
-              <Redirect
-                to={{
-                  pathname: "/items"
-                }}
-              />
-            </Route>
           </Switch>
         </div>
       </Router>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { Link } from 'react-router-dom';
 import utils from './utils';
+import { Link } from 'react-router-dom';
 
 const styles = {
   input: {
@@ -181,13 +181,13 @@ class PasswordForm extends React.Component {
           </div>
         }
 
-        { this.props.type == 'register' &&
+        { this.props.type == 'login' &&
           <div style={{marginTop: '10px'}}>
             <Link
               to='/login/register'
               style={styles.link}
             >
-              Register              
+              Register
             </Link>
           </div>
         }
@@ -202,5 +202,6 @@ class PasswordForm extends React.Component {
     );
   }
 }
+
 
 export default PasswordForm;
