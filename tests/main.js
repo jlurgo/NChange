@@ -1,10 +1,11 @@
 import assert from "assert";
 import "../imports/api/items.tests.js";
+//import "../imports/tests/createTestData.js";
 
-describe("simple-todos-react", function () {
+describe("retrueque", function () {
   it("package.json has correct name", async function () {
     const { name } = await import("../package.json");
-    assert.strictEqual(name, "simple-todos-react");
+    assert.strictEqual(name, "retrueque");
   });
 
   if (Meteor.isClient) {

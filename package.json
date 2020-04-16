@@ -5,7 +5,8 @@
     "start": "meteor run",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-    "visualize": "meteor --production --extra-packages bundle-visualizer"
+    "visualize": "meteor --production --extra-packages bundle-visualizer",
+    "Ntest": "TEST_BROWSER_DRIVER=phantomjs meteor test --full-app --driver-package meteortesting:mocha"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
@@ -30,6 +31,9 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "chromedriver": "^81.0.0",
+    "phantomjs-prebuilt": "^2.1.16",
+    "selenium-webdriver": "^3.0.0-beta-2"
   }
 }

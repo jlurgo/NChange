@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { withSubscriptions } from './WithSubscriptions.js';
 import { withStyles } from '@material-ui/core/styles';
+import { withSubscriptions } from './WithSubscriptions.js';
 
-import { Items } from '../api/items.js';
-import { Troks } from '../api/troks.js';
+import { NChanges } from '../api/nChanges.js';
 
-// import ItemList from './TrokList';
+import NChangesList from './NChangesList';
 
 const styles = {
   root: {
@@ -26,19 +25,20 @@ const styles = {
 };
 
 // App component - represents the whole app
-class TrokExplorer extends Component {
+class NChangesExplorer extends Component {
 
   render() {
-    console.warn(this.props.classes);
     return (
       <div className={this.props.classes.root}>
+        <NChangesList nChanges={this.props.nChanges}
+          classes={{root: this.props.classes.listRoot}}/>
       </div>
     );
   }
 }
 
-export default withSubscriptions(['items'], (props) => {
+export default withSubscriptions(['nChanges'], (props) => {
   return {
-    troks: Troks.find({}, { sort: { createdAt: -1 } }).fetch(),
+    nChanges: NChanges.find({}, { sort: { createdAt: -1 } }).fetch(),
   };
-}, withStyles(styles)(TrokExplorer));
+}, withStyles(styles)(NChangesExplorer));

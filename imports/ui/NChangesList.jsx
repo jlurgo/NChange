@@ -8,24 +8,19 @@ import ItemInList from './ItemInList';
 
 const styles = {
   root: {
-  },
-  grid: {
-    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: 'translateZ(0)',
-  },
+  }
 };
 
-// ItemList component - receives a list of items and dislays them
-class ItemList extends Component {
+// receives a list of nchanges and dislays them
+class NChangesList extends Component {
   constructor(props) {
     super(props);
   }
 
-  renderItems() {
-    console.warn(this.props.items);
-    return this.props.items.map((item) => {
+  renderNChanges() {
+    return this.props.nChanges.map((item) => {
       return (
-        <ItemInList
+        <NChangeInList
           key={item._id}
           item={item}
         />
@@ -37,12 +32,10 @@ class ItemList extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <GridList cellHeight={200} spacing={1} className={classes.grid}>
-        { this.renderItems() }
-        </GridList>
+        { this.renderNChanges() }
       </div>
     );
   }
 }
 
-export default withStyles(styles)(ItemList);
+export default withStyles(styles)(NChangesList);

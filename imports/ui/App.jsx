@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TopBar from './TopBar';
 import Login from './login/Login.jsx';
 import ItemExplorer from './ItemExplorer';
-import TrokExplorer from './TrokExplorer';
+import NChangesExplorer from './NChangesExplorer';
 
 import { BrowserRouter as Router, Switch, Link, Redirect } from "react-router-dom";
 import { Route } from "react-router";
@@ -72,8 +72,8 @@ class App extends Component {
             <PrivateRoute user={this.props.currentUser} path="/items">
               <ItemExplorer classes={{root: this.props.classes.section}}/>
             </PrivateRoute>
-            <PrivateRoute user={this.props.currentUser} path="/troks">
-              <TrokExplorer classes={{root: this.props.classes.section}}/>
+            <PrivateRoute user={this.props.currentUser} path="/n-changes">
+              <NChangesExplorer classes={{root: this.props.classes.section}}/>
             </PrivateRoute>
           </Switch>
         </div>

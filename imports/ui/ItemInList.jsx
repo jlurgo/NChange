@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
+import { withRouter } from 'react-router-dom'
 
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -36,12 +37,16 @@ class ItemInList extends Component {
   render() {
     const { item, classes } = this.props;
     return (
-      <GridListTile key={item._id} cols={1} rows={1} classes={{
+      <GridListTile onClick={()=>{
+          this.props.history.push('/itemDetail')
+        }} key={item._id} cols={1}
+        rows={1}
+        classes={{
         root: classes.tileRoot
       }}>
-        <img src={item.pics[0]} alt={item.text} />
+        <img src={item.pics[0]} alt={item.shortDescription} />
         <GridListTileBar
-          title={item.text}
+          title={item.shortDescription}
           titlePosition="bottom"
           actionIcon={
             <IconButton aria-label={`star ${item.text}`} className={classes.icon}>
@@ -56,7 +61,4 @@ class ItemInList extends Component {
   }
 }
 
-export default withStyles(styles)(ItemInList);
-// export default withTracker((props) => {
-//   return props;
-// })(ItemInList);
+export default withStyles(styles)(withRouter(ItemInList));

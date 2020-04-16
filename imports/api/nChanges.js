@@ -2,13 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
-export const Troks = new Mongo.Collection('troks');
+export const NChanges = new Mongo.Collection('nChanges');
 
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish troks where the user is taking part
-  Meteor.publish('troks', () => {
-    return Troks.find({ trokers: this.userId });
+  Meteor.publish('nChanges', () => {
+    return NChanges.find({ trokers: this.userId });
   });
 }
 

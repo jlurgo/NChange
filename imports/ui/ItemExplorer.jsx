@@ -47,7 +47,8 @@ class ItemExplorer extends Component {
 }
 
 export default withSubscriptions(['items'], (props) => {
+  const filtered_items = Items.find({}).fetch();
   return {
-    filteredItems: Items.find({}, { sort: { createdAt: -1 } }).fetch(),
+    filteredItems: filtered_items,
   };
 }, withStyles(styles)(ItemExplorer));
