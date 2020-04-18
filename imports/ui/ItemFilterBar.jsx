@@ -15,16 +15,22 @@ const styles = {
 
 // App component - represents the whole app
 class ItemFilterBar extends Component {
-
+  handleTextChange = (e) => {
+    console.warn(e.target.value);
+    const text = e.target.value;
+    const tags = text.split(' ');
+    this.props.onFilterChange(tags);
+  }
   render() {
+    const { filter } = this.props;
+    const text = filter.join(' ');
     return (
       <div className={this.props.classes.root}>
-        <TextField label="Filtros" type="search" variant="outlined" fullWidth={true} />
+        <TextField label="Filtros" type="search" variant="outlined"
+          fullWidth={true} value={text} onChange={this.handleTextChange}/>
       </div>
     );
   }
 }
 
-export default withTracker((props) => {
-  return props;
-})(withStyles(styles)(ItemFilterBar));
+export default withStyles(styles)(ItemFilterBar);

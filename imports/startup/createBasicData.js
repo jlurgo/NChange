@@ -61,6 +61,15 @@ export function createBasicData() {
       private: false
     },
     {
+      _id: "4xXiXAGLjK5vK4QYf",
+      tags: ["bicicleta", "aurora", "plegable"],
+      shortDescription: "Bicicleta plegable impecable",
+      longDescription: "Casi nueva",
+      owner: "suta8bz7azTiZ3Xor", //jero
+      pics: [ "https://http2.mlstatic.com/bicicleta-plegable-aurora-folding-20-f20-local-palermo-alum-D_NQ_NP_815601-MLA28911412788_122018-F.jpg" ],
+      private: false
+    },
+    {
       _id: "NjwFDvHbcthTxu9sR",
       tags: ["jarron", "chino", "usado"],
       shortDescription: "Jarrón colorido",
@@ -109,9 +118,9 @@ export function createBasicData() {
   test_n_changers.map((n_changer)=>{
     Meteor.users.upsert(n_changer._id, {$set: n_changer});
   });
-  console.warn("test users created");
+  console.warn("test users created ");
   test_n_things.map((item)=>{
     Items.upsert(item._id, item);
   });
-  console.warn("test items created");
+  console.warn("test items created ");
 }

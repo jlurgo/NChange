@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
+import { withSubscriptions } from './WithSubscriptions.js';
+
+import { Items } from '../api/items.js';
 
 import ItemInList from './ItemInList';
 
@@ -45,4 +48,16 @@ class ItemList extends Component {
   }
 }
 
-export default withStyles(styles)(ItemList);
+export default withSubscriptions(['items'], (props) => {
+  if(props.items) {
+    return {
+      items: props.items
+    };
+  }
+  const filtered_items = Items.find({
+    tags: { $all: props.filter}
+  }).fetch();
+  return {
+    items: filtered_items
+  };
+}, withStyles(styles)(ItemList));

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { withSubscriptions } from './WithSubscriptions.js';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Items } from '../api/items.js';
@@ -28,27 +27,24 @@ const styles = {
 // App component - represents the whole app
 class ItemExplorer extends Component {
   state = {
-    filter: '',
+    filter: [],
   }
 
-  setFilter = (new_filter) => {
-    this.setState({filter: new_filter});
+  setFilter = (filter) => {
+    this.setState({filter});
   }
 
   render() {
+    const { classes } = this.props;
+    console.warn('Item explorer state:', this.state);
     return (
-      <div className={this.props.classes.root}>
-        <ItemFilterBar onFilterChange={this.setFilter} />
-        <ItemList items={this.props.filteredItems}
-          classes={{root: this.props.classes.listRoot}}/>
+      <div className={classes.root}>
+        <ItemFilterBar filter={this.state.filter} onFilterChange={this.setFilter} />
+        <ItemList filter={this.state.filter}
+          classes={{root: classes.listRoot}}/>
       </div>
     );
   }
 }
 
-export default withSubscriptions(['items'], (props) => {
-  const filtered_items = Items.find({}).fetch();
-  return {
-    filteredItems: filtered_items,
-  };
-}, withStyles(styles)(ItemExplorer));
+export default withStyles(styles)(ItemExplorer);
