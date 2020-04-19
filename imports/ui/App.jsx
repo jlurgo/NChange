@@ -64,15 +64,15 @@ class App extends Component {
           <TopBar/>
           <Switch>
             <Route exact path="/">
-              <Redirect to='/items'/>
+              <Redirect to='/nthings'/>
             </Route>
             <Route path="/login">
               <Login/>
             </Route>
-            <PrivateRoute user={this.props.currentUser} path="/items">
+            <PrivateRoute user={this.props.currentUser} path="/nthings">
               <ItemExplorer classes={{root: this.props.classes.section}}/>
             </PrivateRoute>
-            <PrivateRoute user={this.props.currentUser} path="/n-changes">
+            <PrivateRoute user={this.props.currentUser} path="/nchanges">
               <NChangesExplorer classes={{root: this.props.classes.section}}/>
             </PrivateRoute>
           </Switch>

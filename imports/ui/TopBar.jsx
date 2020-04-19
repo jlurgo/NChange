@@ -5,44 +5,87 @@ import { withTracker } from 'meteor/react-meteor-data';
 import AccountsUIWrapper from './AccountsUIWrapper.js';
 import { withStyles } from '@material-ui/core/styles';
 import { Accounts } from 'meteor/accounts-base';
+import { withRouter } from "react-router-dom";
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu'
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import { Link as RouterLink} from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 
 const styles = {
   root: {
   },
-  menuButton: {
-    marginRight: '10px',
-  },
-  title: {
+  linkContainer: {
+    display: 'flex',
     flexGrow: 1,
   },
+  link: {
+    color: 'white',
+  },
+  separator: {
+    marginLeft: '10px',
+    marginRight: '10px',
+    display: 'inline'
+  },
+  selectedLink: {
+    fontWeight: 'bold'
+  }
 };
+
+const sections = {
+  'nthings': {label: 'NThings', url: '/nthings'},
+  'nchanges': {label: 'NChanges', url: '/nchanges'}
+}
 
 class TopBar extends Component {
 
+  state = {
+    selectedSectionKey: 'nthings'
+  }
+
+  handleSectionClick = (section_key) => {
+    this.props.history.push(sections[section_key].url);
+    this.setState({
+      selectedSectionKey: section_key
+    });
+  }
+
+  renderLink = (section_key) => {
+    const section = sections[section_key];
+    const { classes } = this.props;
+    const is_selected = this.props.location.pathname.startsWith(section.url);
+    return (
+      <Typography
+        onClick={()=> this.handleSectionClick(section_key)}
+        variant="h6"
+        className={classes.link + ' ' + (is_selected ? classes.selectedLink : '')}>
+        {section.label}
+      </Typography>
+    );
+  }
+
   render() {
     const { classes } = this.props;
-
     return (
       <div className={classes.root}>
         <AppBar position="static" className= {classes.menuButton}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu">
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Items
-            </Typography>
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={()=>{
-              Accounts.logout();
-            }}>
-              <MenuIcon />
+            <span className={classes.linkContainer}>
+              {this.renderLink('nthings')}
+              <Typography variant="h6" className={classes.separator}>
+                |
+              </Typography>
+              {this.renderLink('nchanges')}
+            </span>
+            <IconButton edge="start" color="inherit" aria-label="menu"
+              onClick={()=>{
+                Accounts.logout();
+              }}>
+              <AccountCircleOutlinedIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -55,4 +98,4 @@ export default withTracker((props) => {
   return {
     currentUser: Meteor.user(),
   };
-})(withStyles(styles)(TopBar));
+})(withRouter(withStyles(styles)(TopBar)));
