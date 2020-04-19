@@ -1,5 +1,5 @@
 {
-  "name": "retrueque",
+  "name": "nchange",
   "private": true,
   "scripts": {
     "start": "meteor run",
@@ -12,6 +12,7 @@
     "@babel/runtime": "^7.9.2",
     "@material-ui/core": "^4.9.10",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.50",
     "bcrypt": "^4.0.1",
     "classnames": "^2.2.6",
     "history": "^4.7.2",

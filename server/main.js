@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import '../imports/api/items.js';
+import '../imports/api/tags.js';
 import { createBasicData } from '../imports/startup/createBasicData.js';
 
 Meteor.startup(() => {

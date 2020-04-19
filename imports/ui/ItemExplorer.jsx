@@ -27,7 +27,7 @@ const styles = {
 // App component - represents the whole app
 class ItemExplorer extends Component {
   state = {
-    filter: [],
+    filter: {},
   }
 
   setFilter = (filter) => {

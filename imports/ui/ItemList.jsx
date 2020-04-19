@@ -20,12 +20,8 @@ const styles = {
 
 // ItemList component - receives a list of items and dislays them
 class ItemList extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   renderItems() {
-    console.warn(this.props.items);
     return this.props.items.map((item) => {
       return (
         <ItemInList
@@ -54,10 +50,7 @@ export default withSubscriptions(['items'], (props) => {
       items: props.items
     };
   }
-  const filtered_items = Items.find({
-    tags: { $all: props.filter}
-  }).fetch();
   return {
-    items: filtered_items
+    items: Items.find(props.filter).fetch()
   };
 }, withStyles(styles)(ItemList));

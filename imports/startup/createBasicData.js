@@ -1,24 +1,25 @@
 import { Items } from "../api/items.js";
 import { Meteor } from 'meteor/meteor';
+import { _ } from 'meteor/underscore';
 
 export function createBasicData() {
-  const test_n_changers = [
-    {
-        _id : "suta8bz7azTiZ3Xor",
-        firstName: "Jero",
-        lastName: "Test",
-        createdAt: Date("2020-04-17T22:06:48.391Z"),
-        "services.password": { // password is "jero"
-          bcrypt: "$2b$10$Z3Pzl4vrKkvbwHXZtLL90eLuvA3whqA6Kjyig56DhhPjYgtCoBqVG"
-        },
-        emails: [
-          {
-            address: "jero@test.com",
-            verified: false
-          }
-        ]
+  const usr = {
+    jero: {
+      _id : "suta8bz7azTiZ3Xor",
+      firstName: "Jero",
+      lastName: "Test",
+      createdAt: Date("2020-04-17T22:06:48.391Z"),
+      "services.password": { // password is "jero"
+        bcrypt: "$2b$10$Z3Pzl4vrKkvbwHXZtLL90eLuvA3whqA6Kjyig56DhhPjYgtCoBqVG"
+      },
+      emails: [
+        {
+          address: "jero@test.com",
+          verified: false
+        }
+      ]
     },
-    {
+    jose: {
       _id: "ZnBYaurWkfXrTx6Mm",
       firstName: "Jose",
       lastName: "Test",
@@ -33,7 +34,7 @@ export function createBasicData() {
         }
       ]
     },
-    {
+    charlo: {
       _id: "oJMQe3eHZmqvrPS2B",
       firstName: "Charlo",
       lastName: "Test",
@@ -48,79 +49,79 @@ export function createBasicData() {
         }
       ]
     }
-  ]
+  }
 
-  const test_n_things = [
-    {
+  const thng = {
+    bici_electrica: {
       _id: "4xXiX6GLjK5vK4QYf",
       tags: ["bicicleta", "electrica", "enova", "usada"],
       shortDescription: "Bicicleta en perfecto estado",
       longDescription: "Frenos a disco y 36 cambios shimano",
-      owner: "suta8bz7azTiZ3Xor", //jero
+      owner: usr.jero._id,
       pics: [ "https://bucket1.glanacion.com/anexos/fotos/90/2920990w740.jpg" ],
       private: false
     },
-    {
+    bici_plegable: {
       _id: "4xXiXAGLjK5vK4QYf",
       tags: ["bicicleta", "aurora", "plegable"],
       shortDescription: "Bicicleta plegable impecable",
       longDescription: "Casi nueva",
-      owner: "suta8bz7azTiZ3Xor", //jero
+      owner: usr.jero._id,
       pics: [ "https://http2.mlstatic.com/bicicleta-plegable-aurora-folding-20-f20-local-palermo-alum-D_NQ_NP_815601-MLA28911412788_122018-F.jpg" ],
       private: false
     },
-    {
+    jarron: {
       _id: "NjwFDvHbcthTxu9sR",
-      tags: ["jarron", "chino", "usado"],
-      shortDescription: "Jarrón colorido",
+      tags: ["jarron", "usado"],
+      shortDescription: "Jarrón con girasoles",
       longDescription: "Mas de 100 años, tiene un arreglo",
-      owner: "suta8bz7azTiZ3Xor", // jero
-      pics: [ "https://upload.wikimedia.org/wikipedia/commons/b/b8/Chinese_vase.jpg" ],
+      owner: usr.jero._id,
+      pics: [ "https://http2.mlstatic.com/jarron-ceramica-girasoles-tipo-talavera-D_NQ_NP_928645-MLM29559760561_032019-F.jpg" ],
       private: false
     },
-    {
+    mesa: {
       _id: "BfCfWvxRwMXn2ADqB",
       tags: ["mesa", "madera", "nueva"],
       shortDescription: "Mesa de madera de paraiso",
       longDescription: "Acabado en laca poliuretánica, fabricacion nacional ",
-      owner: "ZnBYaurWkfXrTx6Mm", // jose
+      owner: usr.jose._id,
       pics: [ "https://d26lpennugtm8s.cloudfront.net/stores/099/040/products/mesa-nucha1-0dcf07456778b2981c15132748677920-640-0.jpg" ],
       private: false
     },
-    {
+    tomate: {
       _id: "ACEvGGwand6EcmxcH",
       tags: ["tomate", "organico"],
       shortDescription: "Tomates frescos de la huerta",
       longDescription: "Cultivados en húrlingham con abono natural, sin pesticidas",
-      owner: "ZnBYaurWkfXrTx6Mm", // jose
+      owner: usr.jose._id,
       pics: [ "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSlsQhOrZuBImzRqIl-Hk-a4l_aBuvcy03gFLlHuhGqkJjdYGak&usqp=CAU" ],
       private: false
     },
-    {
+    pinza: {
       _id: "pNnYqPFeunQArcc4C",
       tags: ["herramienta", "pinza", "bosch", "nueva"],
       shortDescription: "Pinza marca bosch",
       longDescription: "Pinza de acero de primera calidad",
-      owner: "oJMQe3eHZmqvrPS2B", // charlo
+      owner: usr.charlo._id,
       pics: [ "https://www.martinezescalada.com.ar/566/pinza-universal-6.jpg" ],
       private: false
     },
-    {
+    martillo: {
       _id: "TGM9Quij6GNtbynaz",
       tags: ["herramienta", "martillo", "nuevo"],
       shortDescription: "Martillo de primera calidad",
       longDescription: "Martillo de primera calidad",
-      owner: "oJMQe3eHZmqvrPS2B", // charlo
+      owner: usr.charlo._id,
       pics: [ "https://www.ferreteriajs.com/wp-content/uploads/2018/09/STAN0475.jpg" ],
       private: false
     }
-  ];
-  test_n_changers.map((n_changer)=>{
-    Meteor.users.upsert(n_changer._id, {$set: n_changer});
+  };
+  _.forEach(usr, (nchanger)=>{
+    Meteor.users.upsert(nchanger._id, {$set: nchanger});
   });
   console.warn("test users created ");
-  test_n_things.map((item)=>{
-    Items.upsert(item._id, item);
+  _.forEach(thng, (nthing)=>{
+    Items.upsert(nthing._id, nthing);
   });
   console.warn("test items created ");
 }

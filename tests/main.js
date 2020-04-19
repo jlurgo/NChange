@@ -2,10 +2,10 @@ import assert from "assert";
 import "../imports/api/items.tests.js";
 //import "../imports/tests/createTestData.js";
 
-describe("retrueque", function () {
+describe("nchange", function () {
   it("package.json has correct name", async function () {
     const { name } = await import("../package.json");
-    assert.strictEqual(name, "retrueque");
+    assert.strictEqual(name, "nchange");
   });
 
   if (Meteor.isClient) {
