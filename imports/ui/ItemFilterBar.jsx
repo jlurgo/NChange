@@ -56,7 +56,6 @@ class ItemFilterBar extends Component {
           multiple
           filterSelectedOptions
           autoHighlight
-          autoSelect
           disableCloseOnSelect
         />
       </div>
