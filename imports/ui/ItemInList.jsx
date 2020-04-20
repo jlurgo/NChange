@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { withStyles } from '@material-ui/core/styles';
@@ -26,7 +27,7 @@ const styles = {
     maxHeight: '300px',
     minHeight: '300px',
     margin: '5px',
-    border: '1px dashed black',
+    //border: '1px dashed black',
     cursor: 'pointer'
   }
 };
@@ -41,9 +42,9 @@ class ItemInList extends Component {
           this.props.history.push('/itemDetail')
         }} key={item._id} cols={1}
         rows={1}
-        classes={{
-        root: classes.tileRoot
-      }}>
+        component={Paper}
+        classes={{ root: classes.tileRoot }}>
+
         <img src={item.pics[0]} alt={item.shortDescription} />
         <GridListTileBar
           title={item.shortDescription}

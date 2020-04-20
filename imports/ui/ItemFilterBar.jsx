@@ -13,8 +13,10 @@ const Tags = new Mongo.Collection('tags');
 const styles = {
   root: {
     height: '50px',
-    paddingTop: '5px',
-    paddingBottom: '5px'
+    backgroundColor: 'white',
+    padding: '5px',
+    paddingBottom: '10px',
+    borderRadius: '5px'
   }
 };
 

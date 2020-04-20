@@ -11,6 +11,10 @@ html, body {
   overflow: hidden;
 }
 
+body {
+  background: url(background.jpg) center fixed;
+  background-size: 256px;
+}
 #render-target {
   height: 100%;
 }
