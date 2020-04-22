@@ -25,6 +25,7 @@ const styles = {
   },
   link: {
     color: 'white',
+    cursor: 'pointer'
   },
   separator: {
     marginLeft: '10px',
