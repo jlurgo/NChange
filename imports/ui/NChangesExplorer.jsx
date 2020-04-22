@@ -37,8 +37,10 @@ class NChangesExplorer extends Component {
   }
 }
 
-export default withSubscriptions(['nChanges'], (props) => {
+export default withTracker((props) => {
+  const nchanges_sub = Meteor.subscribe('user_n_changes');
   return {
-    nChanges: NChanges.find({}, { sort: { createdAt: -1 } }).fetch(),
+    loading: !nchanges_sub.ready(),
+    nChanges: NChanges.find().fetch(),
   };
-}, withStyles(styles)(NChangesExplorer));
+})(withStyles(styles)(NChangesExplorer));

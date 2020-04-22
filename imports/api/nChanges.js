@@ -6,9 +6,9 @@ export const NChanges = new Mongo.Collection('nChanges');
 
 if (Meteor.isServer) {
   // This code only runs on the server
-  // Only publish troks where the user is taking part
-  Meteor.publish('nChanges', () => {
-    return NChanges.find({ trokers: this.userId });
+  // Only publish nchanges where the user is taking part
+  Meteor.publish('user_n_changes', () => {
+    return NChanges.find({ });
   });
 }
 

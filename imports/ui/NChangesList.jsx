@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
 
-import ItemInList from './ItemInList';
+import NChangeInList from './NChangeInList';
 
 const styles = {
   root: {
@@ -13,16 +13,13 @@ const styles = {
 
 // receives a list of nchanges and dislays them
 class NChangesList extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   renderNChanges() {
-    return this.props.nChanges.map((item) => {
+    return this.props.nChanges.map((nchange) => {
       return (
         <NChangeInList
-          key={item._id}
-          item={item}
+          key={nchange._id}
+          nchange={nchange}
         />
       );
     });

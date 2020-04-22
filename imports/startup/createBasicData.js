@@ -1,4 +1,5 @@
 import { Items } from "../api/items.js";
+import { NChanges } from "../api/nChanges.js";
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 
@@ -51,7 +52,7 @@ export function createBasicData() {
     }
   }
 
-  const thng = {
+  const nthng = {
     bici_electrica: {
       _id: "4xXiX6GLjK5vK4QYf",
       tags: ["bicicleta", "electrica", "enova", "usada"],
@@ -116,12 +117,35 @@ export function createBasicData() {
       private: false
     }
   };
+  nchng = {
+    jeroJoseBiciXJarronYMesa: {
+      _id: "thr9Quij6GNtbynaz",
+      detail: [
+        { id: usr.jero._id,
+          gets: [
+            { id: nthng.bici_electrica._id, qty: 1 }
+          ]
+        },
+        { id: usr.jose._id,
+          gets: [
+            { id: nthng.jarron._id, qty: 1 },
+            { id: nthng.mesa._id, qty: 1 }
+          ]
+        }
+      ]
+    }
+  }
   _.forEach(usr, (nchanger)=>{
     Meteor.users.upsert(nchanger._id, {$set: nchanger});
   });
   console.warn("test users created ");
-  _.forEach(thng, (nthing)=>{
+  _.forEach(nthng, (nthing)=>{
     Items.upsert(nthing._id, nthing);
   });
-  console.warn("test items created ");
+  console.warn("test nthings created ");
+  _.forEach(nchng, (nchange)=>{
+    NChanges.upsert(nchange._id, nchange);
+  });
+  console.warn("test nchanges created ");
+
 }
