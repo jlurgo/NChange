@@ -8,7 +8,7 @@ if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish nchanges where the user is taking part
   Meteor.publish('user_n_changes', () => {
-    return NChanges.find({ });
+    return NChanges.find({ 'nChangers.id': Meteor.userId()});
   });
 }
 

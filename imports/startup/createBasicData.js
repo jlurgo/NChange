@@ -120,16 +120,32 @@ export function createBasicData() {
   nchng = {
     jeroJoseBiciXJarronYMesa: {
       _id: "thr9Quij6GNtbynaz",
-      detail: [
+      nChangers: [
         { id: usr.jero._id,
-          gets: [
+          input_n_things: [
             { id: nthng.bici_electrica._id, qty: 1 }
           ]
         },
         { id: usr.jose._id,
-          gets: [
+          input_n_things: [
             { id: nthng.jarron._id, qty: 1 },
             { id: nthng.mesa._id, qty: 1 }
+          ]
+        }
+      ]
+    },
+    jeroCharlo2BicisXPinza: {
+      _id: "thr9fwefej6GNtbynaz",
+      nChangers: [
+        { id: usr.jero._id,
+          input_n_things: [
+            { id: nthng.bici_electrica._id, qty: 1 },
+            { id: nthng.bici_plegable._id, qty: 1 }
+          ]
+        },
+        { id: usr.charlo._id,
+          input_n_things: [
+            { id: nthng.pinza._id, qty: 1 }
           ]
         }
       ]
