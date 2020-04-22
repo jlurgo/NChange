@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
-import { withSubscriptions } from './WithSubscriptions.js';
+import { withTracker } from 'meteor/react-meteor-data';
 
 import { Items } from '../api/items.js';
 
 import ItemInList from './ItemInList';
+import LoadingPane from './LoadingPane';
 
 const styles = {
   root: {
@@ -34,7 +35,9 @@ class ItemList extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, loading } = this.props;
+    if(loading) return <LoadingPane/>
+
     return (
       <div className={classes.root}>
         <GridList cellHeight={200} spacing={1} className={classes.grid}>
@@ -45,13 +48,15 @@ class ItemList extends Component {
   }
 }
 
-export default withSubscriptions(['items'], (props) => {
+export default withTracker((props) => {
   if(props.items) {
     return {
       items: props.items
     };
   }
+  const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 10);
   return {
+    loading: !items_sub.ready(),
     items: Items.find(props.filter).fetch()
   };
-}, withStyles(styles)(ItemList));
+})(withStyles(styles)(ItemList));

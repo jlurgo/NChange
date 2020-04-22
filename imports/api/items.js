@@ -4,11 +4,20 @@ import { check } from 'meteor/check';
 
 export const Items = new Mongo.Collection('items');
 
+const item_for_list_projection = {
+  shortDescription: 1,
+  pics: { $slice: 1 }, // return only first picture
+  tags: 1
+}
+
 if (Meteor.isServer) {
-  // This code only runs on the server
-  Meteor.publish('items', () => {
-    console.warn('subscribing to items');
-    return Items.find({ private: { $ne: true }});
+  // returns limited data from items to show on filtered lists
+  Meteor.publish('filtered_items_summary', (filter, limit) => {
+    console.warn(`subscribing to items summary with filter: ${JSON.stringify(filter)} and limit: ${limit}`);
+    return Items.find(filter, {
+      fields: item_for_list_projection,
+      limit: limit
+    });
   });
 }
 
