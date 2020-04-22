@@ -3,7 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
-import { withSubscriptions } from './WithSubscriptions.js';
 
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
@@ -29,12 +28,10 @@ class NChangeInList extends Component {
   }
 }
 
-export default withSubscriptions([(props)=>{
+export default withTracker((props) => {
   Meteor.subscribe('filtered_items_summary', props.nchange._id);
-}], (props) => {
-
   return {
     // nChanges: NChanges.find({}, { sort: { createdAt: -1 } }).fetch(),
     // items: Items.find({}).fetch()
   };
-}, withStyles(styles)(NChangeInList));
+})(withStyles(styles)(NChangeInList));

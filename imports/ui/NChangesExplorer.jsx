@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
-import { withSubscriptions } from './WithSubscriptions.js';
 
 import { NChanges } from '../api/nChanges.js';
 
