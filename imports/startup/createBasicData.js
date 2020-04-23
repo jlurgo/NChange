@@ -118,35 +118,31 @@ export function createBasicData() {
     }
   };
   nchng = {
-    jeroJoseBiciXJarronYMesa: {
+    jeroJoseBiciXTomateYMesa: {
       _id: "thr9Quij6GNtbynaz",
-      nChangers: [
-        { id: usr.jero._id,
-          input_n_things: [
-            { id: nthng.bici_electrica._id, qty: 1 }
-          ]
+      actions: [
+        { user: usr.jose._id, action: 'take',
+          nThing: nthng.bici_electrica._id, from: usr.jero._id
         },
-        { id: usr.jose._id,
-          input_n_things: [
-            { id: nthng.jarron._id, qty: 1 },
-            { id: nthng.mesa._id, qty: 1 }
-          ]
+        { user: usr.jero._id, action: 'take',
+          nThing: nthng.mesa._id, from: usr.jose._id
+        },
+        { user: usr.jero._id, action: 'take',
+          nThing: nthng.tomate._id, from: usr.jose._id
         }
       ]
     },
     jeroCharlo2BicisXPinza: {
       _id: "thr9fwefej6GNtbynaz",
-      nChangers: [
-        { id: usr.jero._id,
-          input_n_things: [
-            { id: nthng.bici_electrica._id, qty: 1 },
-            { id: nthng.bici_plegable._id, qty: 1 }
-          ]
+      actions: [
+        { user: usr.charlo._id, action: 'take',
+          nThing: nthng.bici_electrica._id, from: usr.jero._id
         },
-        { id: usr.charlo._id,
-          input_n_things: [
-            { id: nthng.pinza._id, qty: 1 }
-          ]
+        { user: usr.charlo._id, action: 'take',
+          nThing: nthng.bici_plegable._id, from: usr.jero._id
+        },
+        { user: usr.jero._id, action: 'take',
+          nThing: nthng.pinza._id, from: usr.charlo._id
         }
       ]
     }
