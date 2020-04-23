@@ -18,3 +18,14 @@ body {
 #render-target {
   height: 100%;
 }
+
+.login-buttons-landing{
+  position: fixed;
+  top: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  left: 0px;
+  zoom: 2;
+}

@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import LoginBox from './LoginBox';
 import ResetPasswordBox from './ResetPasswordBox';
 import RegisterBox from './RegisterBox';
+import AccountsUIWrapper from './AccountsUIWrapper.js';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Route, Switch, Link} from 'react-router-dom';
-
 const styles = {
   background: {
     minHeight: '100vh',
@@ -43,22 +43,8 @@ class Login extends Component {
       return (<Redirect to='/' />);
     }
     return (
-      <div className={this.props.classes.background}>
-        <div className={this.props.classes.formItems}>
-          <div>
-            <Switch>
-              <Route exact path="/login">
-                <LoginBox/>
-              </Route>
-              <Route path="/login/register">
-                <RegisterBox/>
-              </Route>
-              <Route path="/login/recover">
-                <ResetPasswordBox/>
-              </Route>
-            </Switch>
-          </div>
-        </div>
+      <div className="login-buttons-landing">
+        <AccountsUIWrapper />
       </div>
     );
   }

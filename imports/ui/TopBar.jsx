@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
-import AccountsUIWrapper from './AccountsUIWrapper.js';
 import { withStyles } from '@material-ui/core/styles';
 import { Accounts } from 'meteor/accounts-base';
 import { withRouter } from "react-router-dom";
