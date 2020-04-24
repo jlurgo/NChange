@@ -12,11 +12,10 @@ import LoadingPane from './LoadingPane';
 
 const styles = {
   root: {
-    //backgroundColor: 'rgba(255,255,255,0.3)'
-  },
-  grid: {
-    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: 'translateZ(0)',
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    alignContent: 'start'
   },
 };
 
@@ -40,9 +39,7 @@ class ItemList extends Component {
 
     return (
       <div className={classes.root}>
-        <GridList cellHeight={200} spacing={1} className={classes.grid}>
         { this.renderItems() }
-        </GridList>
       </div>
     );
   }
