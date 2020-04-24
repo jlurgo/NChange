@@ -38,7 +38,7 @@ const styles = {
   userImage: {
     height: '45px',
     borderRadius: '50%',
-    border: '2px solid black'
+    border: '2px solid white'
   }
 };
 
