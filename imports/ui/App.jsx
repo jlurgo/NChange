@@ -50,7 +50,6 @@ class PrivateRoute extends Component {
   }
 }
 
-
 // App component - represents the whole app
 class App extends Component {
   render() {
@@ -60,7 +59,6 @@ class App extends Component {
     return (
       <Router>
         <div className={this.props.classes.root}>
-          <TopBar/>
           <Switch>
             <Route exact path="/">
               <Redirect to='/nthings'/>
@@ -68,11 +66,16 @@ class App extends Component {
             <Route path="/login">
               <Login/>
             </Route>
-            <PrivateRoute user={this.props.currentUser} path="/nthings">
-              <ItemExplorer classes={{root: this.props.classes.section}}/>
-            </PrivateRoute>
-            <PrivateRoute user={this.props.currentUser} path="/nchanges">
-              <NChangesExplorer classes={{root: this.props.classes.section}}/>
+            <PrivateRoute user={this.props.currentUser} path="/">
+              <TopBar/>
+              <Switch>
+                <Route path="/nthings">
+                  <ItemExplorer classes={{root: this.props.classes.section}}/>
+                </Route>
+                <Route path="/nchanges">
+                  <NChangesExplorer classes={{root: this.props.classes.section}}/>
+                </Route>
+              </Switch>
             </PrivateRoute>
           </Switch>
         </div>

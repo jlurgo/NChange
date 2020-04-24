@@ -24,7 +24,8 @@ const styles = {
   },
   link: {
     color: 'white',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    width: '81px'
   },
   separator: {
     marginLeft: '10px',
@@ -33,6 +34,11 @@ const styles = {
   },
   selectedLink: {
     fontWeight: 'bold'
+  },
+  userImage: {
+    height: '45px',
+    borderRadius: '50%',
+    border: '2px solid black'
   }
 };
 
@@ -70,6 +76,8 @@ class TopBar extends Component {
 
   render() {
     const { classes } = this.props;
+    const user_image = Meteor.user() && Meteor.user().services &&
+      Meteor.user().services.google && Meteor.user().services.google.picture;
     return (
       <div className={classes.root}>
         <AppBar position="static" className= {classes.menuButton}>
@@ -81,12 +89,20 @@ class TopBar extends Component {
               </Typography>
               {this.renderLink('nchanges')}
             </span>
-            <IconButton edge="start" color="inherit" aria-label="menu"
-              onClick={()=>{
-                Accounts.logout();
-              }}>
-              <AccountCircleOutlinedIcon />
-            </IconButton>
+            {
+              user_image ?
+                <img src= {user_image} className={classes.userImage}
+                  onClick={()=>{
+                    Accounts.logout();
+                  }}/>
+                :
+                <IconButton edge="start" color="inherit" aria-label="menu"
+                  onClick={()=>{
+                    Accounts.logout();
+                  }}>
+                  <AccountCircleOutlinedIcon />
+                </IconButton>
+            }
           </Toolbar>
         </AppBar>
       </div>
@@ -95,7 +111,9 @@ class TopBar extends Component {
 }
 
 export default withTracker((props) => {
+  const user_sub = Meteor.subscribe('own_user');
   return {
-    currentUser: Meteor.user(),
+    loading: !user_sub.ready(),
+    currentUser: Meteor.user()
   };
 })(withRouter(withStyles(styles)(TopBar)));

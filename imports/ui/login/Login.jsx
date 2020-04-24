@@ -12,15 +12,13 @@ const styles = {
     minHeight: '100vh',
     width: '100%',
     color: '#000',
-    backgroundColor: '#000',
-    backgroundImage: 'url("")',
-    backgroundSize: 'cover',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   formItems: {
-    maxWidth: '30rem',
+    width: '40%',
+    minWidth: '30rem',
     borderRadius: '1rem',
     backgroundColor: 'rgba(17, 17, 17, .8)',
     padding: '2rem',
@@ -43,8 +41,22 @@ class Login extends Component {
       return (<Redirect to='/' />);
     }
     return (
-      <div className="login-buttons-landing">
-        <AccountsUIWrapper />
+      <div className={this.props.classes.background}>
+        <div className={this.props.classes.formItems}>
+          <div>
+            <Switch>
+              <Route exact path="/login">
+                <LoginBox/>
+              </Route>
+              <Route path="/login/register">
+                <RegisterBox/>
+              </Route>
+              <Route path="/login/recover">
+                <ResetPasswordBox/>
+              </Route>
+            </Switch>
+          </div>
+        </div>
       </div>
     );
   }

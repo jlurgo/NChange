@@ -12,7 +12,6 @@ const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'white',
     paddingTop: '5px',
   },
   listRoot: {
