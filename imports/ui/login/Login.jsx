@@ -18,7 +18,7 @@ const styles = {
   },
   formItems: {
     width: '40%',
-    minWidth: '30rem',
+    minWidth: '14rem',
     borderRadius: '1rem',
     backgroundColor: 'rgba(17, 17, 17, .8)',
     padding: '2rem',
