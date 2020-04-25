@@ -14,19 +14,29 @@ import { Items } from '../api/items.js';
 
 const styles = {
   root: {
-    flex: '0 0 auto',
-    height: '250px',
-    width: '250px',
+    flex: '1 1 300px',
+    height: '300px',
     margin: '5px',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch'
   },
+  picContainer: {
+    flex: '1 1 auto',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    borderBottom: '1.5px black dashed',
+  },
+  pic: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain'
+  },
   titleBar: {
-    background:
-    'linear-gradient(to top, rgba(0,0,0,0.7) 0%, ' +
-    'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+    backgroundColor: '#41b53f',
     color: 'white',
     flex: '0 0 15px',
     display: 'flex',
@@ -34,17 +44,6 @@ const styles = {
   },
   icon: {
     color: 'white',
-  },
-  picContainer: {
-    flex: '1 1 auto',
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    overflowY: 'hidden'
-  },
-  pic: {
-    maxWidth: '100%',
-    height: 'auto'
   },
 };
 
@@ -67,7 +66,7 @@ class ItemInList extends Component {
             className={classes.icon}>
             <FavoriteBorderOutlinedIcon />
           </IconButton>
-          <Typography noWrap variant="h6" className={classes.separator}>
+          <Typography noWrap variant="h6">
             {item.shortDescription}
           </Typography>
         </div>

@@ -5,8 +5,6 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
 import { _ } from 'meteor/underscore';
 
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
@@ -16,16 +14,22 @@ import { Items } from '../api/items.js';
 
 const styles = {
   root: {
-    flex: '0 0 100px',
+    flex: '0 0 200px',
     margin: '5px',
+    height: '200px',
     cursor: 'pointer',
     position: 'relative',
-    height: '100px',
-    width: '100px'
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    overflow: 'hidden'
   },
   pic: {
     maxWidth: '100%',
-    height: 'auto'
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain'
   },
   icon: {
     color: 'white',

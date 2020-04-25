@@ -100,16 +100,16 @@ export function createBasicData() {
     },
     pinza: {
       _id: "pNnYqPFeunQArcc4C",
-      tags: ["herramienta", "pinza", "bosch", "nueva"],
-      shortDescription: "Pinza marca bosch",
+      tags: ["pinza", "bahco", "nueva"],
+      shortDescription: "Pinza marca bahco",
       longDescription: "Pinza de acero de primera calidad",
       owner: usr.charlo._id,
-      pics: [ "https://www.martinezescalada.com.ar/566/pinza-universal-6.jpg" ],
+      pics: [ "https://www.demaquinasyherramientas.com/wp-content/uploads/2017/03/pinza-universal-bahco.jpg" ],
       private: false
     },
     martillo: {
       _id: "TGM9Quij6GNtbynaz",
-      tags: ["herramienta", "martillo", "nuevo"],
+      tags: ["martillo", "nuevo"],
       shortDescription: "Martillo de primera calidad",
       longDescription: "Martillo de primera calidad",
       owner: usr.charlo._id,

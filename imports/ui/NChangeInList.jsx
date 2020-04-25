@@ -10,22 +10,36 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { withStyles } from '@material-ui/core/styles';
 import ItemInChange from './ItemInChange';
+import Typography from '@material-ui/core/Typography';
 
 import { Items } from '../api/items.js';
 
 const styles = {
   root: {
-    display: 'flex'
+    display: 'flex',
+    marginBottom: '5px'
   },
   itemSection: {
     flex: '1 1 100px',
+    display: 'flex',
+    flexDirection: 'column',
   },
   itemList: {
     flex: '1 1 100px',
-    display: 'flex'
+    display: 'flex',
+    padding: '4px',
   },
   sectionTitle: {
-    backgroundColor: 'gray'
+  },
+  titleBar: {
+    backgroundColor: '#41b53f',
+    color: 'white',
+    flex: '0 0 auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '48px',
+    borderBottom: '2px black dashed'
   }
 };
 
@@ -56,13 +70,17 @@ class NChangeInList extends Component {
     return (
       <Paper className={classes.root}>
         <div className={classes.itemSection}>
-          <div className={classes.sectionTitle}> Input </div>
-          <div className={classes.itemList}>
+          <div className={classes.titleBar}>
+            <Typography noWrap variant="h6" className={classes.sectionTitle}> Input </Typography>
+          </div>
+          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
             { this.renderItems(user_input_items) }
           </div>
         </div>
         <div className={classes.itemSection}>
-          <div className={classes.sectionTitle}> Output </div>
+          <div className={classes.titleBar}>
+            <Typography noWrap variant="h6" className={classes.sectionTitle}> Output </Typography>
+          </div>
           <div className={classes.itemList}>
             { this.renderItems(user_output_items) }
           </div>
