@@ -27,7 +27,6 @@ const styles = {
   itemList: {
     flex: '1 1 100px',
     display: 'flex',
-    padding: '4px',
   },
   sectionTitle: {
   },

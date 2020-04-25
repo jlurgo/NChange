@@ -14,8 +14,7 @@ import { Items } from '../api/items.js';
 
 const styles = {
   root: {
-    flex: '0 0 200px',
-    margin: '5px',
+    flex: '1 1 200px',
     height: '200px',
     cursor: 'pointer',
     position: 'relative',
@@ -26,10 +25,10 @@ const styles = {
   },
   pic: {
     maxWidth: '100%',
-    height: 'auto',
+    height: '100%',
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'contain'
+    objectFit: 'cover'
   },
   icon: {
     color: 'white',
@@ -43,10 +42,10 @@ class ItemInChange extends Component {
     const { itemInChange, loading, classes } = this.props;
     return loading ?
       <div>Loading</div> :
-      <Paper key={itemInChange.nThing._id} classes={{ root: classes.root }}>
+      <div key={itemInChange.nThing._id} className={classes.root }>
         <img className={classes.pic} src={itemInChange.nThing.pics[0]}
           alt={itemInChange.nThing.shortDescription} />
-      </Paper>
+      </div>
   }
 }
 
