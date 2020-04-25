@@ -17,6 +17,14 @@ const styles = {
     padding: '5px',
     paddingBottom: '10px',
     borderRadius: '5px'
+  },
+  autocompletePaper: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  autocompleteOption: {
+    borderRadius: '5px',
+    fontWeight: 'bold',
+    fontSize: '18px',
   }
 };
 
@@ -39,7 +47,8 @@ class ItemFilterBar extends Component {
     });
   }
   render() {
-    const tags = this.props.tags.sort();
+    const { tags, classes} = this.props;
+
     return (
       <div className={this.props.classes.root}>
         <Autocomplete options={tags}
@@ -59,6 +68,11 @@ class ItemFilterBar extends Component {
           filterSelectedOptions
           autoHighlight
           disableCloseOnSelect
+          debug = {true}
+          classes={{
+            paper: classes.autocompletePaper,
+            option: classes.autocompleteOption,
+          }}
         />
       </div>
     );
@@ -69,6 +83,6 @@ export default withTracker((props) => {
   Meteor.subscribe('tags', props.filter);
   return {
     ...props,
-    tags: Tags.find({}).fetch().map( tag => tag._id)
+    tags: Tags.find({}).fetch().map( tag => tag._id).sort()
   };
 })(withStyles(styles)(ItemFilterBar));

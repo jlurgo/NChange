@@ -51,7 +51,6 @@ class ItemInChange extends Component {
 }
 
 export default withTracker((props) => {
-  console.warn('iteminchange');
   const filter = {_id: props.itemInChange.nThing};
   const item_sub = Meteor.subscribe('filtered_items_summary', filter);
 

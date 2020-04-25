@@ -35,7 +35,6 @@ class ItemExplorer extends Component {
 
   render() {
     const { classes } = this.props;
-    console.warn('Item explorer state:', this.state);
     return (
       <div className={classes.root}>
         <ItemFilterBar filter={this.state.filter} onFilterChange={this.setFilter} />
