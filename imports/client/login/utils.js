@@ -12,9 +12,25 @@ export default {
   hasPasswordService() {
     return !!Package['accounts-password'];
   },
+  runningOnMobile() {
+    const toMatch = [
+        'Android',
+        'webOS',
+        'iPhone',
+        'ipad',
+        'iPod',
+        'BlackBerry',
+        'Windows Phone'
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.includes(toMatchItem);
+    });
+  },
   performOAuthLogin(service, cb) {
+    const loginStyle = this.runningOnMobile() ? 'redirect' : 'popup';
     try {
-      Meteor[`loginWith${this.capitalize(service)}`]({}, cb);
+      Meteor[`loginWith${this.capitalize(service)}`]({loginStyle: loginStyle}, cb);
     } catch (e) {
       cb(e);
     }
