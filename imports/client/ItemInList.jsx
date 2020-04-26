@@ -10,7 +10,7 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import { Items } from '../api/items.js';
+import { Items } from "../shared/collections";
 
 const styles = {
   root: {
@@ -54,7 +54,7 @@ class ItemInList extends Component {
     const { item, classes } = this.props;
     return (
       <Paper onClick={()=>{
-          this.props.history.push('/itemDetail')
+          this.props.history.push(`/nthingdetail/${item._id}`)
         }} key={item._id}
         classes={{ root: classes.root }}>
         <div className={classes.picContainer}>

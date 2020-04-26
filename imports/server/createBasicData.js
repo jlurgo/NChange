@@ -1,5 +1,5 @@
-import { Items } from "../api/items.js";
-import { NChanges } from "../api/nChanges.js";
+import { Items } from "../shared/collections";
+import { NChanges } from "../shared/collections";
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 

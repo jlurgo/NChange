@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
 
-import { NChanges } from '../api/nChanges.js';
+import { NChanges } from "../shared/collections";
 
 import NChangesList from './NChangesList';
 

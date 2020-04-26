@@ -3,14 +3,15 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
-import TopBar from './TopBar';
-import Login from './login/Login.jsx';
-import ItemExplorer from './ItemExplorer';
-import NChangesExplorer from './NChangesExplorer';
 
 import { BrowserRouter as Router, Switch, Link, Redirect } from "react-router-dom";
 import { Route } from "react-router";
 
+import TopBar from './TopBar';
+import Login from './login/Login.jsx';
+import ItemExplorer from './ItemExplorer';
+import NChangesExplorer from './NChangesExplorer';
+import NThingDetail from './NThingDetail';
 
 const styles = {
   root: {
@@ -69,6 +70,9 @@ class App extends Component {
             <PrivateRoute user={this.props.currentUser} path="/">
               <TopBar/>
               <Switch>
+                <Route exact path="/nthingdetail/:id">
+                  <NThingDetail classes={{root: this.props.classes.section}}/>
+                </Route>
                 <Route path="/nthings">
                   <ItemExplorer classes={{root: this.props.classes.section}}/>
                 </Route>

@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-
-export const Items = new Mongo.Collection('items');
+import { Items } from '../shared/collections';
 
 const item_for_list_projection = {
   shortDescription: 1,
@@ -10,20 +9,21 @@ const item_for_list_projection = {
   tags: 1
 }
 
-if (Meteor.isServer) {
-  // returns limited data from items to show on filtered lists
-  Meteor.publish('filtered_items_summary', (filter, limit) => {
-    console.warn(`subscribing to items summary with filter: ${JSON.stringify(filter)} and limit: ${limit}`);
-    return Items.find(filter, {
-      fields: item_for_list_projection,
-      limit: limit
-    });
+// returns limited data from items to show on filtered lists
+Meteor.publish('filtered_items_summary', (filter, limit) => {
+  console.warn(`subscribing to items summary with filter: ${JSON.stringify(filter)} and limit: ${limit}`);
+  return Items.find(filter, {
+    fields: item_for_list_projection,
+    limit: limit
   });
+});
 
-  Meteor.publish('own_user', () => {
-    return Meteor.users.find({_id: Meteor.userId()});
+Meteor.publish('nthing_detail', (id) => {
+  console.warn(`subscribing to nthing_detail with id: ${id}`);
+  return Items.find({
+    _id: id 
   });
-}
+});
 
 Meteor.methods({
   'items.insert'(text) {

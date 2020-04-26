@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ItemInChange from './ItemInChange';
 import Typography from '@material-ui/core/Typography';
 
-import { Items } from '../api/items.js';
+import { Items } from "../shared/collections";
 
 const styles = {
   root: {

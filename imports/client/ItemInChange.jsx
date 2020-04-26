@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Items } from '../api/items.js';
+import { Items } from "../shared/collections";
 
 const styles = {
   root: {

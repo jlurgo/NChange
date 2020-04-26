@@ -6,6 +6,8 @@ import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 
+import { ACollection } from "../../shared/collections";
+
 const styles = {
   root: {
 
@@ -16,11 +18,14 @@ const styles = {
 class MyComponent extends Component {
   render() {
     const { loading, classes, history } = this.props;
-    return loading ?
-      <div>Loading...</div> :
+
+    if (loading) return <div>Loading...</div>
+
+    return (
       <div className={classes.root }>
 
       </div>
+    );
   }
 }
 
@@ -28,6 +33,7 @@ export default withTracker((props) => {
   const sub = Meteor.subscribe('a_publication');
   return {
     loading: !item_sub.ready(),
+
   };
 })
-(withRouter(withStyles(styles)(ItemInChange)));
+(withRouter(withStyles(styles)(MyComponent)));

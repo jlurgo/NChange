@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Items } from '../api/items.js';
+import { Items } from "../shared/collections";
 
 import ItemList from './ItemList';
 import ItemFilterBar from './ItemFilterBar';

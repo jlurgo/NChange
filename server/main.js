@@ -1,7 +1,10 @@
 import { Meteor } from 'meteor/meteor';
-import '../imports/api/items.js';
-import '../imports/api/tags.js';
-import { createBasicData } from '../imports/startup/createBasicData.js';
+import '../imports/shared/collections.js';
+import '../imports/server/items.js';
+import '../imports/server/nchanges.js';
+import '../imports/server/tags.js';
+import '../imports/server/users.js';
+import { createBasicData } from '../imports/server/createBasicData.js';
 
 Meteor.startup(() => {
   // If we are not running tests we insert some basic documents in the database

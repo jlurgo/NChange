@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
-import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Items } from '../api/items.js';
+import { Items } from "../shared/collections";
 
 import ItemInList from './ItemInList';
 import LoadingPane from './LoadingPane';
@@ -35,8 +34,8 @@ class ItemList extends Component {
 
   render() {
     const { classes, loading } = this.props;
-    if(loading) return <LoadingPane/>
 
+    if(loading) return <LoadingPane/>
     return (
       <div className={classes.root}>
         { this.renderItems() }
