@@ -6,7 +6,8 @@ import { Items } from '../shared/collections';
 const item_for_list_projection = {
   shortDescription: 1,
   pics: { $slice: 1 }, // return only first picture
-  tags: 1
+  tags: 1,
+  owner: 1
 }
 
 // returns limited data from items to show on filtered lists
@@ -21,7 +22,7 @@ Meteor.publish('filtered_items_summary', (filter, limit) => {
 Meteor.publish('nthing_detail', (id) => {
   console.warn(`subscribing to nthing_detail with id: ${id}`);
   return Items.find({
-    _id: id 
+    _id: id
   });
 });
 

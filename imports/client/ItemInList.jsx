@@ -38,13 +38,22 @@ const styles = {
   titleBar: {
     backgroundColor: '#41b53f',
     color: 'white',
-    flex: '0 0 15px',
+    flex: '0 0 50px',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'stretch'
   },
-  icon: {
-    color: 'white',
+  title: {
+    flex: '1 1 auto',
+    marginLeft: '15px'
   },
+  likeIcon: {
+    color: 'red',
+    flex: '0 0 auto'
+  },
+  likeIconLiked: {
+
+  }
 };
 
 
@@ -62,13 +71,15 @@ class ItemInList extends Component {
             className={classes.pic}/>
         </div>
         <div className={classes.titleBar}>
-          <IconButton aria-label={`star ${item.shortDescription}`}
-            className={classes.icon}>
-            <FavoriteBorderOutlinedIcon />
-          </IconButton>
-          <Typography noWrap variant="h6">
+          <Typography className={classes.title} noWrap variant="h6">
             {item.shortDescription}
           </Typography>
+          {(item.owner != Meteor.userId()) &&
+            <IconButton aria-label={`star ${item.shortDescription}`}
+              className={classes.likeIcon}>
+              <FavoriteBorderOutlinedIcon />
+            </IconButton>
+          }
         </div>
       </Paper>
     );

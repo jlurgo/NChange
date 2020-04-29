@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 import { Items } from "../shared/collections";
 
@@ -23,8 +24,20 @@ class NThingDetail extends Component {
     if (loading) return <div>Loading...</div>
 
     return (
-      <Paper classes={{ root: classes.root}}>
-        {JSON.stringify(nThing)}
+      <Paper classes={{ root: classes.root }}>
+        <div className={classes.picsContainer}>
+          {
+            nThing.pics.map((pic) =>{
+              return (
+                <img src={pic} alt={nThing.shortDescription}
+                  className={classes.pic}/>
+              )
+            })
+          }
+        </div>
+        <Typography variant="h6">
+          {nThing.longDescription}
+        </Typography>
       </Paper>
     );
   }
