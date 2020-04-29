@@ -12,7 +12,20 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
-
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  picsList: {
+    flex: '0 0 50vh',
+    display: 'flex',
+    flexWrap: 'nowrap',
+    alignItems: 'stretch',
+    overflowX: 'auto',
+  },
+  pic: {
+    maxHeight: '100%',
+    objectFit: 'contain',
+    display: 'inline'
   },
 };
 
@@ -25,16 +38,19 @@ class NThingDetail extends Component {
 
     return (
       <Paper classes={{ root: classes.root }}>
-        <div className={classes.picsContainer}>
-          {
-            nThing.pics.map((pic) =>{
-              return (
-                <img src={pic} alt={nThing.shortDescription}
-                  className={classes.pic}/>
-              )
-            })
-          }
+        <div className={classes.picsList}>
+            {
+              nThing.pics.map((pic) =>{
+                return (
+                    <img src={pic} alt={nThing.shortDescription}
+                      className={classes.pic}/>
+                )
+              })
+            }
         </div>
+        <Typography variant="h4">
+          {nThing.shortDescription}
+        </Typography>
         <Typography variant="h6">
           {nThing.longDescription}
         </Typography>

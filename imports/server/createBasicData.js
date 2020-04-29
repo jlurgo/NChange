@@ -109,7 +109,11 @@ export function createBasicData() {
       shortDescription: "Pinza marca bahco",
       longDescription: "Pinza de acero de primera calidad",
       owner: usr.charlo._id,
-      pics: [ "https://www.demaquinasyherramientas.com/wp-content/uploads/2017/03/pinza-universal-bahco.jpg" ],
+      pics: [ "https://www.demaquinasyherramientas.com/wp-content/uploads/2017/03/pinza-universal-bahco.jpg",
+              "https://lh3.googleusercontent.com/proxy/ZtMfAjj8XhEZGcstTsTrzdIz2FaQ9d8XbtZpBL-uB0ihD_MZsQrBHCUAvGMHOrkIckN7S-r67DmuqQXwwvTaqBLri8ySkAhlMcnmtxruAal-XBbz_a-CFw-ghBYde6T05FFl",
+              "https://mla-s1-p.mlstatic.com/629668-MLA40078358763_122019-E.jpg",
+              "https://http2.mlstatic.com/pinza-bahco-tipo-ford-2-posiciones-2970g-200-regulable-D_NQ_NP_937559-MLA31063584936_062019-F.jpg"
+            ],
       private: false,
       likedBy: []
     },
