@@ -3,10 +3,12 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
+import { _ } from 'meteor/underscore';
 
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
@@ -38,7 +40,7 @@ const styles = {
   titleBar: {
     backgroundColor: '#41b53f',
     color: 'white',
-    flex: '0 0 50px',
+    flex: '0 0 59px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'stretch'
@@ -48,24 +50,36 @@ const styles = {
     marginLeft: '15px'
   },
   likeIcon: {
-    color: 'red',
-    flex: '0 0 auto'
+    color: 'white',
+    flex: '0 0 auto',
+    cursor: 'pointer'
   },
   likeIconLiked: {
-
+    color: 'red',
   }
 };
 
 
 // Item component - represents a single todo item
 class ItemInList extends Component {
+  handleLikeButtonClick = (e) => {
+    const { item } = this.props;
+    this.itemliked() ?
+      Meteor.call('items.unlike', item._id) :
+      Meteor.call('items.like', item._id);
+    e.stopPropagation()
+  }
+  itemliked = () => {
+    const { item } = this.props;
+    return item.likedBy &&
+      !!_.findWhere(item.likedBy, {userId: Meteor.userId()});
+  }
   render() {
     const { item, classes } = this.props;
     return (
       <Paper onClick={()=>{
           this.props.history.push(`/nthingdetail/${item._id}`)
-        }} key={item._id}
-        classes={{ root: classes.root }}>
+        }} key={item._id} classes={{ root: classes.root }}>
         <div className={classes.picContainer}>
           <img src={item.pics[0]} alt={item.shortDescription}
             className={classes.pic}/>
@@ -76,8 +90,11 @@ class ItemInList extends Component {
           </Typography>
           {(item.owner != Meteor.userId()) &&
             <IconButton aria-label={`star ${item.shortDescription}`}
-              className={classes.likeIcon}>
-              <FavoriteBorderOutlinedIcon />
+              className={classes.likeIcon} onClick={this.handleLikeButtonClick}>
+              {this.itemliked() ?
+                <FavoriteIcon className={classes.likeIconLiked} fontSize= 'large'/> :
+                <FavoriteBorderIcon fontSize= 'large'/>
+              }
             </IconButton>
           }
         </div>

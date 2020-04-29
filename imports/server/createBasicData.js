@@ -60,7 +60,8 @@ export function createBasicData() {
       longDescription: "Frenos a disco y 36 cambios shimano",
       owner: usr.jero._id,
       pics: [ "https://bucket1.glanacion.com/anexos/fotos/90/2920990w740.jpg" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     bici_plegable: {
       _id: "4xXiXAGLjK5vK4QYf",
@@ -69,7 +70,8 @@ export function createBasicData() {
       longDescription: "Casi nueva",
       owner: usr.jero._id,
       pics: [ "https://http2.mlstatic.com/bicicleta-plegable-aurora-folding-20-f20-local-palermo-alum-D_NQ_NP_815601-MLA28911412788_122018-F.jpg" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     jarron: {
       _id: "NjwFDvHbcthTxu9sR",
@@ -78,7 +80,8 @@ export function createBasicData() {
       longDescription: "Mas de 100 años, tiene un arreglo",
       owner: usr.jero._id,
       pics: [ "https://http2.mlstatic.com/jarron-ceramica-girasoles-tipo-talavera-D_NQ_NP_928645-MLM29559760561_032019-F.jpg" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     mesa: {
       _id: "BfCfWvxRwMXn2ADqB",
@@ -87,7 +90,8 @@ export function createBasicData() {
       longDescription: "Acabado en laca poliuretánica, fabricacion nacional ",
       owner: usr.jose._id,
       pics: [ "https://d26lpennugtm8s.cloudfront.net/stores/099/040/products/mesa-nucha1-0dcf07456778b2981c15132748677920-640-0.jpg" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     tomate: {
       _id: "ACEvGGwand6EcmxcH",
@@ -96,7 +100,8 @@ export function createBasicData() {
       longDescription: "Cultivados en húrlingham con abono natural, sin pesticidas",
       owner: usr.jose._id,
       pics: [ "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSlsQhOrZuBImzRqIl-Hk-a4l_aBuvcy03gFLlHuhGqkJjdYGak&usqp=CAU" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     pinza: {
       _id: "pNnYqPFeunQArcc4C",
@@ -105,7 +110,8 @@ export function createBasicData() {
       longDescription: "Pinza de acero de primera calidad",
       owner: usr.charlo._id,
       pics: [ "https://www.demaquinasyherramientas.com/wp-content/uploads/2017/03/pinza-universal-bahco.jpg" ],
-      private: false
+      private: false,
+      likedBy: []
     },
     martillo: {
       _id: "TGM9Quij6GNtbynaz",
@@ -114,7 +120,8 @@ export function createBasicData() {
       longDescription: "Martillo de primera calidad",
       owner: usr.charlo._id,
       pics: [ "https://www.ferreteriajs.com/wp-content/uploads/2018/09/STAN0475.jpg" ],
-      private: false
+      private: false,
+      likedBy: [{ userId: usr.jero._id }, { userId: usr.jose._id }]
     }
   };
   nchng = {
