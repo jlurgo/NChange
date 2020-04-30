@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography';
 
 import { Items } from "../shared/collections";
 
+import TagBar from "./TagBar";
+
 const styles = {
   root: {
     display: 'flex',
@@ -39,15 +41,16 @@ class NThingDetail extends Component {
     return (
       <Paper classes={{ root: classes.root }}>
         <div className={classes.picsList}>
-            {
-              nThing.pics.map((pic) =>{
-                return (
-                    <img src={pic} alt={nThing.shortDescription}
-                      className={classes.pic}/>
-                )
-              })
-            }
+          {
+            nThing.pics.map((pic) =>{
+              return (
+                  <img src={pic} alt={nThing.shortDescription}
+                    className={classes.pic}/>
+              )
+            })
+          }
         </div>
+        <TagBar tags={nThing.tags}/>
         <Typography variant="h4">
           {nThing.shortDescription}
         </Typography>
