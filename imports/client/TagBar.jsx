@@ -31,8 +31,8 @@ class TagBar extends Component {
   renderTag = (tag) => {
     const { classes } = this.props;
     return (
-      <div className={classes.tag}>
-        <Typography variant="h7">
+      <div className={classes.tag} key={tag}>
+        <Typography variant="h6">
           {tag}
         </Typography>
       </div>

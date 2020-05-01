@@ -50,7 +50,7 @@ export default withTracker((props) => {
       items: props.items
     };
   }
-  const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 10);
+  const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 50);
   return {
     loading: !items_sub.ready(),
     items: Items.find(props.filter).fetch()

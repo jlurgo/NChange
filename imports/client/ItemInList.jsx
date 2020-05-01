@@ -65,8 +65,8 @@ class ItemInList extends Component {
   handleLikeButtonClick = (e) => {
     const { item } = this.props;
     this.itemliked() ?
-      Meteor.call('items.unlike', item._id) :
-      Meteor.call('items.like', item._id);
+      Meteor.call('nthings.unlike', item._id) :
+      Meteor.call('nthings.like', item._id);
     e.stopPropagation()
   }
   itemliked = () => {
