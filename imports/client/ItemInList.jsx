@@ -8,6 +8,7 @@ import { _ } from 'meteor/underscore';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -16,13 +17,14 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
+    position: 'relative',
+    display: 'flex',
     flex: '1 1 300px',
     height: '300px',
     margin: '5px',
     cursor: 'pointer',
-    display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
   },
   picContainer: {
     flex: '1 1 auto',
@@ -56,12 +58,19 @@ const styles = {
   },
   likeIconLiked: {
     color: 'red',
-  }
+  },
+  removeThingIcon: {
+    position: 'absolute',
+    top: '5px',
+    right: '5px',
+    color: 'red'
+  },
 };
 
 
 // Item component - represents a single todo item
 class ItemInList extends Component {
+
   handleLikeButtonClick = (e) => {
     const { item } = this.props;
     this.itemliked() ?
@@ -74,8 +83,13 @@ class ItemInList extends Component {
     return item.likedBy &&
       !!_.findWhere(item.likedBy, {userId: Meteor.userId()});
   }
+  handleRemoveClick = (e) => {
+    Meteor.call('nthings.remove', this.props.item._id);
+    e.stopPropagation()
+  }
   render() {
     const { item, classes } = this.props;
+    const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <Paper onClick={()=>{
           this.props.history.push(`/nthingdetail/${item._id}`)
@@ -88,7 +102,7 @@ class ItemInList extends Component {
           <Typography className={classes.title} noWrap variant="h6">
             {item.shortDescription}
           </Typography>
-          {(item.owner != Meteor.userId()) &&
+          { !is_my_own_thing &&
             <IconButton aria-label={`star ${item.shortDescription}`}
               className={classes.likeIcon} onClick={this.handleLikeButtonClick}>
               {this.itemliked() ?
@@ -98,6 +112,12 @@ class ItemInList extends Component {
             </IconButton>
           }
         </div>
+        { is_my_own_thing &&
+          <IconButton className={classes.removeThingIcon}
+           onClick={this.handleRemoveClick}>
+             <DeleteForeverIcon />
+          </IconButton>
+        }
       </Paper>
     );
   }

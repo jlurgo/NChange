@@ -53,10 +53,11 @@ Meteor.methods({
   },
   'nthings.remove'(itemId) {
     check(itemId, String);
-
+    console.warn('removing a thing');
+    
     const item = Items.findOne(itemId);
-    if (item.private && item.owner !== this.userId) {
-      // If the item is private, make sure only the owner can delete it
+    if (item.owner !== this.userId) {
+      // make sure only the owner can delete it
       throw new Meteor.Error('not-authorized');
     }
 
