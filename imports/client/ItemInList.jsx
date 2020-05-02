@@ -12,48 +12,40 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import TagBar from "./TagBar";
 
 import { Items } from "../shared/collections";
 
 const styles = {
   root: {
     position: 'relative',
-    display: 'flex',
     flex: '1 1 300px',
     height: '300px',
     margin: '5px',
     cursor: 'pointer',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    overflow: 'hidden'
-  },
-  picContainer: {
-    flex: '1 1 auto',
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
     overflow: 'hidden',
-    borderBottom: '1.5px black dashed',
+    width: '100%'
   },
   pic: {
-    maxWidth: '100%',
+    height: '100%',
+    width: '100%',
     maxHeight: '100%',
     objectFit: 'contain'
   },
-  titleBar: {
-    backgroundColor: '#41b53f',
-    color: 'white',
-    flex: '0 0 59px',
+  bottomBar: {
+    width: '100%',
+    position: 'absolute',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'stretch'
+    bottom: '0px',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
   },
-  title: {
-    flex: '1 1 auto',
-    marginLeft: '15px'
+  tagBarRoot: {
+    flexWrap: 'wrap-reverse',
+    flex: '1 1 auto'
   },
   likeIcon: {
-    color: 'white',
+    color: 'black',
     flex: '0 0 auto',
     cursor: 'pointer'
   },
@@ -88,7 +80,7 @@ class ItemInList extends Component {
 
   handleRemoveClick = (e) => {
     Meteor.call('nthings.remove', this.props.item._id);
-    e.stopPropagation()
+    e.stopPropagation();
   }
 
   render() {
@@ -98,14 +90,10 @@ class ItemInList extends Component {
       <Paper onClick={()=>{
           this.props.history.push(`/nthingdetail/${item._id}`)
         }} key={item._id} classes={{ root: classes.root }}>
-        <div className={classes.picContainer}>
-          <img src={item.pics[0]} alt={item.shortDescription}
-            className={classes.pic}/>
-        </div>
-        <div className={classes.titleBar}>
-          <Typography className={classes.title} noWrap variant="h6">
-            {item.shortDescription}
-          </Typography>
+        <img src={item.pics[0]} alt={item.shortDescription}
+          className={classes.pic}/>
+        <div className={classes.bottomBar}>
+          <TagBar tags={item.tags} classes={{root: classes.tagBarRoot}}/>
           { !is_my_own_thing &&
             <IconButton aria-label={`star ${item.shortDescription}`}
               className={classes.likeIcon} onClick={this.handleLikeButtonClick}>

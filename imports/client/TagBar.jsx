@@ -12,16 +12,17 @@ const styles = {
   root: {
     display: 'flex',
     flex: '0 0 40px',
-    padding: '10px'
+    padding: '10px',
+    width: '100%'
   },
   tag: {
     display: 'flex',
     alignItems: 'center',
-    marginRight: '5px',
+    margin: '5px',
     paddingLeft: '15px',
     paddingRight: '15px',
     borderRadius: '25px',
-    backgroundColor: '#afe9af',
+    backgroundColor: '#afe9afbd',
   }
 };
 

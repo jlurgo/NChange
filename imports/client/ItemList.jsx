@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withStyles } from '@material-ui/core/styles';
 import { withTracker } from 'meteor/react-meteor-data';
+import { _ } from 'meteor/underscore';
 
 import { Items } from "../shared/collections";
 
@@ -51,8 +52,15 @@ export default withTracker((props) => {
     };
   }
   const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 50);
+  let items = Items.find(props.filter).fetch();
+  if(props.filter.tags) {
+    items = items.map((item)=>{
+      item.tags = _.difference(item.tags, props.filter.tags.$all);
+      return item;
+    });
+  }
   return {
     loading: !items_sub.ready(),
-    items: Items.find(props.filter).fetch()
+    items: items
   };
 })(withStyles(styles)(ItemList));
