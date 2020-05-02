@@ -25,6 +25,7 @@ const styles = {
     cursor: 'pointer',
     flexDirection: 'column',
     alignItems: 'stretch',
+    overflow: 'hidden'
   },
   picContainer: {
     flex: '1 1 auto',
@@ -78,15 +79,18 @@ class ItemInList extends Component {
       Meteor.call('nthings.like', item._id);
     e.stopPropagation()
   }
+
   itemliked = () => {
     const { item } = this.props;
     return item.likedBy &&
       !!_.findWhere(item.likedBy, {userId: Meteor.userId()});
   }
+
   handleRemoveClick = (e) => {
     Meteor.call('nthings.remove', this.props.item._id);
     e.stopPropagation()
   }
+
   render() {
     const { item, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());

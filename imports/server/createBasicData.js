@@ -131,6 +131,7 @@ export function createBasicData() {
   nchng = {
     jeroJoseBiciXTomateYMesa: {
       _id: "thr9Quij6GNtbynaz",
+      nChangers: [usr.jero._id, usr.jose._id],
       actions: [
         { user: usr.jose._id, action: 'take',
           nThing: nthng.bici_electrica._id, from: usr.jero._id
@@ -145,6 +146,7 @@ export function createBasicData() {
     },
     jeroCharlo2BicisXPinza: {
       _id: "thr9fwefej6GNtbynaz",
+      nChangers: [usr.jero._id, usr.charlo._id],
       actions: [
         { user: usr.charlo._id, action: 'take',
           nThing: nthng.bici_electrica._id, from: usr.jero._id

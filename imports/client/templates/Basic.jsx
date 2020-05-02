@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 
-import { ACollection } from "../../shared/collections";
+import { ACollection } from "../shared/collections";
 
 const styles = {
   root: {

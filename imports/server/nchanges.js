@@ -6,5 +6,10 @@ import { NChanges } from '../shared/collections';
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
   const usr = Meteor.userId();
-  return NChanges.find({ $or: [{'actions.user': usr}, {'actions.from': usr}]});
+  return NChanges.find({'nChangers': usr});
+});
+
+Meteor.publish('nchange_detail', (nchange_id) => {
+  const usr = Meteor.userId();
+  return NChanges.find({_id: nchange_id});
 });

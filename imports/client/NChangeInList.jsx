@@ -58,7 +58,7 @@ class NChangeInList extends Component {
   }
 
   render() {
-    const { nchange, classes } = this.props;
+    const { nchange, classes, history } = this.props;
 
     const user_input_items = _.where(nchange.actions,
       { action: 'take', user: Meteor.userId()});
@@ -67,21 +67,27 @@ class NChangeInList extends Component {
       { action: 'take', from: Meteor.userId()});
 
     return (
-      <Paper className={classes.root}>
+      <Paper className={classes.root} onClick={()=>{
+          history.push(`/nchangedetail/${nchange._id}`)
+        }} >
         <div className={classes.itemSection}>
           <div className={classes.titleBar}>
-            <Typography noWrap variant="h6" className={classes.sectionTitle}> Input </Typography>
+            <Typography noWrap variant="h6" className={classes.sectionTitle}>
+              Doy
+            </Typography>
           </div>
-          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
-            { this.renderItems(user_input_items) }
+          <div className={classes.itemList}>
+            { this.renderItems(user_output_items) }
           </div>
         </div>
         <div className={classes.itemSection}>
           <div className={classes.titleBar}>
-            <Typography noWrap variant="h6" className={classes.sectionTitle}> Output </Typography>
+            <Typography noWrap variant="h6" className={classes.sectionTitle}>
+              Recibo
+            </Typography>
           </div>
-          <div className={classes.itemList}>
-            { this.renderItems(user_output_items) }
+          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
+            { this.renderItems(user_input_items) }
           </div>
         </div>
       </Paper>
@@ -91,4 +97,4 @@ class NChangeInList extends Component {
 
 export default withTracker((props) => {
   return { props };
-})(withStyles(styles)(NChangeInList));
+})(withStyles(styles)(withRouter(NChangeInList)));

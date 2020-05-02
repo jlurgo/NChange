@@ -12,6 +12,7 @@ import Login from './login/Login.jsx';
 import ItemExplorer from './ItemExplorer';
 import NChangesExplorer from './NChangesExplorer';
 import NThingDetail from './NThingDetail';
+import NChangeDetail from './NChangeDetail';
 
 const styles = {
   root: {
@@ -72,6 +73,9 @@ class App extends Component {
               <Switch>
                 <Route exact path="/nthingdetail/:id">
                   <NThingDetail classes={{root: this.props.classes.section}}/>
+                </Route>
+                <Route exact path="/nchangedetail/:id">
+                  <NChangeDetail classes={{root: this.props.classes.section}}/>
                 </Route>
                 <Route path="/nthings">
                   <ItemExplorer classes={{root: this.props.classes.section}}/>
