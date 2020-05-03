@@ -25,9 +25,7 @@ class ItemList extends Component {
   renderItems() {
     return this.props.items.map((item) => {
       return (
-        <ItemInList
-          key={item._id}
-          item={item}
+        <ItemInList key={item._id} item={item} onClick={this.props.onItemClick}
         />
       );
     });

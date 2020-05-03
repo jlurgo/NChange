@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import { NChanges } from '../shared/collections';
+import { NChanges, Items } from '../shared/collections';
 
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
@@ -12,4 +12,34 @@ Meteor.publish('user_n_changes', () => {
 Meteor.publish('nchange_detail', (nchange_id) => {
   const usr = Meteor.userId();
   return NChanges.find({_id: nchange_id});
+});
+
+Meteor.methods({
+  'nchanges.takeItem'(nchange_id, nthing_id) {
+    // Make sure the user is logged in before updating an nchange
+    if (! this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const item = Items.findOne({_id: nthing_id});
+    return NChanges.update({_id: nchange_id}, { $push: {
+      actions: { user: this.userId, action: 'take',
+        nThing: item._id, from: item.owner
+      }
+    }});
+  },
+  'nchanges.releaseItem'(nchange_id, nthing_id) {
+    // Make sure the user is logged in before updating an nchange
+    if (! this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const user_id = Meteor.userId();
+    const item = Items.findOne({_id: nthing_id});
+    return NChanges.update({_id: nchange_id}, { $pull: {
+      actions: { user: user_id, action: 'take',
+        nThing: item._id, from: item.owner
+      }
+    }});
+  },
 });

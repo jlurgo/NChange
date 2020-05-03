@@ -52,6 +52,20 @@ const styles = {
 
 //
 class NChangeDetail extends Component {
+
+  handleOnItemClick = (item) => {
+    const { nchange } = this.props;
+    if(item.owner == Meteor.userId()) {
+      return;
+    }
+    const taken_by_me = _.findWhere(nchange.actions, {
+      user: Meteor.userId(), nThing: item._id, action: 'take'
+    });
+
+    taken_by_me ? Meteor.call('nchanges.releaseItem', nchange._id, item._id) :
+      Meteor.call('nchanges.takeItem', nchange._id, item._id);
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
 
@@ -77,6 +91,7 @@ class NChangeDetail extends Component {
             </div>
             <div className={classes.nThings}>
               <ItemList filter={{owner: { $in: nchange.nChangers }}}
+                onItemClick={this.handleOnItemClick}
                 classes={{root: classes.listRoot}}/>
             </div>
           </div>

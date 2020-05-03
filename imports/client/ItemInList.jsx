@@ -89,13 +89,20 @@ class ItemInList extends Component {
     e.stopPropagation();
   }
 
+  handleClick = (e) => {
+    const { onClick, item } = this.props;
+    if(onClick) {
+      onClick(item);
+      return;
+    }
+    this.props.history.push(`/nthingdetail/${item._id}`)
+  }
+
   render() {
     const { item, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
-      <Paper onClick={()=>{
-          this.props.history.push(`/nthingdetail/${item._id}`)
-        }} key={item._id} classes={{ root: classes.root }}>
+      <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
         <img src={item.pics[0]} alt={item.shortDescription}
           className={classes.pic}/>
         <div className={classes.bottomBar}>
