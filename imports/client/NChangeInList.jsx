@@ -17,6 +17,7 @@ import { Items } from "../shared/collections";
 const styles = {
   root: {
     display: 'flex',
+    flex: '0 0 auto',
     marginBottom: '5px'
   },
   itemSection: {
@@ -76,7 +77,7 @@ class NChangeInList extends Component {
               Doy
             </Typography>
           </div>
-          <div className={classes.itemList}>
+          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
             { this.renderItems(user_output_items) }
           </div>
         </div>
@@ -86,7 +87,7 @@ class NChangeInList extends Component {
               Recibo
             </Typography>
           </div>
-          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
+          <div className={classes.itemList} >
             { this.renderItems(user_input_items) }
           </div>
         </div>
