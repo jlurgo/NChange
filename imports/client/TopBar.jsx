@@ -10,13 +10,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import { Link as RouterLink} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 
+import NChangerAvatar from './NChangerAvatar'
+
 const styles = {
   root: {
+    flex: '0 0 auto'
   },
   linkContainer: {
     display: 'flex',
@@ -35,9 +36,7 @@ const styles = {
   selectedLink: {
     fontWeight: 'bold'
   },
-  userImage: {
-    height: '45px',
-    borderRadius: '50%',
+  userAvatar: {
     border: '2px solid white'
   }
 };
@@ -76,8 +75,6 @@ class TopBar extends Component {
 
   render() {
     const { classes } = this.props;
-    const user_image = Meteor.user() && Meteor.user().services &&
-      Meteor.user().services.google && Meteor.user().services.google.picture;
     return (
       <div className={classes.root}>
         <AppBar position="static" className= {classes.menuButton}>
@@ -89,20 +86,7 @@ class TopBar extends Component {
               </Typography>
               {this.renderLink('nchanges')}
             </span>
-            {
-              user_image ?
-                <img src= {user_image} className={classes.userImage}
-                  onClick={()=>{
-                    Accounts.logout();
-                  }}/>
-                :
-                <IconButton edge="start" color="inherit" aria-label="menu"
-                  onClick={()=>{
-                    Accounts.logout();
-                  }}>
-                  <AccountCircleOutlinedIcon />
-                </IconButton>
-            }
+            <NChangerAvatar nChangerId={Meteor.user()._id}/>
           </Toolbar>
         </AppBar>
       </div>

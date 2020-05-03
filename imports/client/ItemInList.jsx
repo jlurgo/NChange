@@ -13,6 +13,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TagBar from "./TagBar";
+import NChangerAvatar from "./NChangerAvatar";
 
 import { Items } from "../shared/collections";
 
@@ -58,6 +59,11 @@ const styles = {
     right: '5px',
     color: 'red'
   },
+  ownerAvatar: {
+    position: 'absolute',
+    left: '5px',
+    top: '5px'
+  }
 };
 
 
@@ -104,6 +110,8 @@ class ItemInList extends Component {
             </IconButton>
           }
         </div>
+        <NChangerAvatar nChangerId={item.owner}
+          classes={{root: classes.ownerAvatar}}/>
         { is_my_own_thing &&
           <IconButton className={classes.removeThingIcon}
            onClick={this.handleRemoveClick}>
