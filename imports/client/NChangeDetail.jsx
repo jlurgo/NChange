@@ -33,7 +33,9 @@ const styles = {
     flex: '1 1 50%'
   },
   historyTitle: {
-
+    textAlign: 'center',
+    backgroundColor: '#41b53f',
+    color: 'white'
   },
   thingsSection: {
     flex: '1 1 50%',
@@ -43,7 +45,8 @@ const styles = {
   },
   nChangers: {
     flex: '0 0 auto',
-    display: 'flex'
+    display: 'flex',
+    paddingLeft: '15px'
   },
   nThings: {
     flex: '1 1 auto'
@@ -80,7 +83,7 @@ class NChangeDetail extends Component {
         <div className={classes.bottomSection}>
           <div className={classes.historySection}>
             <Typography noWrap variant="h6" className={classes.historyTitle}>
-              Discusion
+              Actividad
             </Typography>
           </div>
           <div className={classes.thingsSection}>
@@ -101,8 +104,12 @@ class NChangeDetail extends Component {
   }
 
   renderNChanger = (n_changer_id) => {
+    const { nchange } = this.props;
+    const approved_by_user = !!_.findWhere(nchange.actions,
+      { action: 'approve', user: n_changer_id});
     return (
-      <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}/>
+      <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}
+        thumbsUp={approved_by_user}/>
     );
   }
 }

@@ -9,7 +9,7 @@ import { _ } from 'meteor/underscore';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
-
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 const styles = {
   root: {
@@ -23,13 +23,19 @@ const styles = {
   },
   isLoggedUser: {
     border: '3px solid yellow'
+  },
+  thumbUp: {
+    position: 'absolute',
+    top: '10px',
+    right: '3px',
+    color: '#41b53f'
   }
 };
 
 //
 class NChangerAvatar extends Component {
   render() {
-    const { nChanger, loading, classes, history } = this.props;
+    const { nChanger, thumbsUp, loading, classes, history } = this.props;
 
     if (loading) return <div>Loading...</div>
 
@@ -47,6 +53,10 @@ class NChangerAvatar extends Component {
           user_image ?
             <img src= {user_image} className={pic_classes} /> :
             <AccountCircleOutlinedIcon fontSize= 'large'/>
+        }
+        {
+          thumbsUp &&
+            <ThumbUpIcon className={classes.thumbUp} fontSize= 'small'/>
         }
         </IconButton>
       </div>

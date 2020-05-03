@@ -179,6 +179,12 @@ export function createBasicData() {
           nThing: nthng.pinza._id, from: usr.charlo._id
         }
       ]
+    },
+    jeroCharloJoseEmpty: {
+      _id: "thr9fwefwereGNtbynaz",
+      nChangers: [usr.jero._id, usr.charlo._id, usr.jose._id],
+      actions: [
+      ]
     }
   }
   _.forEach(usr, (nchanger)=>{

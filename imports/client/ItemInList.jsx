@@ -75,7 +75,7 @@ class ItemInList extends Component {
     this.itemliked() ?
       Meteor.call('nthings.unlike', item._id) :
       Meteor.call('nthings.like', item._id);
-    e.stopPropagation()
+    e.stopPropagation();
   }
 
   itemliked = () => {

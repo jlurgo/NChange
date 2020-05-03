@@ -7,7 +7,12 @@ import { _ } from 'meteor/underscore';
 
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
+import StarsIcon from '@material-ui/icons/Stars';
+
 import { withStyles } from '@material-ui/core/styles';
 import ItemInChange from './ItemInChange';
 import Typography from '@material-ui/core/Typography';
@@ -28,6 +33,7 @@ const styles = {
   itemList: {
     flex: '1 1 100px',
     display: 'flex',
+    position: 'relative'
   },
   sectionTitle: {
   },
@@ -40,12 +46,35 @@ const styles = {
     justifyContent: 'center',
     minHeight: '48px',
     borderBottom: '2px black dashed'
+  },
+  okButton: {
+    position: 'absolute',
+    top: '-31px',
+    right: '-31px',
+    backgroundColor: '#e7e7e7',
+    zIndex: '1'
+  },
+  approvedOkButton: {
+    color: '#41b53f',
+  },
+  finishedOkButton : {
+    color: 'orange'
   }
 };
 
 
 // Item component - represents a single todo item
 class NChangeInList extends Component {
+
+  approveNchange = (e) => {
+    Meteor.call('nchanges.approve', this.props.nchange._id);
+    e.stopPropagation();
+  }
+
+  dontApproveNchange = (e) => {
+    Meteor.call('nchanges.dont_approve', this.props.nchange._id);
+    e.stopPropagation();
+  }
 
   renderItems(items) {
     return items.map((item) => {
@@ -56,6 +85,33 @@ class NChangeInList extends Component {
         />
       );
     });
+  }
+
+  renderOkButton = () => {
+    const { nchange, classes } = this.props;
+
+    if (nchange.approved)
+      return (
+        <IconButton className={classes.okButton + ' ' + classes.finishedOkButton}>
+            <StarsIcon fontSize='large'/>
+        </IconButton>
+      )
+
+    const approved_by_me = !!_.findWhere(nchange.actions,
+      { action: 'approve', user: Meteor.userId()});
+    if (approved_by_me)
+      return (
+        <IconButton className={classes.okButton + ' ' + classes.approvedOkButton}
+          onClick={this.dontApproveNchange}>
+            <ThumbUpIcon fontSize='large'/>
+        </IconButton>
+      )
+    return (
+      <IconButton className={classes.okButton}
+        onClick={this.approveNchange}>
+          <ThumbUpOutlinedIcon fontSize='large'/>
+      </IconButton>
+    )
   }
 
   render() {
@@ -76,13 +132,16 @@ class NChangeInList extends Component {
             <Typography noWrap variant="h6" className={classes.sectionTitle}>
               Doy
             </Typography>
+            <ArrowForwardIcon fontSize='large'/>
           </div>
           <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
             { this.renderItems(user_output_items) }
+            { this.renderOkButton() }
           </div>
         </div>
         <div className={classes.itemSection}>
           <div className={classes.titleBar}>
+            <ArrowBackIcon fontSize='large'/>
             <Typography noWrap variant="h6" className={classes.sectionTitle}>
               Recibo
             </Typography>
