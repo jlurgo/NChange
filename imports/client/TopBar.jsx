@@ -86,7 +86,7 @@ class TopBar extends Component {
               </Typography>
               {this.renderLink('nchanges')}
             </span>
-            <NChangerAvatar nChangerId={Meteor.user()._id}/>
+            <NChangerAvatar onClick={()=>{Accounts.logout()}} nChangerId={Meteor.user()._id}/>
           </Toolbar>
         </AppBar>
       </div>

@@ -48,16 +48,17 @@ class NChangerAvatar extends Component {
 
     return (
       <div className={classes.root }>
-        <IconButton edge="start" color="inherit" aria-label="menu">
-        {
-          user_image ?
-            <img src= {user_image} className={pic_classes} /> :
-            <AccountCircleOutlinedIcon fontSize= 'large'/>
-        }
-        {
-          thumbsUp &&
-            <ThumbUpIcon className={classes.thumbUp} fontSize= 'small'/>
-        }
+        <IconButton edge="start" color="inherit" aria-label="menu"
+          onClick={this.props.onClick}>
+          {
+            user_image ?
+              <img src= {user_image} className={pic_classes} /> :
+              <AccountCircleOutlinedIcon fontSize= 'large'/>
+          }
+          {
+            thumbsUp &&
+              <ThumbUpIcon className={classes.thumbUp} fontSize= 'small'/>
+          }
         </IconButton>
       </div>
     );
