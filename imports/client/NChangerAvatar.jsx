@@ -22,7 +22,9 @@ const styles = {
     border: '1px solid black'
   },
   isLoggedUser: {
-    border: '3px solid yellow'
+    border: '3px solid yellow',
+    height: '55px',
+    width: '55px',
   },
   thumbUp: {
     position: 'absolute',

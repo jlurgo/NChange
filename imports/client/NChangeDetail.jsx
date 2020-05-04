@@ -46,7 +46,9 @@ const styles = {
   nChangers: {
     flex: '0 0 auto',
     display: 'flex',
-    paddingLeft: '15px'
+    paddingLeft: '15px',
+    alignItems: 'center',
+    borderBottom: '2px black dashed'
   },
   nThings: {
     flex: '1 1 auto'
