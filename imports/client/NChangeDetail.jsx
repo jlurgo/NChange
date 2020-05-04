@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
+import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
 
 const styles = {
@@ -50,6 +51,15 @@ const styles = {
     alignItems: 'center',
     borderBottom: '2px black dashed'
   },
+  nChangersList: {
+    flex: '1 1 auto',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  addNchangerButton: {
+    flex: '0 0 auto',
+    marginRight: '10px'
+  },
   nThings: {
     flex: '1 1 auto'
   },
@@ -71,6 +81,14 @@ class NChangeDetail extends Component {
       Meteor.call('nchanges.takeItem', nchange._id, item._id);
   }
 
+  addNChanger = (nchanger_mail) => {
+    const { nchange } = this.props;
+    Meteor.call('nchanges.add_nchanger', nchange._id, nchanger_mail,
+      (err, res) => {
+        if (err) alert('nChanger no encontrado');
+      });
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
 
@@ -90,9 +108,13 @@ class NChangeDetail extends Component {
           </div>
           <div className={classes.thingsSection}>
             <div className={classes.nChangers}>
+              <div className={classes.nChangersList}>
               {
                 nchange.nChangers.map(this.renderNChanger)
               }
+              </div>
+              <AddNChangerButton classes={{ root: classes.addNchangerButton}}
+                onSelect={this.addNChanger}/>
             </div>
             <div className={classes.nThings}>
               <ItemList filter={{owner: { $in: nchange.nChangers }}}

@@ -88,4 +88,18 @@ Meteor.methods({
       actions: { user: this.userId, action: 'approve' }
     }});
   },
+  'nchanges.add_nchanger'(nchange_id, nchanger_mail) {
+    console.warn('adding nchanger to nchange');
+    // Make sure the user is logged in before updating an nchange
+    if (! this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    console.warn('user mail:', nchanger_mail);
+    const user = Meteor.users.findOne({'services.google.email': nchanger_mail});
+    if (!user) throw new Meteor.Error('nchanger-not-found');
+    console.warn('user:', user);
+    return NChanges.update({_id: nchange_id}, { $push: {
+      nChangers: user._id
+    }});
+  },
 });
