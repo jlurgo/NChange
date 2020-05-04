@@ -14,6 +14,7 @@ import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
 import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
+import NChangeActivity from './NChangeActivity';
 
 const styles = {
   root: {
@@ -73,7 +74,7 @@ class NChangeDetail extends Component {
     if(item.owner == Meteor.userId()) {
       return;
     }
-    const taken_by_me = _.findWhere(nchange.actions, {
+    const taken_by_me = _.findWhere(nchange.detail, {
       user: Meteor.userId(), nThing: item._id, action: 'take'
     });
 
@@ -105,6 +106,7 @@ class NChangeDetail extends Component {
             <Typography noWrap variant="h6" className={classes.historyTitle}>
               Actividad
             </Typography>
+            <NChangeActivity activity={nchange.activity}/>
           </div>
           <div className={classes.thingsSection}>
             <div className={classes.nChangers}>
@@ -129,7 +131,7 @@ class NChangeDetail extends Component {
 
   renderNChanger = (n_changer_id) => {
     const { nchange } = this.props;
-    const approved_by_user = !!_.findWhere(nchange.actions,
+    const approved_by_user = !!_.findWhere(nchange.detail,
       { action: 'approve', user: n_changer_id});
     return (
       <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}

@@ -25,7 +25,9 @@ Meteor.methods({
 
     return NChanges.insert({
       nChangers: [ this.userId ],
-      actions: [
+      detail: [ ],
+      activity: [
+        {timestamp: new Date(), action: 'create', user: this.userId}
       ],
       createdAt: new Date(),
     });
@@ -37,11 +39,16 @@ Meteor.methods({
     }
 
     const item = Items.findOne({_id: nthing_id});
-    return NChanges.update({_id: nchange_id}, { $push: {
-      actions: { user: this.userId, action: 'take',
-        nThing: item._id, from: item.owner
-      }
-    }});
+    NChanges.update({_id: nchange_id}, {
+      $push: { detail: {
+        user: this.userId, action: 'take',
+        nThing: item._id, from: item.owner}}
+    });
+    return NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'take',
+        nThing: item._id, from: item.owner}}
+    });
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
     // Make sure the user is logged in before updating an nchange
@@ -51,11 +58,16 @@ Meteor.methods({
 
     const user_id = Meteor.userId();
     const item = Items.findOne({_id: nthing_id});
-    return NChanges.update({_id: nchange_id}, { $pull: {
-      actions: { user: user_id, action: 'take',
-        nThing: item._id, from: item.owner
-      }
-    }});
+    NChanges.update({_id: nchange_id}, {
+      $pull: { detail: {
+        user: user_id, action: 'take',
+        nThing: item._id, from: item.owner}},
+    });
+    return NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'release',
+        nThing: item._id, from: item.owner}}
+    });
   },
   'nchanges.approve'(nchange_id) {
     // Make sure the user is logged in before updating an nchange
@@ -64,22 +76,32 @@ Meteor.methods({
     }
     console.warn('approving nchange');
     NChanges.update({_id: nchange_id}, { $push: {
-      actions: { user: this.userId, action: 'approve' }
+      detail: { user: this.userId, action: 'approve' }
     }});
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'approve',
+      }}
+    });
     // check if all participants approved the nchange
     const nchange = NChanges.findOne({_id: nchange_id});
     const all_approved = _.all(nchange.nChangers, (nchanger) => {
-      return !!_.findWhere(nchange.actions,
+      return !!_.findWhere(nchange.detail,
         { action: 'approve', user: nchanger});
     })
+
     if(!all_approved) return;
     // approving the nChange
     NChanges.update({_id: nchange_id}, { $set: { approved: true }});
-
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), action: 'finish',
+      }}
+    });
     // update ownership of taken things
     nchange.nChangers.forEach((nchanger) => {
       console.warn('taking items for:', nchanger);
-      const take_actions = _.where(nchange.actions, {
+      const take_actions = _.where(nchange.detail, {
         user: nchanger, action: 'take'
       });
       console.warn('taking actions:', take_actions);
@@ -98,9 +120,14 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized');
     }
     console.warn('not approving nchange');
-    return NChanges.update({_id: nchange_id}, { $pull: {
-      actions: { user: this.userId, action: 'approve' }
+    NChanges.update({_id: nchange_id}, { $pull: {
+      detail: { user: this.userId, action: 'approve' }
     }});
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'unapprove',
+      }}
+    });
   },
   'nchanges.add_nchanger'(nchange_id, nchanger_mail) {
     console.warn('adding nchanger to nchange');
@@ -112,8 +139,13 @@ Meteor.methods({
     const user = Meteor.users.findOne({'services.google.email': nchanger_mail});
     if (!user) throw new Meteor.Error('nchanger-not-found');
     console.warn('user:', user);
-    return NChanges.update({_id: nchange_id}, { $push: {
+    NChanges.update({_id: nchange_id}, { $push: {
       nChangers: user._id
     }});
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'addnchanger',
+      }}
+    });
   },
 });

@@ -153,7 +153,7 @@ export function createBasicData() {
     jeroJoseBiciXTomateYMesa: {
       _id: "thr9Quij6GNtbynaz",
       nChangers: [usr.jero._id, usr.jose._id],
-      actions: [
+      detail: [
         { user: usr.jose._id, action: 'take',
           nThing: nthng.bici_electrica._id, from: usr.jero._id
         },
@@ -163,12 +163,26 @@ export function createBasicData() {
         { user: usr.jero._id, action: 'take',
           nThing: nthng.tomate._id, from: usr.jose._id
         }
+      ],
+      activity: [
+        { timestamp: Date("2020-04-20T21:00:00Z"),
+          user: usr.jose._id, action: 'create'
+        },
+        { timestamp: Date("2020-04-20T22:00:00Z"), action: 'take',
+          user: usr.jose._id, nThing: nthng.bici_electrica._id,
+          from: usr.jero._id },
+        { timestamp: Date("2020-04-20T22:05:00Z"), action: 'take',
+          user: usr.jero._id, nThing: nthng.mesa._id, from: usr.jose._id
+        },
+        { timestamp: Date("2020-04-20T22:10:00Z"), action: 'take',
+          user: usr.jero._id, nThing: nthng.tomate._id, from: usr.jose._id
+        }
       ]
     },
     jeroCharlo2BicisXPinza: {
       _id: "thr9fwefej6GNtbynaz",
       nChangers: [usr.jero._id, usr.charlo._id],
-      actions: [
+      detail: [
         { user: usr.charlo._id, action: 'take',
           nThing: nthng.bici_electrica._id, from: usr.jero._id
         },
@@ -178,12 +192,33 @@ export function createBasicData() {
         { user: usr.jero._id, action: 'take',
           nThing: nthng.pinza._id, from: usr.charlo._id
         }
+      ],
+      activity: [
+        { timestamp: Date("2020-04-20T21:00:00Z"),
+          user: usr.jero._id, action: 'create'
+        },
+        { timestamp: Date("2020-04-20T22:00:00Z"),
+          user: usr.charlo._id, action: 'take',
+          nThing: nthng.bici_electrica._id, from: usr.jero._id
+        },
+        { timestamp: Date("2020-04-20T22:05:00Z"),
+          user: usr.charlo._id, action: 'take',
+          nThing: nthng.bici_plegable._id, from: usr.jero._id
+        },
+        { timestamp: Date("2020-04-20T22:10:00Z"), user: usr.jero._id, action: 'take',
+          nThing: nthng.pinza._id, from: usr.charlo._id
+        }
       ]
     },
     jeroCharloJoseEmpty: {
       _id: "thr9fwefwereGNtbynaz",
       nChangers: [usr.jero._id, usr.charlo._id, usr.jose._id],
-      actions: [
+      detail: [
+      ],
+      activity: [
+        { timestamp: Date("2020-04-20T21:00:00Z"),
+          user: usr.charlo._id, action: 'create'
+        },
       ]
     }
   }

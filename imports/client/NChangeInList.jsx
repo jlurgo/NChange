@@ -97,7 +97,7 @@ class NChangeInList extends Component {
         </IconButton>
       )
 
-    const approved_by_me = !!_.findWhere(nchange.actions,
+    const approved_by_me = !!_.findWhere(nchange.detail,
       { action: 'approve', user: Meteor.userId()});
     if (approved_by_me)
       return (
@@ -117,10 +117,10 @@ class NChangeInList extends Component {
   render() {
     const { nchange, classes, history } = this.props;
 
-    const user_input_items = _.where(nchange.actions,
+    const user_input_items = _.where(nchange.detail,
       { action: 'take', user: Meteor.userId()});
 
-    const user_output_items = _.where(nchange.actions,
+    const user_output_items = _.where(nchange.detail,
       { action: 'take', from: Meteor.userId()});
 
     return (
