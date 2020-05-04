@@ -32,12 +32,15 @@ const styles = {
     backgroundColor: 'white'
   },
   historySection: {
-    flex: '1 1 50%'
+    flex: '1 1 50%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   historyTitle: {
     textAlign: 'center',
     backgroundColor: '#41b53f',
-    color: 'white'
+    color: 'white',
+    flex: '0 0 auto',
   },
   thingsSection: {
     flex: '1 1 50%',

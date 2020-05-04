@@ -145,6 +145,7 @@ Meteor.methods({
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), user: this.userId, action: 'addnchanger',
+        addedNchanger: user._id,
       }}
     });
   },
