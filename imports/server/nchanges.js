@@ -16,6 +16,20 @@ Meteor.publish('nchange_detail', (nchange_id) => {
 });
 
 Meteor.methods({
+  'nchanges.new'() {
+    console.warn('creating new nChange');
+    // Make sure the user is logged in before inserting a item
+    if (! this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    return NChanges.insert({
+      nChangers: [ this.userId ],
+      actions: [
+      ],
+      createdAt: new Date(),
+    });
+  },
   'nchanges.takeItem'(nchange_id, nthing_id) {
     // Make sure the user is logged in before updating an nchange
     if (! this.userId) {
