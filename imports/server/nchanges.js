@@ -58,9 +58,25 @@ Meteor.methods({
       return !!_.findWhere(nchange.actions,
         { action: 'approve', user: nchanger});
     })
-    if(all_approved) {
-      NChanges.update({_id: nchange_id}, { $set: { approved: true }});
-    }
+    if(!all_approved) return;
+    // approving the nChange
+    NChanges.update({_id: nchange_id}, { $set: { approved: true }});
+
+    // update ownership of taken things
+    nchange.nChangers.forEach((nchanger) => {
+      console.warn('taking items for:', nchanger);
+      const take_actions = _.where(nchange.actions, {
+        user: nchanger, action: 'take'
+      });
+      console.warn('taking actions:', take_actions);
+      const taken_items = _.map(take_actions, (action) => {
+        return action.nThing;
+      });
+      console.warn('taken items:', taken_items);
+
+      Items.update({_id: { $in: taken_items }}, {$set: { owner: nchanger}},
+        {multi: true});
+    })
   },
   'nchanges.dont_approve'(nchange_id) {
     // Make sure the user is logged in before updating an nchange
