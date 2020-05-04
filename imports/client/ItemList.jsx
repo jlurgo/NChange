@@ -26,7 +26,7 @@ class ItemList extends Component {
     return this.props.items.map((item) => {
       return (
         <ItemInList key={item._id} item={item} onClick={this.props.onItemClick}
-        />
+          showDeleteButton={this.props.showItemsDeleteButton}/>
       );
     });
   }

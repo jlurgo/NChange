@@ -61,7 +61,7 @@ const styles = {
   },
   ownerAvatar: {
     position: 'absolute',
-    left: '5px',
+    left: '14px',
     top: '5px'
   }
 };
@@ -99,7 +99,7 @@ class ItemInList extends Component {
   }
 
   render() {
-    const { item, classes } = this.props;
+    const { item, showDeleteButton, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
@@ -119,7 +119,7 @@ class ItemInList extends Component {
         </div>
         <NChangerAvatar nChangerId={item.owner}
           classes={{root: classes.ownerAvatar}}/>
-        { is_my_own_thing &&
+        { is_my_own_thing && showDeleteButton &&
           <IconButton className={classes.removeThingIcon}
            onClick={this.handleRemoveClick}>
              <DeleteForeverIcon />
