@@ -122,6 +122,14 @@ class NChangeActivity extends Component {
           <NChangerAvatar nChangerId={entry.addedNchanger}/>
         </div>
       ),
+      chatmessage:(
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            {entry.message}
+          </Typography>
+        </div>
+      ),
       finish:(
         <div className={classes.entry}>
           <Typography noWrap variant="h6" className={classes.entryText}>

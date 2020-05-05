@@ -149,4 +149,17 @@ Meteor.methods({
       }}
     });
   },
+  'nchanges.new_chat_message'(nchange_id, message) {
+    console.warn('adding message to nchange');
+    // Make sure the user is logged in before updating an nchange
+    if (! this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'chatmessage',
+        message: message
+      }}
+    });
+  },
 });

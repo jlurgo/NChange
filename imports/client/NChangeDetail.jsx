@@ -15,6 +15,7 @@ import NChangerAvatar from './NChangerAvatar';
 import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
 import NChangeActivity from './NChangeActivity';
+import SendChatMessageBox from './SendChatMessageBox';
 
 const styles = {
   root: {
@@ -93,6 +94,10 @@ class NChangeDetail extends Component {
       });
   }
 
+  sendMessage = (message) => {
+    Meteor.call('nchanges.new_chat_message', this.props.nchange._id, message);
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
 
@@ -110,6 +115,7 @@ class NChangeDetail extends Component {
               Actividad
             </Typography>
             <NChangeActivity activity={nchange.activity}/>
+            <SendChatMessageBox onSend={this.sendMessage}/>
           </div>
           <div className={classes.thingsSection}>
             <div className={classes.nChangers}>
