@@ -14,8 +14,8 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
-    flex: '1 1 200px',
-    height: '200px',
+    height: '50px',
+    width: '50px',
     cursor: 'pointer',
     position: 'relative',
     display: 'flex',
@@ -28,36 +28,32 @@ const styles = {
     height: '100%',
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'cover'
-  },
-  icon: {
-    color: 'white',
+    objectFit: 'contain'
   },
 };
 
 
 // It's an item being exchanged in an nchange
-class ItemInChange extends Component {
+class NThingIcon extends Component {
   render() {
-    const { itemInChange, loading, classes } = this.props;
+    const { nThing, loading, classes } = this.props;
     return loading ?
       <div>Loading</div> :
-      <div key={itemInChange.nThing._id} className={classes.root }>
-        <img className={classes.pic} src={itemInChange.nThing.pics[0]}
-          alt={itemInChange.nThing.shortDescription} />
+      <div key={nThing._id} className={classes.root }>
+        <img className={classes.pic} src={nThing.pics[0]} alt= ''/>
       </div>
   }
 }
 
 export default withTracker((props) => {
-  const filter = {_id: props.itemInChange.nThing};
+  const filter = {_id: props.nThingId};
   const item_sub = Meteor.subscribe('filtered_items_summary', filter);
 
-  const item = Items.findOne(filter);
+  const n_thing = Items.findOne(filter);
 
   return {
     loading: !item_sub.ready(),
-    itemInChange: _.extend({}, props.itemInChange, {nThing: item})
+    nThing: n_thing
   };
 })
-(withRouter(withStyles(styles)(ItemInChange)));
+(withRouter(withStyles(styles)(NThingIcon)));

@@ -9,6 +9,7 @@ import { _ } from 'meteor/underscore';
 import Typography from '@material-ui/core/Typography';
 
 import NChangerAvatar from './NChangerAvatar';
+import NThingIcon from './NThingIcon';
 
 const styles = {
   root: {
@@ -28,6 +29,20 @@ const styles = {
 
 //
 class NChangeActivity extends Component {
+
+  scrollToBottom = () => {
+    this.activitiesEnd &&
+      this.activitiesEnd.scrollIntoView({ behavior: "smooth" });
+  }
+
+  componentDidMount() {
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
   render() {
     const { activity, classes, history } = this.props;
 
@@ -38,6 +53,8 @@ class NChangeActivity extends Component {
             return this.renderActivityEntry(entry)
           })
         }
+        {/*div at the bottom, used for scrolling to bottom */}
+        <div ref={(el) => { this.activitiesEnd = el; }}> </div>
       </div>
     );
   }
@@ -58,16 +75,26 @@ class NChangeActivity extends Component {
         <div className={classes.entry}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
-            agarró un item
+            quiere 1
           </Typography>
+          <NThingIcon nThingId={entry.nThing}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            de
+          </Typography>
+          <NChangerAvatar nChangerId={entry.from}/>
         </div>
       ),
       release: (
         <div className={classes.entry}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
-            soltó un item
+            ya no quiere 1
           </Typography>
+          <NThingIcon nThingId={entry.nThing}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            de
+          </Typography>
+          <NChangerAvatar nChangerId={entry.from}/>
         </div>
       ),
       approve:(
