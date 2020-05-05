@@ -61,7 +61,7 @@ const styles = {
   },
   ownerAvatar: {
     position: 'absolute',
-    left: '14px',
+    left: '2px',
     top: '5px'
   }
 };
@@ -130,4 +130,4 @@ class ItemInList extends Component {
   }
 }
 
-export default withStyles(styles)(withRouter(ItemInList));
+export default withRouter(withStyles(styles)(ItemInList));

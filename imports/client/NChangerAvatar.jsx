@@ -19,12 +19,9 @@ const styles = {
     height: '45px',
     width: '45px',
     borderRadius: '50%',
-    border: '1px solid black'
   },
   isLoggedUser: {
-    border: '3px solid yellow',
-    height: '55px',
-    width: '55px',
+    background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 0%, rgb(251, 255, 0) 26%, rgba(226,237,2,0) 70%)'
   },
   thumbUp: {
     position: 'absolute',
@@ -45,12 +42,11 @@ class NChangerAvatar extends Component {
      && nChanger.services.google.picture;
 
     let pic_classes = classes.userImage;
-    if (nChanger._id == Meteor.userId())
-      pic_classes += ' ' + classes.isLoggedUser;
+    const is_logged_user = (nChanger._id == Meteor.userId());
 
     return (
       <div className={classes.root }>
-        <IconButton edge="start" color="inherit" aria-label="menu"
+        <IconButton classes={{root: is_logged_user ? classes.isLoggedUser : ''}}
           onClick={this.props.onClick}>
           {
             user_image ?

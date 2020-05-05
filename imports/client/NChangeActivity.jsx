@@ -21,7 +21,8 @@ const styles = {
     alignItems: 'center',
   },
   entryText: {
-
+    marginLeft: '5px',
+    marginRight: '5px'
   }
 };
 
@@ -44,79 +45,65 @@ class NChangeActivity extends Component {
   renderActivityEntry = (entry) => {
     const { classes } = this.props;
 
-    const renderActivityEntryHandlers = {
-      create: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user}/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              creó el nchange
-            </Typography>
-          </div>
-        )
-      },
-      take: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user}/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              agarró un item
-            </Typography>
-          </div>
-        )
-      },
-      release: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user}/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              soltó un item
-            </Typography>
-          </div>
-        )
-      },
-      approve: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user} thumbsUp/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              aprueba el nchange
-            </Typography>
-          </div>
-        )
-      },
-      unapprove: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user}/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              dejó de aprobar el nchange
-            </Typography>
-          </div>
-        )
-      },
-      addnchanger: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <NChangerAvatar nChangerId={entry.user}/>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              agregó a
-            </Typography>
-            <NChangerAvatar nChangerId={entry.addedNchanger}/>
-          </div>
-        )
-      },
-      finish: (entry) => {
-        return (
-          <div className={classes.entry}>
-            <Typography noWrap variant="h6" className={classes.entryText}>
-              NCHANGE FINALIZADO
-            </Typography>
-          </div>
-        )
-      }
+    const renderActivityEntry = {
+      create: (
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            creó el nchange
+          </Typography>
+        </div>
+      ),
+      take: (
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            agarró un item
+          </Typography>
+        </div>
+      ),
+      release: (
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            soltó un item
+          </Typography>
+        </div>
+      ),
+      approve:(
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user} thumbsUp/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            aprueba el nchange
+          </Typography>
+        </div>
+      ),
+      unapprove: (
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            dejó de aprobar el nchange
+          </Typography>
+        </div>
+      ),
+      addnchanger: (
+        <div className={classes.entry}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            agregó a
+          </Typography>
+          <NChangerAvatar nChangerId={entry.addedNchanger}/>
+        </div>
+      ),
+      finish:(
+        <div className={classes.entry}>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            NCHANGE FINALIZADO
+          </Typography>
+        </div>
+      ),
     }
-    return renderActivityEntryHandlers[entry.action](entry);
+    return renderActivityEntry[entry.action];
   }
 }
 
