@@ -15,11 +15,15 @@ const styles = {
   root: {
     flex: '1 1 auto',
     height: '100px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   entry: {
     display: 'flex',
     alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    padding: '5px',
+    margin: '5px'
   },
   entryText: {
     marginLeft: '5px',

@@ -13,7 +13,14 @@ import SendIcon from '@material-ui/icons/Send';
 const styles = {
   root: {
     flex: '0 0 auto',
-    display: 'flex'
+    display: 'flex',
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    marginTop: '5px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    height: '79px',
+    alignItems: 'center'
   },
 };
 

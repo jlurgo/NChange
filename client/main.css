@@ -12,8 +12,7 @@ html, body {
 }
 
 body {
-  background: url(background.jpg) center fixed;
-  background-size: 700px;
+  background-color: #a2b9dac4;
 }
 #render-target {
   height: 100%;

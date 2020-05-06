@@ -14,8 +14,9 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
-    flex: '1 1 200px',
-    height: '200px',
+    flex: '0 0 200px',
+    height: '110px',
+    width: '200px',
     cursor: 'pointer',
     position: 'relative',
     display: 'flex',
@@ -28,7 +29,7 @@ const styles = {
     height: '100%',
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'cover'
+    objectFit: 'contain'
   },
   icon: {
     color: 'white',

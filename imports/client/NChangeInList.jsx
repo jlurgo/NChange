@@ -12,10 +12,12 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 import StarsIcon from '@material-ui/icons/Stars';
+import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
 import ItemInChange from './ItemInChange';
-import Typography from '@material-ui/core/Typography';
+import NChangerAvatar from './NChangerAvatar';
+import NThingIcon from './NThingIcon';
 
 import { Items } from "../shared/collections";
 
@@ -23,36 +25,23 @@ const styles = {
   root: {
     display: 'flex',
     flex: '0 0 auto',
-    marginBottom: '5px'
-  },
-  itemSection: {
-    flex: '1 1 100px',
-    display: 'flex',
-    flexDirection: 'column',
+    height: '120px',
+    alignItems: 'center',
+    margin: '5px',
+    cursor: 'pointer'
   },
   itemList: {
     flex: '1 1 100px',
     display: 'flex',
-    position: 'relative'
+    position: 'relative',
+    justifyContent: 'flex-end'
   },
-  sectionTitle: {
-  },
-  titleBar: {
-    backgroundColor: '#41b53f',
-    color: 'white',
-    flex: '0 0 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '48px',
-    borderBottom: '2px black dashed'
+  listOnTheRight: {
+    justifyContent: 'flex-start'
   },
   okButton: {
-    position: 'absolute',
-    top: '-31px',
-    right: '-31px',
+    flex: '0 0 auto',
     backgroundColor: '#e7e7e7',
-    zIndex: '1'
   },
   approvedOkButton: {
     color: '#41b53f',
@@ -127,29 +116,15 @@ class NChangeInList extends Component {
       <Paper className={classes.root} onClick={()=>{
           history.push(`/nchangedetail/${nchange._id}`)
         }} >
-        <div className={classes.itemSection}>
-          <div className={classes.titleBar}>
-            <Typography noWrap variant="h6" className={classes.sectionTitle}>
-              Doy
-            </Typography>
-            <ArrowForwardIcon fontSize='large'/>
-          </div>
-          <div className={classes.itemList} style={{borderRight: '2px dashed black'}}>
+          <div className={classes.itemList}>
             { this.renderItems(user_output_items) }
-            { this.renderOkButton() }
           </div>
-        </div>
-        <div className={classes.itemSection}>
-          <div className={classes.titleBar}>
-            <ArrowBackIcon fontSize='large'/>
-            <Typography noWrap variant="h6" className={classes.sectionTitle}>
-              Recibo
-            </Typography>
-          </div>
-          <div className={classes.itemList} >
+          <ArrowForwardIcon fontSize='large'/>
+          { this.renderOkButton() }
+          <ArrowBackIcon fontSize='large'/>
+          <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             { this.renderItems(user_input_items) }
           </div>
-        </div>
       </Paper>
     );
   }

@@ -30,31 +30,30 @@ const styles = {
     flex: '1 1 auto',
     height: '100px',
     display: 'flex',
-    backgroundColor: 'white'
   },
   historySection: {
     flex: '1 1 50%',
     display: 'flex',
     flexDirection: 'column',
-  },
-  historyTitle: {
-    textAlign: 'center',
-    backgroundColor: '#41b53f',
-    color: 'white',
-    flex: '0 0 auto',
+    marginRight: '5px'
   },
   thingsSection: {
     flex: '1 1 50%',
     display: 'flex',
     flexDirection: 'column',
-    overflowY: 'auto'
+    marginLeft: '5px'
   },
   nChangers: {
     flex: '0 0 auto',
     display: 'flex',
     paddingLeft: '15px',
     alignItems: 'center',
-    borderBottom: '2px black dashed'
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    marginTop: '5px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    height: '79px'
   },
   nChangersList: {
     flex: '1 1 auto',
@@ -66,7 +65,9 @@ const styles = {
     marginRight: '10px'
   },
   nThings: {
-    flex: '1 1 auto'
+    flex: '1 1 auto',
+    height: '100px',
+    overflowY: 'auto'
   },
 };
 
@@ -111,14 +112,16 @@ class NChangeDetail extends Component {
         />
         <div className={classes.bottomSection}>
           <div className={classes.historySection}>
-            <Typography noWrap variant="h6" className={classes.historyTitle}>
-              Actividad
-            </Typography>
             <NChangeActivity activity={nchange.activity}/>
             <SendChatMessageBox onSend={this.sendMessage}/>
           </div>
           { !nchange.approved &&
             <div className={classes.thingsSection}>
+              <div className={classes.nThings}>
+                <ItemList filter={{owner: { $in: nchange.nChangers }}}
+                  onItemClick={this.handleOnItemClick}
+                  classes={{root: classes.listRoot}}/>
+              </div>
               <div className={classes.nChangers}>
                 <div className={classes.nChangersList}>
                 {
@@ -127,11 +130,6 @@ class NChangeDetail extends Component {
                 </div>
                 <AddNChangerButton classes={{ root: classes.addNchangerButton}}
                   onSelect={this.addNChanger}/>
-              </div>
-              <div className={classes.nThings}>
-                <ItemList filter={{owner: { $in: nchange.nChangers }}}
-                  onItemClick={this.handleOnItemClick}
-                  classes={{root: classes.listRoot}}/>
               </div>
             </div>
           }
