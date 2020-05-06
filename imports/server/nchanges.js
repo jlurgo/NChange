@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { NChanges, Items } from '../shared/collections';
 import { _ } from 'meteor/underscore';
+import { rejectUnloggedUsers } from './utils';
 
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
@@ -15,13 +16,28 @@ Meteor.publish('nchange_detail', (nchange_id) => {
   return NChanges.find({_id: nchange_id});
 });
 
+const rejectUsersNotInNChange = (nchange_id) => {
+  check(nchange_id, String);
+
+  nchange = NChanges.findOne({_id: nchange_id, nChangers: this.userId});
+  if (!nchange) {
+    throw new Meteor.Error('you-are-not-part-of-this-nchange');
+  }
+};
+
+const rejectOperationOnFinishedNchange = (nchange_id) => {
+  check(nchange_id, String);
+
+  nchange = NChanges.findOne({_id: nchange_id, approved: true });
+  if (nchange) {
+    throw new Meteor.Error('this-nchange-is-already-approved');
+  }
+};
+
 Meteor.methods({
   'nchanges.new'() {
     console.warn('creating new nChange');
-    // Make sure the user is logged in before inserting a item
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
+    rejectUnloggedUsers();
 
     return NChanges.insert({
       nChangers: [ this.userId ],
@@ -33,10 +49,10 @@ Meteor.methods({
     });
   },
   'nchanges.takeItem'(nchange_id, nthing_id) {
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
+    console.warn('taking item');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
 
     const item = Items.findOne({_id: nthing_id});
     NChanges.update({_id: nchange_id}, {
@@ -51,10 +67,10 @@ Meteor.methods({
     });
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
+    console.warn('releasing item');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
 
     const user_id = Meteor.userId();
     const item = Items.findOne({_id: nthing_id});
@@ -70,11 +86,11 @@ Meteor.methods({
     });
   },
   'nchanges.approve'(nchange_id) {
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
     console.warn('approving nchange');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
+
     NChanges.update({_id: nchange_id}, { $push: {
       detail: { user: this.userId, action: 'approve' }
     }});
@@ -115,11 +131,11 @@ Meteor.methods({
     })
   },
   'nchanges.dont_approve'(nchange_id) {
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
     console.warn('not approving nchange');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
+
     NChanges.update({_id: nchange_id}, { $pull: {
       detail: { user: this.userId, action: 'approve' }
     }});
@@ -131,10 +147,10 @@ Meteor.methods({
   },
   'nchanges.add_nchanger'(nchange_id, nchanger_mail) {
     console.warn('adding nchanger to nchange');
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
+
     console.warn('user mail:', nchanger_mail);
     const user = Meteor.users.findOne({'services.google.email': nchanger_mail});
     if (!user) throw new Meteor.Error('nchanger-not-found');
@@ -151,10 +167,9 @@ Meteor.methods({
   },
   'nchanges.new_chat_message'(nchange_id, message) {
     console.warn('adding message to nchange');
-    // Make sure the user is logged in before updating an nchange
-    if (! this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), user: this.userId, action: 'chatmessage',

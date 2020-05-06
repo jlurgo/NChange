@@ -49,9 +49,7 @@ class NChangeActivity extends Component {
     return (
       <div className={classes.root }>
         {
-          activity.map((entry)=>{
-            return this.renderActivityEntry(entry)
-          })
+          activity && activity.map(this.renderActivityEntry)
         }
         {/*div at the bottom, used for scrolling to bottom */}
         <div ref={(el) => { this.activitiesEnd = el; }}> </div>
@@ -59,12 +57,12 @@ class NChangeActivity extends Component {
     );
   }
 
-  renderActivityEntry = (entry) => {
+  renderActivityEntry = (entry, i) => {
     const { classes } = this.props;
 
     const renderActivityEntry = {
       create: (
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             creó el nchange
@@ -72,7 +70,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       take: (
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             quiere 1
@@ -85,7 +83,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       release: (
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             ya no quiere 1
@@ -98,7 +96,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       approve:(
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user} thumbsUp/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             aprueba el nchange
@@ -106,7 +104,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       unapprove: (
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             dejó de aprobar el nchange
@@ -114,7 +112,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       addnchanger: (
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             agregó a
@@ -123,7 +121,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       chatmessage:(
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
             {entry.message}
@@ -131,7 +129,7 @@ class NChangeActivity extends Component {
         </div>
       ),
       finish:(
-        <div className={classes.entry}>
+        <div className={classes.entry} key={i}>
           <Typography noWrap variant="h6" className={classes.entryText}>
             NCHANGE FINALIZADO
           </Typography>

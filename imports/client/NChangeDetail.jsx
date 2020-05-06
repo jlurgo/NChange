@@ -117,22 +117,24 @@ class NChangeDetail extends Component {
             <NChangeActivity activity={nchange.activity}/>
             <SendChatMessageBox onSend={this.sendMessage}/>
           </div>
-          <div className={classes.thingsSection}>
-            <div className={classes.nChangers}>
-              <div className={classes.nChangersList}>
-              {
-                nchange.nChangers.map(this.renderNChanger)
-              }
+          { !nchange.approved &&
+            <div className={classes.thingsSection}>
+              <div className={classes.nChangers}>
+                <div className={classes.nChangersList}>
+                {
+                  nchange.nChangers.map(this.renderNChanger)
+                }
+                </div>
+                <AddNChangerButton classes={{ root: classes.addNchangerButton}}
+                  onSelect={this.addNChanger}/>
               </div>
-              <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-                onSelect={this.addNChanger}/>
+              <div className={classes.nThings}>
+                <ItemList filter={{owner: { $in: nchange.nChangers }}}
+                  onItemClick={this.handleOnItemClick}
+                  classes={{root: classes.listRoot}}/>
+              </div>
             </div>
-            <div className={classes.nThings}>
-              <ItemList filter={{owner: { $in: nchange.nChangers }}}
-                onItemClick={this.handleOnItemClick}
-                classes={{root: classes.listRoot}}/>
-            </div>
-          </div>
+          }
         </div>
       </div>
     );
