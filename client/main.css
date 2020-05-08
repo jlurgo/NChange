@@ -34,6 +34,13 @@ body {
   width: 10px;
 }
 
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 600px) {
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+}
+
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -51,5 +58,5 @@ body {
 
 @keyframes animatedBackground {
 	from { background-position: 0 0; }
-	to { background-position: 1000px 0; }
+	to { background-position: 10000px 0; }
 }

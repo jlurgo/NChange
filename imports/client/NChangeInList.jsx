@@ -24,7 +24,7 @@ import { Items } from "../shared/collections";
 const styles = {
   root: {
     display: 'flex',
-    flex: '1 0 auto',
+    flex: '1 1 auto',
     height: '120px',
     alignItems: 'center',
     margin: '5px',
@@ -58,7 +58,7 @@ const styles = {
     backgroundPosition: '0px 0px',
     backgroundRepeat: 'repeat',
     backgroundSize: 'cover',
-    animation: 'animatedBackground 60s linear infinite',
+    animation: 'animatedBackground 600s linear infinite',
     zIndex: '-1'
   },
   animatedBackgroundRight: {
