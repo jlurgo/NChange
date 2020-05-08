@@ -49,12 +49,7 @@ body {
   background: #555;
 }
 
-@keyframes animatedBackgroundToLeft {
-	from { background-position: 0 0; }
-	to { background-position: -1000px 0; }
-}
-
-@keyframes animatedBackgroundToRight {
+@keyframes animatedBackground {
 	from { background-position: 0 0; }
 	to { background-position: 1000px 0; }
 }

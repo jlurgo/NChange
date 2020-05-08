@@ -30,7 +30,8 @@ const styles = {
     margin: '5px',
     cursor: 'pointer',
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    backgroundColor: 'unset'
   },
   itemList: {
     flex: '1 1 100px',
@@ -39,23 +40,36 @@ const styles = {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    position: 'relative',
+    paddingRight: '40px'
+  },
+  listOnTheRight: {
+    justifyContent: 'flex-start',
+    paddingRight: 'unset',
+    paddingLeft: '40px'
+  },
+  animatedBackground: {
+    position: 'absolute',
+    top: '0px',
+    left: '0px',
+    bottom: '0px',
+    right: '0px',
     backgroundImage: `url(${Meteor.absoluteUrl()}bg-clouds.png)`,
     backgroundPosition: '0px 0px',
     backgroundRepeat: 'repeat',
     backgroundSize: 'cover',
-    animation: 'animatedBackgroundToRight 60s linear infinite',
+    animation: 'animatedBackground 60s linear infinite',
+    zIndex: '-1'
   },
-  listOnTheRight: {
-    justifyContent: 'flex-start',
-    animation: 'animatedBackgroundToLeft 60s linear infinite',
-    backgroundImage: `url(${Meteor.absoluteUrl()}bg-clouds-flip.png)`,
-    backgroundPosition: '100% 100%',
+  animatedBackgroundRight: {
+    transform: 'scaleX(-1)'
   },
   okButton: {
     flex: '0 0 auto',
-    backgroundColor: '#e7e7e7',
+    backgroundColor: '#ffee1f61',
     marginLeft: '-30px',
-    marginRight: '-30px'
+    marginRight: '-30px',
+    zIndex: '1'
   },
   approvedOkButton: {
     color: '#41b53f',
@@ -131,12 +145,13 @@ class NChangeInList extends Component {
           history.push(`/nchangedetail/${nchange._id}`)
         }} >
           <div className={classes.itemList}>
+            <div className={classes.animatedBackground}></div>
             { this.renderItems(user_output_items) }
-            <ArrowForwardIcon fontSize='large' style={{marginRight: '40px'}}/>
           </div>
           { this.renderOkButton() }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
-            <ArrowBackIcon fontSize='large' style={{marginLeft: '40px'}}/>
+            <div className={classes.animatedBackground + ' ' +
+              classes.animatedBackgroundRight}></div>
             { this.renderItems(user_input_items) }
           </div>
       </Paper>
