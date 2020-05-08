@@ -24,24 +24,38 @@ import { Items } from "../shared/collections";
 const styles = {
   root: {
     display: 'flex',
-    flex: '0 0 auto',
+    flex: '1 0 auto',
     height: '120px',
     alignItems: 'center',
     margin: '5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    position: 'relative',
+    overflow: 'hidden'
   },
   itemList: {
     flex: '1 1 100px',
+    height: '100%',
+    minWidth: '100px',
     display: 'flex',
-    position: 'relative',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundImage: `url(${Meteor.absoluteUrl()}bg-clouds.png)`,
+    backgroundPosition: '0px 0px',
+    backgroundRepeat: 'repeat',
+    backgroundSize: 'cover',
+    animation: 'animatedBackgroundToRight 60s linear infinite',
   },
   listOnTheRight: {
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    animation: 'animatedBackgroundToLeft 60s linear infinite',
+    backgroundImage: `url(${Meteor.absoluteUrl()}bg-clouds-flip.png)`,
+    backgroundPosition: '100% 100%',
   },
   okButton: {
     flex: '0 0 auto',
     backgroundColor: '#e7e7e7',
+    marginLeft: '-30px',
+    marginRight: '-30px'
   },
   approvedOkButton: {
     color: '#41b53f',
@@ -118,11 +132,11 @@ class NChangeInList extends Component {
         }} >
           <div className={classes.itemList}>
             { this.renderItems(user_output_items) }
+            <ArrowForwardIcon fontSize='large' style={{marginRight: '40px'}}/>
           </div>
-          <ArrowForwardIcon fontSize='large'/>
           { this.renderOkButton() }
-          <ArrowBackIcon fontSize='large'/>
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
+            <ArrowBackIcon fontSize='large' style={{marginLeft: '40px'}}/>
             { this.renderItems(user_input_items) }
           </div>
       </Paper>
@@ -132,4 +146,4 @@ class NChangeInList extends Component {
 
 export default withTracker((props) => {
   return { props };
-})(withStyles(styles)(withRouter(NChangeInList)));
+})(withRouter(withStyles(styles)(NChangeInList)));

@@ -14,22 +14,24 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
-    flex: '0 0 200px',
-    height: '110px',
-    width: '200px',
+    flex: '0 0 100px',
+    height: '100px',
     cursor: 'pointer',
     position: 'relative',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    borderRadius: '50%',
+    marginLeft: '10px',
+    marginRight: '10px'
   },
   pic: {
     maxWidth: '100%',
     height: '100%',
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'contain'
+    objectFit: 'cover'
   },
   icon: {
     color: 'white',

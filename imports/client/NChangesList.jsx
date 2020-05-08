@@ -10,6 +10,9 @@ import NChangeInList from './NChangeInList';
 
 const styles = {
   root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start'
   }
 };
 
@@ -17,12 +20,10 @@ const styles = {
 class NChangesList extends Component {
 
   renderNChanges() {
+    const { classes } = this.props;
     return this.props.nChanges.map((nchange) => {
       return (
-        <NChangeInList
-          key={nchange._id}
-          nchange={nchange}
-        />
+        <NChangeInList key={nchange._id} nchange={nchange}/>
       );
     });
   }

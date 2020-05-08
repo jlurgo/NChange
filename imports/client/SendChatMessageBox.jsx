@@ -53,8 +53,9 @@ class SendChatMessageBox extends Component {
     return (
       <div className={classes.root }>
         <TextField value={this.state.message} fullWidth
-          margin="dense" label="Send a message" type="text" variant="outlined"
-          onChange={this.handleTextChange} onKeyDown={this.handleKeyPress}/>
+          margin="dense" label="enviar un mensaje al nchange" type="text"
+          variant="outlined" onChange={this.handleTextChange} 
+          onKeyDown={this.handleKeyPress}/>
         <IconButton className={classes.removePicIcon} onClick={this.sendMessage}
           disabled={!this.state.message}>
            <SendIcon fontSize= 'large'/>

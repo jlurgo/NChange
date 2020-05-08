@@ -24,7 +24,7 @@ const styles = {
     flexDirection: 'column'
   },
   detailBar: {
-
+    flex: '0 0 auto'
   },
   bottomSection: {
     flex: '1 1 auto',
@@ -107,8 +107,8 @@ class NChangeDetail extends Component {
     return (
       <div className={classes.root }>
         <NChangeInList
-          key={nchange._id}
-          nchange={nchange}
+          key={nchange._id} nchange={nchange}
+          classes={{root: classes.detailBar}}
         />
         <div className={classes.bottomSection}>
           <div className={classes.historySection}>

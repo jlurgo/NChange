@@ -28,3 +28,33 @@ body {
   left: 0px;
   zoom: 2;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@keyframes animatedBackgroundToLeft {
+	from { background-position: 0 0; }
+	to { background-position: -1000px 0; }
+}
+
+@keyframes animatedBackgroundToRight {
+	from { background-position: 0 0; }
+	to { background-position: 1000px 0; }
+}
