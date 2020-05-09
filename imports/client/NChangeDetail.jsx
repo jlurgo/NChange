@@ -79,6 +79,10 @@ const styles = {
     height: '100px',
     overflowY: 'auto'
   },
+  showAllButton: {
+    height:' 69px',
+    width: '69px',
+  },
   showAllButtonSelected: {
     background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 40%, rgb(142, 193, 218) 50%, rgba(226,237,2,0) 70%)'
   }
@@ -199,10 +203,12 @@ class NChangeDetail extends Component {
   renderShowAllButton = (n_changer_id) => {
     const { nchange, classes  } = this.props;
     const is_selected = this.state.selectedNchanger == 'all';
+    let iconRootClass = classes.showAllButton;
+    iconRootClass += is_selected ? (' ' + classes.showAllButtonSelected) : '';
     return (
       <div>
         <IconButton onClick={this.handleShowAllButtonClick}
-          classes={{root: is_selected ? classes.showAllButtonSelected : ''}}>
+          classes={{root: iconRootClass}}>
           <GroupIcon fontSize= 'large'/>
         </IconButton>
       </div>

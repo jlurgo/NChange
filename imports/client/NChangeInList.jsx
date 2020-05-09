@@ -11,7 +11,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
-import StarsIcon from '@material-ui/icons/Stars';
+import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -110,7 +110,7 @@ class NChangeInList extends Component {
     if (nchange.approved)
       return (
         <IconButton className={classes.okButton + ' ' + classes.finishedOkButton}>
-            <StarsIcon fontSize='large'/>
+            <WbSunnyIcon fontSize='large'/>
         </IconButton>
       )
 

@@ -60,11 +60,17 @@ Meteor.methods({
         user: this.userId, action: 'take',
         nThing: item._id, from: item.owner}}
     });
-    return NChanges.update({_id: nchange_id}, {
+    NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), user: this.userId, action: 'take',
         nThing: item._id, from: item.owner}}
     });
+    // we retract approvals because conditions changed
+    const nchange = NChanges.findOne({_id: nchange_id});
+    // TODO: only retract approvals affected by this change
+    NChanges.update({_id: nchange_id}, { $pull: {
+      detail: { action: 'approve' }
+    }});
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
     console.warn('releasing item');
@@ -79,11 +85,17 @@ Meteor.methods({
         user: user_id, action: 'take',
         nThing: item._id, from: item.owner}},
     });
-    return NChanges.update({_id: nchange_id}, {
+    NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), user: this.userId, action: 'release',
         nThing: item._id, from: item.owner}}
     });
+    // we retract approvals because conditions changed
+    const nchange = NChanges.findOne({_id: nchange_id});
+    // TODO: only retract approvals affected by this change
+    NChanges.update({_id: nchange_id}, { $pull: {
+      detail: { action: 'approve' }
+    }});
   },
   'nchanges.approve'(nchange_id) {
     console.warn('approving nchange');
@@ -191,5 +203,16 @@ Meteor.methods({
         timestamp: new Date(), user: this.userId, action: 'leave'
       }}
     });
+    // we retract approvals and releaseeverything given and taken
+    const nchange = NChanges.findOne({_id: nchange_id});
+    // TODO: only retract approvals affected by this change
+
+    // remove all actions involving the user
+    NChanges.update({_id: nchange_id}, { $pull: {
+      detail: { user: this.userId }
+    }});
+    NChanges.update({_id: nchange_id}, { $pull: {
+      detail: { from: this.userId }
+    }});
   },
 });

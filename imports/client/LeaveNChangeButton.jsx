@@ -21,12 +21,13 @@ const styles = {
 
   },
   button: {
-    backgroundColor: '#41b53f'
+    backgroundColor: 'red'
   }
 };
 
 //
 class LeaveNChangeButton extends Component {
+
   state = {
     showConfirmDialog: false
   }
