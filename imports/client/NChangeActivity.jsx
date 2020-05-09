@@ -128,14 +128,22 @@ class NChangeActivity extends Component {
         <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
-            {entry.message}
+            dice: {entry.message}
+          </Typography>
+        </div>
+      ),
+      leave: (
+        <div className={classes.entry} key={i}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            abandona este nChange
           </Typography>
         </div>
       ),
       finish:(
         <div className={classes.entry} key={i}>
-          <Typography noWrap variant="h6" className={classes.entryText}>
-            NCHANGE FINALIZADO
+          <Typography noWrap variant="h5" className={classes.entryText}>
+            nChange finalizado
           </Typography>
         </div>
       ),

@@ -10,6 +10,7 @@ import { NChanges } from "../shared/collections";
 
 import Typography from '@material-ui/core/Typography';
 import GroupIcon from '@material-ui/icons/Group';
+import IconButton from '@material-ui/core/IconButton';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
@@ -17,7 +18,8 @@ import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
 import NChangeActivity from './NChangeActivity';
 import SendChatMessageBox from './SendChatMessageBox';
-import IconButton from '@material-ui/core/IconButton';
+import LeaveNChangeButton from './LeaveNChangeButton';
+
 
 const styles = {
   root: {
@@ -68,6 +70,10 @@ const styles = {
     flex: '0 0 auto',
     marginRight: '10px'
   },
+  leaveNchangeButton: {
+    flex: '0 0 auto',
+    marginRight: '5px'
+  },
   nThings: {
     flex: '1 1 auto',
     height: '100px',
@@ -111,7 +117,6 @@ class NChangeDetail extends Component {
   }
 
   handleNchangerClick = (nchanger_id) => {
-    console.warn('handleNchangerClick');
     const { nchange } = this.props;
     this.setState({
       selectedNchanger: nchanger_id,
@@ -142,7 +147,6 @@ class NChangeDetail extends Component {
       });
       return <div>Loading...</div>
     }
-    console.warn(this.state);
     return (
       <div className={classes.root }>
         <NChangeInList
@@ -169,6 +173,8 @@ class NChangeDetail extends Component {
                   _.without(nchange.nChangers, user_id).map(this.renderNChanger)
                 }
                 </div>
+                <LeaveNChangeButton nchange_id={nchange._id}
+                  classes={{ root: classes.leaveNchangeButton}}/>
                 <AddNChangerButton classes={{ root: classes.addNchangerButton}}
                   onSelect={this.addNChanger}/>
               </div>

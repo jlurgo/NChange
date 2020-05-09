@@ -177,4 +177,19 @@ Meteor.methods({
       }}
     });
   },
+  'nchanges.leave'(nchange_id) {
+    console.warn('leaving nchange');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+
+    NChanges.update({_id: nchange_id}, { $pull: {
+      nChangers: this.userId
+    }});
+
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'leave'
+      }}
+    });
+  },
 });
