@@ -85,7 +85,7 @@ class ItemInList extends Component {
   }
 
   handleRemoveClick = (e) => {
-    Meteor.call('nthings.remove', this.props.item._id);
+    Meteor.call('nthings.archive', this.props.item._id);
     e.stopPropagation();
   }
 

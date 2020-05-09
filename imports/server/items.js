@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { Items } from '../shared/collections';
+import { removeThingFromAllCurrentNchanges } from './nchanges';
 
 // returns limited data from items to show on filtered lists
 Meteor.publish('filtered_items_summary', (filter, limit) => {
@@ -13,6 +14,9 @@ Meteor.publish('filtered_items_summary', (filter, limit) => {
     likedBy: 1, // TODO: only return user like {$elemMatch: {userId : this.userId}}
   };
   console.warn(`subscribing to items summary with filter: ${JSON.stringify(filter)} and limit: ${limit}`);
+  filter.archived = {
+    $exists: false
+  }
   return Items.find(filter, {
     fields: item_for_list_projection,
     limit: limit
@@ -51,17 +55,20 @@ Meteor.methods({
 
     Items.update(n_thing._id, n_thing);
   },
-  'nthings.remove'(itemId) {
+  'nthings.archive'(itemId) {
     check(itemId, String);
-    console.warn('removing a thing');
-    
+    console.warn('archiving a thing');
+
     const item = Items.findOne(itemId);
     if (item.owner !== this.userId) {
       // make sure only the owner can delete it
       throw new Meteor.Error('not-authorized');
     }
-
-    Items.remove(itemId);
+    // remove thing from all not approved nchanges
+    removeThingFromAllCurrentNchanges(itemId)
+    Items.update(itemId, { $set: {
+      archived: 'true'
+    }});
   },
   'nthings.setPrivate'(itemId, setToPrivate) {
     check(itemId, String);

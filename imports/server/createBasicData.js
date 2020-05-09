@@ -10,15 +10,13 @@ export function createBasicData() {
       firstName: "Jero",
       lastName: "Test",
       createdAt: Date("2020-04-17T22:06:48.391Z"),
-      services: {
-        password: { // password is "jero"
+      'services.password': { // password is "jero"
           bcrypt: "$2b$10$Z3Pzl4vrKkvbwHXZtLL90eLuvA3whqA6Kjyig56DhhPjYgtCoBqVG"
         },
-        google: {
-          email: "jero@test.com",
-          name: "Jerónimo D'ecole",
-          picture: "https://lh5.googleusercontent.com/-Yh6WB21dICs/AAAAAAAAAAI/AAAAAAAACuo/_Ui3TH-iyLMPvlAy1N5HAAU8rns9SYlLACLcDEAE/s32-c-k-no/photo.jpg"
-        }
+      'services.google': {
+        email: "jero@test.com",
+        name: "Jerónimo D'ecole",
+        picture: "https://lh5.googleusercontent.com/-Yh6WB21dICs/AAAAAAAAAAI/AAAAAAAACuo/_Ui3TH-iyLMPvlAy1N5HAAU8rns9SYlLACLcDEAE/s32-c-k-no/photo.jpg"
       },
       emails: [
         {
@@ -32,15 +30,13 @@ export function createBasicData() {
       firstName: "Jose",
       lastName: "Test",
       createdAt: Date("2020-04-17T22:07:16.636Z"),
-      services: {
-        password: { // password is "jose"
-          bcrypt: "$2b$10$yWDUKQlhABRumd6rs.MjJ.56mEwOgsm0WXAP7ZLnpTth8P1Ms3opq"
-        },
-        google: {
-          email: "jose@test.com",
-          name: "JoZbuyo",
-          picture: "https://lh5.googleusercontent.com/-EShmwv2lFxs/AAAAAAAAAAI/AAAAAAAAAJc/nlGkmKaubaEwv7MoHmGthS9LoxbQbESMwCLcDEAE/s32-c-k-no/photo.jpg"
-        }
+      'services.password': { // password is "jose"
+        bcrypt: "$2b$10$yWDUKQlhABRumd6rs.MjJ.56mEwOgsm0WXAP7ZLnpTth8P1Ms3opq"
+      },
+      'services.google': {
+        email: "jose@test.com",
+        name: "JoZbuyo",
+        picture: "https://lh5.googleusercontent.com/-EShmwv2lFxs/AAAAAAAAAAI/AAAAAAAAAJc/nlGkmKaubaEwv7MoHmGthS9LoxbQbESMwCLcDEAE/s32-c-k-no/photo.jpg"
       },
       emails: [
         {
@@ -54,16 +50,14 @@ export function createBasicData() {
       firstName: "Charlo",
       lastName: "Test",
       createdAt: Date("2020-04-17T22:07:36.443Z"),
-      services: {
-        password: { // password is "charlo"
-          bcrypt: "$2b$10$YqOjUBWJ0lZ4waYGMoo8XezDMMgpWbzCCNy0CW9UVW8LEg64sn4Ky"
-        },
-        google: {
-          email: "charlo@test.com",
-          name: "Charlo Luerco",
-          picture: "https://lh3.googleusercontent.com/a-/AOh14Gih_3ZabVYBHgpMqQZaTagP9pwXwFcBZhwX_48xUQ=s28-c-k-no"
-        }
+      'services.password': { // password is "charlo"
+        bcrypt: "$2b$10$YqOjUBWJ0lZ4waYGMoo8XezDMMgpWbzCCNy0CW9UVW8LEg64sn4Ky"
       },
+      'services.google': {
+        email: "charlo@test.com",
+        name: "Charlo Luerco",
+        picture: "https://lh3.googleusercontent.com/a-/AOh14Gih_3ZabVYBHgpMqQZaTagP9pwXwFcBZhwX_48xUQ=s28-c-k-no"
+      },      
       emails: [
         {
           address: "charlo@test.com",

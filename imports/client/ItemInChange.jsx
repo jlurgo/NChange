@@ -43,7 +43,7 @@ const styles = {
 class ItemInChange extends Component {
   render() {
     const { itemInChange, loading, classes } = this.props;
-    return loading ?
+    return (loading || !itemInChange.nThing) ?
       <div>Loading</div> :
       <div key={itemInChange.nThing._id} className={classes.root }>
         <img className={classes.pic} src={itemInChange.nThing.pics[0]}

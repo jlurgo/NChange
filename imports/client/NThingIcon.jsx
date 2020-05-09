@@ -8,6 +8,7 @@ import { _ } from 'meteor/underscore';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+import ExtensionIcon from '@material-ui/icons/Extension';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Items } from "../shared/collections";
@@ -37,11 +38,14 @@ const styles = {
 class NThingIcon extends Component {
   render() {
     const { nThing, loading, classes } = this.props;
-    return loading ?
-      <div>Loading</div> :
-      <div key={nThing._id} className={classes.root }>
-        <img className={classes.pic} src={nThing.pics[0]} alt= ''/>
+    return (
+      <div key={nThing && nThing._id} className={classes.root }>
+        { (loading || !nThing) ?
+          <ExtensionIcon /> :
+          <img className={classes.pic} src={nThing.pics[0]} alt= ''/>
+        }
       </div>
+    );
   }
 }
 

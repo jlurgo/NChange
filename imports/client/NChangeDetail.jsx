@@ -177,10 +177,10 @@ class NChangeDetail extends Component {
                   _.without(nchange.nChangers, user_id).map(this.renderNChanger)
                 }
                 </div>
-                <LeaveNChangeButton nchange_id={nchange._id}
-                  classes={{ root: classes.leaveNchangeButton}}/>
                 <AddNChangerButton classes={{ root: classes.addNchangerButton}}
                   onSelect={this.addNChanger}/>
+                <LeaveNChangeButton nchange_id={nchange._id}
+                  classes={{ root: classes.leaveNchangeButton}}/>
               </div>
             </div>
           }

@@ -104,7 +104,7 @@ class NChangeInList extends Component {
     });
   }
 
-  renderOkButton = () => {
+  renderOkButton = (user_gives_and_receives) => {
     const { nchange, classes } = this.props;
 
     if (nchange.approved)
@@ -124,7 +124,7 @@ class NChangeInList extends Component {
         </IconButton>
       )
     return (
-      <IconButton className={classes.okButton}
+      <IconButton className={classes.okButton} disabled={!user_gives_and_receives}
         onClick={this.approveNchange}>
           <ThumbUpOutlinedIcon fontSize='large'/>
       </IconButton>
@@ -140,6 +140,9 @@ class NChangeInList extends Component {
     const user_output_items = _.where(nchange.detail,
       { action: 'take', from: Meteor.userId()});
 
+    const user_gives_and_receives =
+      user_input_items.length > 0 && user_output_items.length > 0
+
     return (
       <Paper className={classes.root} onClick={()=>{
           history.push(`/nchangedetail/${nchange._id}`)
@@ -148,7 +151,7 @@ class NChangeInList extends Component {
             <div className={classes.animatedBackground}></div>
             { this.renderItems(user_output_items) }
           </div>
-          { this.renderOkButton() }
+          { this.renderOkButton(user_gives_and_receives) }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>

@@ -140,6 +140,14 @@ class NChangeActivity extends Component {
           </Typography>
         </div>
       ),
+      remove: (
+        <div className={classes.entry} key={i}>
+          <NThingIcon nThingId={entry.nThing}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            ya no está disponible
+          </Typography>
+        </div>
+      ),
       finish:(
         <div className={classes.entry} key={i}>
           <Typography noWrap variant="h5" className={classes.entryText}>
