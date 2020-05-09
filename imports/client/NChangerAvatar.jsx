@@ -23,6 +23,9 @@ const styles = {
   isLoggedUser: {
     background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 0%, rgb(251, 255, 0) 26%, rgba(226,237,2,0) 70%)'
   },
+  isSelected: {
+    background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 40%, rgb(142, 193, 218) 50%, rgba(226,237,2,0) 70%)'
+  },
   thumbUp: {
     position: 'absolute',
     top: '10px',
@@ -34,7 +37,7 @@ const styles = {
 //
 class NChangerAvatar extends Component {
   render() {
-    const { nChanger, thumbsUp, loading, classes, history } = this.props;
+    const { nChanger, thumbsUp, loading, classes, history, selected } = this.props;
 
     if (loading) return <div>Loading...</div>
 
@@ -44,10 +47,19 @@ class NChangerAvatar extends Component {
     let pic_classes = classes.userImage;
     const is_logged_user = (nChanger._id == Meteor.userId());
 
+    let button_class = '';
+    if (is_logged_user){
+      button_class = classes.isLoggedUser;
+    }
+    if (selected) {
+      button_class = classes.isSelected;
+    }
     return (
       <div className={classes.root }>
-        <IconButton classes={{root: is_logged_user ? classes.isLoggedUser : ''}}
-          onClick={this.props.onClick}>
+        <IconButton classes={{root: button_class}}
+          onClick={() => {
+            console.warn('avatar clicked');
+            this.props.onClick(nChanger._id)}}>
           {
             user_image ?
               <img src= {user_image} className={pic_classes} /> :

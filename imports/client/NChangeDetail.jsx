@@ -9,6 +9,7 @@ import { _ } from 'meteor/underscore';
 import { NChanges } from "../shared/collections";
 
 import Typography from '@material-ui/core/Typography';
+import GroupIcon from '@material-ui/icons/Group';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
@@ -16,6 +17,7 @@ import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
 import NChangeActivity from './NChangeActivity';
 import SendChatMessageBox from './SendChatMessageBox';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = {
   root: {
@@ -30,12 +32,14 @@ const styles = {
     flex: '1 1 auto',
     height: '100px',
     display: 'flex',
+    overflowX: 'auto'
   },
   historySection: {
     flex: '1 1 50%',
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '5px'
+    marginRight: '5px',
+    maxWidth: '500px',
   },
   thingsSection: {
     flex: '1 1 50%',
@@ -69,10 +73,17 @@ const styles = {
     height: '100px',
     overflowY: 'auto'
   },
+  showAllButtonSelected: {
+    background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 40%, rgb(142, 193, 218) 50%, rgba(226,237,2,0) 70%)'
+  }
 };
 
 //
 class NChangeDetail extends Component {
+
+  state = {
+    selectedNchanger: 'all',
+  }
 
   handleOnItemClick = (item) => {
     const { nchange } = this.props;
@@ -99,11 +110,39 @@ class NChangeDetail extends Component {
     Meteor.call('nchanges.new_chat_message', this.props.nchange._id, message);
   }
 
+  handleNchangerClick = (nchanger_id) => {
+    console.warn('handleNchangerClick');
+    const { nchange } = this.props;
+    this.setState({
+      selectedNchanger: nchanger_id,
+      thingsFilter: { owner: nchanger_id }
+    });
+  }
+
+  handleShowAllButtonClick = () => {
+    const { nchange } = this.props;
+    this.setState({
+      selectedNchanger: 'all',
+      thingsFilter: { owner:
+        { $in: nchange.nChangers}
+      }
+    });
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
-
     if (loading) return <div>Loading...</div>
-
+    const user_id = Meteor.userId();
+    if (!this.state.thingsFilter) {
+      this.setState({
+        selectedNchanger: 'all',
+        thingsFilter: { owner:
+          { $in: nchange.nChangers}
+        }
+      });
+      return <div>Loading...</div>
+    }
+    console.warn(this.state);
     return (
       <div className={classes.root }>
         <NChangeInList
@@ -118,14 +157,16 @@ class NChangeDetail extends Component {
           { !nchange.approved &&
             <div className={classes.thingsSection}>
               <div className={classes.nThings}>
-                <ItemList filter={{owner: { $in: nchange.nChangers }}}
+                <ItemList filter={this.state.thingsFilter}
                   onItemClick={this.handleOnItemClick}
                   classes={{root: classes.listRoot}}/>
               </div>
               <div className={classes.nChangers}>
+                {this.renderShowAllButton()}
+                {this.renderNChanger(user_id)}
                 <div className={classes.nChangersList}>
                 {
-                  nchange.nChangers.map(this.renderNChanger)
+                  _.without(nchange.nChangers, user_id).map(this.renderNChanger)
                 }
                 </div>
                 <AddNChangerButton classes={{ root: classes.addNchangerButton}}
@@ -139,12 +180,26 @@ class NChangeDetail extends Component {
   }
 
   renderNChanger = (n_changer_id) => {
-    const { nchange } = this.props;
+    const { nchange, classes } = this.props;
     const approved_by_user = !!_.findWhere(nchange.detail,
       { action: 'approve', user: n_changer_id});
     return (
       <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}
-        thumbsUp={approved_by_user}/>
+        thumbsUp={approved_by_user} onClick={this.handleNchangerClick}
+        selected={this.state.selectedNchanger == n_changer_id}/>
+    );
+  }
+
+  renderShowAllButton = (n_changer_id) => {
+    const { nchange, classes  } = this.props;
+    const is_selected = this.state.selectedNchanger == 'all';
+    return (
+      <div>
+        <IconButton onClick={this.handleShowAllButtonClick}
+          classes={{root: is_selected ? classes.showAllButtonSelected : ''}}>
+          <GroupIcon fontSize= 'large'/>
+        </IconButton>
+      </div>
     );
   }
 }

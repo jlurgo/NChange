@@ -32,12 +32,14 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
+  height:10px;
 }
 
 /* On screens that are 600px or less, set the background color to olive */
 @media screen and (max-width: 600px) {
   ::-webkit-scrollbar {
     width: 0px;
+    height: 0px;
   }
 }
 
