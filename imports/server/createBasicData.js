@@ -57,7 +57,7 @@ export function createBasicData() {
         email: "charlo@test.com",
         name: "Charlo Luerco",
         picture: "https://lh3.googleusercontent.com/a-/AOh14Gih_3ZabVYBHgpMqQZaTagP9pwXwFcBZhwX_48xUQ=s28-c-k-no"
-      },      
+      },
       emails: [
         {
           address: "charlo@test.com",
@@ -76,7 +76,7 @@ export function createBasicData() {
       owner: usr.jero._id,
       pics: [ "https://bucket1.glanacion.com/anexos/fotos/90/2920990w740.jpg" ],
       private: false,
-      likedBy: []
+      likedBy: [],
     },
     bici_plegable: {
       _id: "4xXiXAGLjK5vK4QYf",

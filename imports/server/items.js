@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { Items } from '../shared/collections';
-import { removeThingFromAllCurrentNchanges } from './nchanges';
+import { NChangesController } from './NChangesController';
 
 // returns limited data from items to show on filtered lists
 Meteor.publish('filtered_items_summary', (filter, limit) => {
@@ -64,10 +64,8 @@ Meteor.methods({
       // make sure only the owner can delete it
       throw new Meteor.Error('not-authorized');
     }
-    // remove thing from all not approved nchanges
-    removeThingFromAllCurrentNchanges(itemId)
     Items.update(itemId, { $set: {
-      archived: 'true'
+      archived: true
     }});
   },
   'nthings.setPrivate'(itemId, setToPrivate) {

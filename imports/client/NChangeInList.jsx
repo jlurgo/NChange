@@ -114,8 +114,7 @@ class NChangeInList extends Component {
         </IconButton>
       )
 
-    const approved_by_me = !!_.findWhere(nchange.detail,
-      { action: 'approve', user: Meteor.userId()});
+    const approved_by_me = _.contains(nchange.approvals, Meteor.userId());
     if (approved_by_me)
       return (
         <IconButton className={classes.okButton + ' ' + classes.approvedOkButton}

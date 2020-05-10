@@ -20,8 +20,9 @@ const styles = {
     cursor: 'pointer',
     position: 'relative',
     display: 'flex',
-    justifyContent: 'center',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     overflow: 'hidden'
   },
   pic: {

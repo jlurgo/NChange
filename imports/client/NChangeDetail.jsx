@@ -191,8 +191,7 @@ class NChangeDetail extends Component {
 
   renderNChanger = (n_changer_id) => {
     const { nchange, classes } = this.props;
-    const approved_by_user = !!_.findWhere(nchange.detail,
-      { action: 'approve', user: n_changer_id});
+    const approved_by_user = _.contains(nchange.approvals, n_changer_id);
     return (
       <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}
         thumbsUp={approved_by_user} onClick={this.handleNchangerClick}

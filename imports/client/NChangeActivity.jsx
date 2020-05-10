@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 
 import Typography from '@material-ui/core/Typography';
+import WbSunnyIcon from '@material-ui/icons/WbSunny';
 
 import NChangerAvatar from './NChangerAvatar';
 import NThingIcon from './NThingIcon';
@@ -150,6 +151,7 @@ class NChangeActivity extends Component {
       ),
       finish:(
         <div className={classes.entry} key={i}>
+          <WbSunnyIcon/>
           <Typography noWrap variant="h5" className={classes.entryText}>
             nChange finalizado
           </Typography>

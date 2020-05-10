@@ -4,7 +4,9 @@ import { check } from 'meteor/check';
 import { NChanges, Items } from '../shared/collections';
 import { _ } from 'meteor/underscore';
 import { rejectUnloggedUsers } from './utils';
+import { NChangesController } from './nchanges';
 
+// publications
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
   const usr = Meteor.userId();
@@ -16,6 +18,7 @@ Meteor.publish('nchange_detail', (nchange_id) => {
   return NChanges.find({_id: nchange_id});
 });
 
+// authorization check functions
 const rejectUsersNotInNChange = (nchange_id) => {
   check(nchange_id, String);
 
@@ -34,31 +37,7 @@ const rejectOperationOnFinishedNchange = (nchange_id) => {
   }
 };
 
-export const removeThingFromAllCurrentNchanges = (thing_id) => {
-  check(thing_id, String);
-
-  console.warn('removing thing from all current nchanges');
-  // remove actions involving the thing
-  const nchanges_with_thing_in_detail = NChanges.find({
-    approved: { $exists: false },
-    detail: { $elemMatch: { nThing: thing_id }}
-  }).map((nch) => {return nch._id});
-
-  NChanges.update({_id: { $in: nchanges_with_thing_in_detail}}, { $pull: {
-    detail: { nThing: thing_id }
-  }}, { multi: true });
-
-  NChanges.update({_id: { $in: nchanges_with_thing_in_detail}}, { $pull: {
-    detail: { action: 'approve' }
-  }}, { multi: true });
-
-  NChanges.update({_id: { $in: nchanges_with_thing_in_detail}}, {
-    $push: { activity: {
-      timestamp: new Date(), action: 'remove', nThing: thing_id
-    }}
-  }, { multi: true });
-};
-
+// API
 Meteor.methods({
   'nchanges.new'() {
     console.warn('creating new nChange');
@@ -145,7 +124,7 @@ Meteor.methods({
     }
 
     NChanges.update({_id: nchange_id}, { $push: {
-      detail: { user: this.userId, action: 'approve' }
+      approvals: this.userId
     }});
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
@@ -155,36 +134,31 @@ Meteor.methods({
     // check if all participants approved the nchange
     // getting the nchange again to get latest
     nchange = NChanges.findOne({_id: nchange_id});
-    const all_approved = _.all(nchange.nChangers, (nchanger) => {
-      return !!_.findWhere(nchange.detail,
-        { action: 'approve', user: nchanger});
-    })
-
+    const all_approved =
+      _.difference(nchange.nChangers, nchange.approvals).length == 0;
     if(!all_approved) return;
+    console.warn('all nchangers approved this nchange!');
     // approving the nChange
     NChanges.update({_id: nchange_id}, { $set: { approved: true }});
+    console.warn('nchange approved!');
+
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), action: 'finish',
       }}
     });
 
+    console.warn('changing ownership of nchanged things');
     // update ownership of taken things
     nchange.nChangers.forEach((nchanger) => {
-      console.warn('taking items for:', nchanger);
       const take_actions = _.where(nchange.detail, {
         user: nchanger, action: 'take'
       });
-      console.warn('taking actions:', take_actions);
       const taken_items = _.map(take_actions, (action) => {
         return action.nThing;
       });
-      console.warn('taken items:', taken_items);
       Items.update({_id: { $in: taken_items }}, {$set: { owner: nchanger}},
         {multi: true});
-      taken_items.forEach((thing_id) => {
-        removeThingFromAllCurrentNchanges(thing_id)
-      });
     })
   },
   'nchanges.dont_approve'(nchange_id) {
@@ -194,7 +168,7 @@ Meteor.methods({
     rejectOperationOnFinishedNchange(nchange_id);
 
     NChanges.update({_id: nchange_id}, { $pull: {
-      detail: { user: this.userId, action: 'approve' }
+      approvals: this.userId
     }});
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
