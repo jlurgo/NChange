@@ -61,7 +61,7 @@ class LeaveNChangeButton extends Component {
           <DialogTitle id="form-dialog-title">¿Abandonar nChange?</DialogTitle>
           <DialogActions>
             <Button onClick={this.closeDialog} color="primary">
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={this.handleOk} color="primary">
               Ok

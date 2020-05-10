@@ -121,7 +121,6 @@ class ItemInList extends Component {
 
   handleClick = (e) => {
     const { onClick, item } = this.props;
-    console.warn(onClick);
     if(onClick) {
       onClick(item);
       return;

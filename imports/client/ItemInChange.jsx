@@ -43,7 +43,7 @@ const styles = {
 class ItemInChange extends Component {
 
   handleClick = (e) => {
-    this.props.onClick(this.props.itemInChange.nThing._id);
+    this.props.onClick && this.props.onClick(this.props.itemInChange.nThing._id);
     e.stopPropagation();
   }
 

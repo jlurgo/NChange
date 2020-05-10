@@ -93,9 +93,20 @@ class NChangeInList extends Component {
     e.stopPropagation();
   }
 
-  onItemClick = (item_id) => {
-    Meteor.call('nchanges.releaseItem', this.props.nchange._id, item_id);
-    e.stopPropagation();
+  onInputItemClick = (item_id) => {
+    const { nchange } = this.props;
+    const take_action = _.where(nchange.detail,
+      { action: 'take', nThing: item_id, user: Meteor.userId()});
+    Meteor.call('nchanges.releaseItem', this.props.nchange._id, item_id,
+      take_action.from);
+  }
+
+  onOutputItemClick = (item_id) => {
+    const { nchange } = this.props;
+    const take_action = _.findWhere(nchange.detail,
+      { action: 'take', nThing: item_id, from: Meteor.userId()});
+    Meteor.call('nchanges.retrieveItem', this.props.nchange._id, item_id,
+      take_action.user);
   }
 
   renderItems(items, onClick) {
@@ -154,13 +165,13 @@ class NChangeInList extends Component {
         }} >
           <div className={classes.itemList}>
             <div className={classes.animatedBackground}></div>
-            { this.renderItems(user_output_items) }
+            { this.renderItems(user_output_items, this.onOutputItemClick) }
           </div>
           { this.renderOkButton(user_gives_and_receives) }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>
-            { this.renderItems(user_input_items, this.onItemClick) }
+            { this.renderItems(user_input_items, this.onInputItemClick) }
           </div>
       </Paper>
     );

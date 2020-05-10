@@ -4,7 +4,7 @@ import { check } from 'meteor/check';
 import { NChanges, Items } from '../shared/collections';
 import { _ } from 'meteor/underscore';
 import { rejectUnloggedUsers } from './utils';
-import { NChangesController } from './nchanges';
+import { NChangesController } from './NChangesController';
 
 // publications
 // Only publish nchanges where the user is taking part
@@ -22,7 +22,7 @@ Meteor.publish('nchange_detail', (nchange_id) => {
 const rejectUsersNotInNChange = (nchange_id) => {
   check(nchange_id, String);
 
-  nchange = NChanges.findOne({_id: nchange_id, nChangers: this.userId});
+  const nchange = NChanges.findOne({_id: nchange_id, nChangers: this.userId});
   if (!nchange) {
     throw new Meteor.Error('you-are-not-part-of-this-nchange');
   }
@@ -31,9 +31,18 @@ const rejectUsersNotInNChange = (nchange_id) => {
 const rejectOperationOnFinishedNchange = (nchange_id) => {
   check(nchange_id, String);
 
-  nchange = NChanges.findOne({_id: nchange_id, approved: true });
+  const nchange = NChanges.findOne({_id: nchange_id, approved: true });
   if (nchange) {
     throw new Meteor.Error('this-nchange-is-already-approved');
+  }
+};
+
+const rejectIfUserDoesNotOwnTheThing = (nthing_id) => {
+  check(nthing_id, String);
+
+  const nthing = Items.findOne(nthing_id);
+  if (nthing.owner != Meteor.userId()) {
+    throw new Meteor.Error('this-nthing-does-not-belong-to-the-user');
   }
 };
 
@@ -69,18 +78,36 @@ Meteor.methods({
         timestamp: new Date(), user: this.userId, action: 'take',
         nThing: item._id, from: item.owner}}
     });
-    // we retract approvals because conditions changed
-    const nchange = NChanges.findOne({_id: nchange_id});
-    // TODO: only retract approvals affected by this change
-    NChanges.update({_id: nchange_id}, { $pull: {
-      detail: { action: 'approve' }
-    }});
+    NChangesController.retractAllApprovalsFromNchange(nchange_id);
+  },
+  'nchanges.offerItem'(nchange_id, nthing_id, receiver_id) {
+    console.warn('offering item');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
+    rejectIfUserDoesNotOwnTheThing(nthing_id);
+
+    const item = Items.findOne({_id: nthing_id});
+    NChanges.update({_id: nchange_id}, {
+      $push: { detail: {
+        user: receiver_id, action: 'take',
+        nThing: item._id, from: this.userId}}
+    });
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'offer',
+        nThing: item._id, to: receiver_id}}
+    });
+    NChangesController.retractAllApprovalsFromNchange(nchange_id);
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
     console.warn('releasing item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
+
+    //TODO: check that the user is the one taking the item to avoid releasing
+    // others takings
 
     const user_id = Meteor.userId();
     const item = Items.findOne({_id: nthing_id});
@@ -94,12 +121,28 @@ Meteor.methods({
         timestamp: new Date(), user: this.userId, action: 'release',
         nThing: item._id, from: item.owner}}
     });
-    // we retract approvals because conditions changed
-    const nchange = NChanges.findOne({_id: nchange_id});
-    // TODO: only retract approvals affected by this change
-    NChanges.update({_id: nchange_id}, { $pull: {
-      detail: { action: 'approve' }
-    }});
+    NChangesController.retractAllApprovalsFromNchange(nchange_id);
+  },
+  'nchanges.retrieveItem'(nchange_id, nthing_id, taker_id) {
+    console.warn('retrieving item');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectOperationOnFinishedNchange(nchange_id);
+    rejectIfUserDoesNotOwnTheThing(nthing_id);
+
+    const user_id = Meteor.userId();
+    const item = Items.findOne({_id: nthing_id});
+    NChanges.update({_id: nchange_id}, {
+      $pull: { detail: {
+        user: taker_id, action: 'take',
+        nThing: nthing_id, from: this.userId}},
+    });
+    NChanges.update({_id: nchange_id}, {
+      $push: { activity: {
+        timestamp: new Date(), user: this.userId, action: 'retrieve',
+        nThing: item._id, from: taker_id}}
+    });
+    NChangesController.retractAllApprovalsFromNchange(nchange_id);
   },
   'nchanges.approve'(nchange_id) {
     console.warn('approving nchange');

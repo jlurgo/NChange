@@ -11,6 +11,12 @@ import { NChanges } from "../shared/collections";
 import Typography from '@material-ui/core/Typography';
 import GroupIcon from '@material-ui/icons/Group';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle'
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
@@ -93,14 +99,31 @@ class NChangeDetail extends Component {
 
   state = {
     selectedNchanger: 'all',
+    showChooseNchangerDialog: false
   }
 
   handleOnItemClick = (item) => {
     const { nchange } = this.props;
     if(item.owner == Meteor.userId()) {
+      this.setState({
+        showChooseNchangerDialog: true,
+        nThingToOffer: item
+      });
       return;
     }
     Meteor.call('nchanges.takeItem', nchange._id, item._id);
+  }
+
+  onNchangerSelectedToOffer = (nchanger) => {
+    const { nchange } = this.props;
+    const { nThingToOffer } = this.state;
+    Meteor.call('nchanges.offerItem', nchange._id, this.state.nThingToOffer._id,
+      nchanger);
+    this.closeChooseNchangerDialog();
+  }
+
+  closeChooseNchangerDialog = ( ) => {
+    this.setState({showChooseNchangerDialog: false, nchangerMail: ''});
   }
 
   addNChanger = (nchanger_mail) => {
@@ -169,6 +192,7 @@ class NChangeDetail extends Component {
 
     return (
       <div className={classes.root }>
+        {this.renderChooseNchangerDialog()}
         <NChangeInList
           key={nchange._id} nchange={nchange}
           classes={{root: classes.detailBar}}
@@ -227,6 +251,35 @@ class NChangeDetail extends Component {
           <GroupIcon fontSize= 'large'/>
         </IconButton>
       </div>
+    );
+  }
+
+  renderChooseNchangerDialog = () => {
+    const { nchange, classes } = this.props;
+    const { showChooseNchangerDialog } = this.state;
+
+    return (
+      <Dialog open={showChooseNchangerDialog} onClose={this.closeChooseNchangerDialog}
+        aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">¿A quien se lo dás?</DialogTitle>
+        <DialogContent>
+          <div className={classes.nChangers}>
+          {
+            _.without(nchange.nChangers, Meteor.userId()).map((nchanger_id) => {
+              return (
+              <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
+                onClick={this.onNchangerSelectedToOffer}/>
+              );
+            })
+          }
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.closeChooseNchangerDialog} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }

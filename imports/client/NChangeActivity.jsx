@@ -100,6 +100,32 @@ class NChangeActivity extends Component {
           <NChangerAvatar nChangerId={entry.from}/>
         </div>
       ),
+      offer: (
+        <div className={classes.entry} key={i}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            ofrece 1
+          </Typography>
+          <NThingIcon nThingId={entry.nThing}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            a
+          </Typography>
+          <NChangerAvatar nChangerId={entry.to}/>
+        </div>
+      ),
+      retrieve: (
+        <div className={classes.entry} key={i}>
+          <NChangerAvatar nChangerId={entry.user}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            recupera
+          </Typography>
+          <NThingIcon nThingId={entry.nThing}/>
+          <Typography noWrap variant="h6" className={classes.entryText}>
+            de
+          </Typography>
+          <NChangerAvatar nChangerId={entry.from}/>
+        </div>
+      ),
       approve:(
         <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user} thumbsUp/>

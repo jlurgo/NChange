@@ -72,7 +72,7 @@ class AddNChangerButton extends Component {
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={this.handleOk} color="primary">
               Ok
