@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
+import ResizeDetector  from 'react-resize-detector';
 import { _ } from 'meteor/underscore';
 
 import Paper from '@material-ui/core/Paper';
@@ -14,7 +15,7 @@ import { Items } from "../shared/collections";
 
 const styles = {
   root: {
-    flex: '0 0 100px',
+    flex: '0 1 100px',
     height: '100px',
     cursor: 'pointer',
     position: 'relative',
@@ -38,23 +39,46 @@ const styles = {
   },
 };
 
-
 // It's an item being exchanged in an nchange
 class ItemInChange extends Component {
+  state = {
+    leftPanel: true,
+    mainFrame: true,
+    count: 0,
+    width: undefined,
+    height: undefined
+  };
+
+  constructor() {
+    super();
+    this.rootRef = React.createRef();
+  };
+
 
   handleClick = (e) => {
     this.props.onClick && this.props.onClick(this.props.itemInChange.nThing._id);
     e.stopPropagation();
-  }
+  };
+
+  onResize = (width) => {
+    this.setState({
+      width
+    })
+  };
 
   render() {
     const { itemInChange, loading, classes } = this.props;
+    const { width } = this.state;
+
     return (loading || !itemInChange.nThing) ?
       <div>Loading</div> :
       <div key={itemInChange.nThing._id} className={classes.root }
-        onClick={this.handleClick}>
+        style={{height: width}}
+        onClick={this.handleClick} ref={this.rootRef}>
         <img className={classes.pic} src={itemInChange.nThing.pics[0]}
           alt={itemInChange.nThing.shortDescription} />
+        <ResizeDetector handleWidth onResize={this.onResize}
+          targetDomEl={this.rootRef.current} />
       </div>
   }
 }
