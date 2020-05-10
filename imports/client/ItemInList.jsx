@@ -8,8 +8,10 @@ import { _ } from 'meteor/underscore';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TagBar from "./TagBar";
@@ -41,6 +43,24 @@ const styles = {
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
   },
+  buttonBar: {
+    position: 'absolute',
+    top: '5px',
+    right: '5px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '5px'
+  },
+  button: {
+    marginBottom: '5px'
+  },
+  plusIcon: {
+    backgroundColor: '#41b53f'
+  },
+  minusIcon: {
+    backgroundColor: '#41b53f'
+  },
   tagBarRoot: {
     flexWrap: 'wrap-reverse',
     flex: '1 1 auto'
@@ -48,16 +68,14 @@ const styles = {
   likeIcon: {
     color: 'black',
     flex: '0 0 auto',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    backgroundColor: 'pink'
   },
   likeIconLiked: {
     color: 'red',
   },
   removeThingIcon: {
-    position: 'absolute',
-    top: '5px',
-    right: '5px',
-    color: 'red'
+    backgroundColor: '#ff8a12',
   },
   ownerAvatar: {
     position: 'absolute',
@@ -89,8 +107,21 @@ class ItemInList extends Component {
     e.stopPropagation();
   }
 
+  handlePlusClick = (e) => {
+    const { onPlusButtonClick, item } = this.props;
+    onPlusButtonClick(item);
+    e.stopPropagation();
+  }
+
+  handleMinusClick = (e) => {
+    const { onMinusButtonClick, item } = this.props;
+    onMinusButtonClick(item);
+    e.stopPropagation();
+  }
+
   handleClick = (e) => {
     const { onClick, item } = this.props;
+    console.warn(onClick);
     if(onClick) {
       onClick(item);
       return;
@@ -99,7 +130,8 @@ class ItemInList extends Component {
   }
 
   render() {
-    const { item, showDeleteButton, classes } = this.props;
+    const { item, showDeleteButton, showLikeButton, onPlusButtonClick,
+      onMinusButtonClick, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
@@ -107,24 +139,39 @@ class ItemInList extends Component {
           className={classes.pic}/>
         <div className={classes.bottomBar}>
           <TagBar tags={item.tags} classes={{root: classes.tagBarRoot}}/>
-          { !is_my_own_thing &&
-            <IconButton aria-label={`star ${item.shortDescription}`}
-              className={classes.likeIcon} onClick={this.handleLikeButtonClick}>
-              {this.itemliked() ?
-                <FavoriteIcon className={classes.likeIconLiked} fontSize= 'large'/> :
-                <FavoriteBorderIcon fontSize= 'large'/>
-              }
-            </IconButton>
-          }
         </div>
         <NChangerAvatar nChangerId={item.owner}
           classes={{root: classes.ownerAvatar}}/>
-        { is_my_own_thing && showDeleteButton &&
-          <IconButton className={classes.removeThingIcon}
-           onClick={this.handleRemoveClick}>
-             <DeleteForeverIcon />
-          </IconButton>
-        }
+        <div className={classes.buttonBar}>
+          { onPlusButtonClick &&
+            <IconButton className={classes.button + ' ' + classes.plusIcon}
+              onClick={this.handlePlusClick}>
+               <AddIcon fontSize= 'small'/>
+            </IconButton>
+          }
+          { onMinusButtonClick &&
+            <IconButton className={classes.button + ' ' + classes.minusIcon}
+              onClick={this.handleMinusClick}>
+               <RemoveIcon fontSize= 'small'/>
+            </IconButton>
+          }
+          { !is_my_own_thing && showLikeButton &&
+            <IconButton aria-label={`star ${item.shortDescription}`}
+              className={classes.button + ' ' + classes.likeIcon}
+              onClick={this.handleLikeButtonClick}>
+              {this.itemliked() ?
+                <FavoriteIcon className={classes.likeIconLiked} fontSize= 'small'/> :
+                <FavoriteBorderIcon fontSize= 'small'/>
+              }
+            </IconButton>
+          }
+          { is_my_own_thing && showDeleteButton &&
+            <IconButton className={classes.button + ' ' + classes.removeThingIcon}
+              onClick={this.handleRemoveClick}>
+               <DeleteIcon fontSize= 'small'/>
+            </IconButton>
+          }
+        </div>
       </Paper>
     );
   }

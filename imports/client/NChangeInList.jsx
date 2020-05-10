@@ -93,12 +93,18 @@ class NChangeInList extends Component {
     e.stopPropagation();
   }
 
-  renderItems(items) {
+  onItemClick = (item_id) => {
+    Meteor.call('nchanges.releaseItem', this.props.nchange._id, item_id);
+    e.stopPropagation();
+  }
+
+  renderItems(items, onClick) {
     return items.map((item) => {
       return (
         <ItemInChange
           key={item.nThing}
           itemInChange={item}
+          onClick={onClick}
         />
       );
     });
@@ -154,7 +160,7 @@ class NChangeInList extends Component {
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>
-            { this.renderItems(user_input_items) }
+            { this.renderItems(user_input_items, this.onItemClick) }
           </div>
       </Paper>
     );

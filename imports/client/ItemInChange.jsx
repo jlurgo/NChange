@@ -41,11 +41,18 @@ const styles = {
 
 // It's an item being exchanged in an nchange
 class ItemInChange extends Component {
+
+  handleClick = (e) => {
+    this.props.onClick(this.props.itemInChange.nThing._id);
+    e.stopPropagation();
+  }
+
   render() {
     const { itemInChange, loading, classes } = this.props;
     return (loading || !itemInChange.nThing) ?
       <div>Loading</div> :
-      <div key={itemInChange.nThing._id} className={classes.root }>
+      <div key={itemInChange.nThing._id} className={classes.root }
+        onClick={this.handleClick}>
         <img className={classes.pic} src={itemInChange.nThing.pics[0]}
           alt={itemInChange.nThing.shortDescription} />
       </div>

@@ -100,12 +100,7 @@ class NChangeDetail extends Component {
     if(item.owner == Meteor.userId()) {
       return;
     }
-    const taken_by_me = _.findWhere(nchange.detail, {
-      user: Meteor.userId(), nThing: item._id, action: 'take'
-    });
-
-    taken_by_me ? Meteor.call('nchanges.releaseItem', nchange._id, item._id) :
-      Meteor.call('nchanges.takeItem', nchange._id, item._id);
+    Meteor.call('nchanges.takeItem', nchange._id, item._id);
   }
 
   addNChanger = (nchanger_mail) => {
@@ -140,9 +135,11 @@ class NChangeDetail extends Component {
 
   render() {
     const { nchange, loading, classes, history } = this.props;
+    const { thingsFilter } = this.state;
     if (loading) return <div>Loading...</div>
     const user_id = Meteor.userId();
-    if (!this.state.thingsFilter) {
+
+    if (!thingsFilter) {
       this.setState({
         selectedNchanger: 'all',
         thingsFilter: { owner:
@@ -151,6 +148,25 @@ class NChangeDetail extends Component {
       });
       return <div>Loading...</div>
     }
+
+    // we filter out from the available things list the items already visible
+    // in the top bar
+    const user_input_items = _.chain(nchange.detail)
+      .where({ action: 'take', user: Meteor.userId()})
+      .pluck('nThing')
+      .value();
+
+    const user_output_items = _.chain(nchange.detail)
+      .where({ action: 'take', from: Meteor.userId()})
+      .pluck('nThing')
+      .value();
+
+    const all_taken_things = _.union(user_input_items, user_output_items)
+
+    const new_filter = all_taken_things.length > 0 ?
+      _.extend({}, thingsFilter, {_id: { $nin: all_taken_things}}) :
+      thingsFilter;
+
     return (
       <div className={classes.root }>
         <NChangeInList
@@ -165,7 +181,7 @@ class NChangeDetail extends Component {
           { !nchange.approved &&
             <div className={classes.thingsSection}>
               <div className={classes.nThings}>
-                <ItemList filter={this.state.thingsFilter}
+                <ItemList filter={new_filter}
                   onItemClick={this.handleOnItemClick}
                   classes={{root: classes.listRoot}}/>
               </div>

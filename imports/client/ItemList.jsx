@@ -25,8 +25,12 @@ class ItemList extends Component {
   renderItems() {
     return this.props.items.map((item) => {
       return (
-        <ItemInList key={item._id} item={item} onClick={this.props.onItemClick}
-          showDeleteButton={this.props.showItemsDeleteButton}/>
+        <ItemInList key={item._id} item={item}
+          onClick={this.props.onItemClick}
+          onPlusButtonClick={this.props.onThingPlusButtonClick}
+          onMinusButtonClick={this.props.onThingMinusButtonClick}
+          showDeleteButton={this.props.showItemsDeleteButton}
+          showLikeButton={this.props.showItemsLikeButton}/>
       );
     });
   }
