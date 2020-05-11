@@ -73,7 +73,7 @@ class TagSelectBar extends Component {
 
 export default withTracker((props) => {
   const filter = {};
-  if(props.selectedTags.length > 0) {
+  if(props.selectedTags && props.selectedTags.length > 0) {
     filter.tags = {
       $all: props.selectedTags
     }

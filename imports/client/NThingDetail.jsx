@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
@@ -64,38 +65,71 @@ const styles = {
 //
 class NThingDetail extends Component {
 
-  updateThing = (n_thing) => {
-    Meteor.call('nthings.update', n_thing);
+  state = {
+    nThing: {}
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return {
+      nThing: nextProps.nThing,
+    };
+  }
+
+  handleClose = () => {
+    this.props.history.push(`/nthings`);
+  }
+
+  handleSave = () => {
+    const { nThing } = this.state;
+    if (!nThing._id) {
+      Meteor.call('nthings.new', nThing, (error, thing_id)=> {
+        if (error) {
+          console.warn(error);
+          return
+        }
+        this.props.history.push(`/nthings`);
+      });
+      return
+    }
+    Meteor.call('nthings.update', nThing, (error)=> {
+      if (error) {
+        console.warn(error);
+        return
+      }
+      this.props.history.push(`/nthings`);
+    });
   }
 
   removePic = (pic) => {
-    const { nThing } = this.props;
+    const { nThing } = this.state;
     nThing.pics = _.without(nThing.pics, pic);
-    this.updateThing(nThing);
+    this.setState(nThing);
   }
 
   addPic = (pic) => {
-    const { nThing } = this.props;
+    const { nThing } = this.state;
+    if (!nThing.pics)
+      nThing.pics = [];
     nThing.pics.push(pic);
-    this.updateThing(nThing);
+    this.setState(nThing);
   }
 
   updateTags = (tags) => {
-    const { nThing } = this.props;
+    const { nThing } = this.state;
     nThing.tags = tags;
-    this.updateThing(nThing);
+    this.setState(nThing);
   }
 
   updateShortDescription = (e) => {
-    const { nThing } = this.props;
+    const { nThing } = this.state;
     nThing.shortDescription = e.target.value;
-    this.updateThing(nThing);
+    this.setState(nThing);
   }
 
   updateLongDescription = (e) => {
-    const { nThing } = this.props;
+    const { nThing } = this.state;
     nThing.longDescription = e.target.value;
-    this.updateThing(nThing);
+    this.setState(nThing);
   }
 
   renderPic = (pic, i) => {
@@ -115,16 +149,17 @@ class NThingDetail extends Component {
   }
 
   render() {
-    const { inEditMode, nThing, loading, classes, history } = this.props;
-
+    const { inEditMode, loading, classes, history } = this.props;
     if (loading) return <div>Loading...</div>
+
+    const nThing = inEditMode ? this.state.nThing : this.props.nThing;
 
     return (
       <Paper classes={{ root: classes.root }}>
         <div className={classes.picsSection}>
           <div className={classes.picsList}>
             {
-              nThing.pics.map(this.renderPic)
+              nThing.pics && nThing.pics.map(this.renderPic)
             }
             { inEditMode &&
               <SelectPicButton onSelect={this.addPic}
@@ -155,22 +190,41 @@ class NThingDetail extends Component {
               {nThing.longDescription}
             </Typography>
         }
+        {
+          inEditMode &&
+            <div>
+              <Button onClick={this.handleClose} color="secondary">
+                Cancelar
+              </Button>
+              <Button onClick={this.handleSave} color="primary">
+                Guardar
+              </Button>
+            </div>
+        }
       </Paper>
     );
   }
 }
 
 export default withRouter(withTracker((props) => {
-  const item_sub = Meteor.subscribe('nthing_detail', props.match.params.id);
+  const thing_id = props.match.params.id
+  if (thing_id == 'new') {
+    return {
+      nThing: {},
+      inEditMode: true,
+    }
+  }
+
+  const item_sub = Meteor.subscribe('nthing_detail', thing_id);
   if (!item_sub.ready())
     return {
       loading: true
     }
 
-  const n_thing = Items.findOne({_id: props.match.params.id});
+  const nthing = Items.findOne({_id: thing_id});
   return {
-    nThing: n_thing,
-    inEditMode: n_thing.owner == Meteor.userId(),
+    nThing: nthing,
+    inEditMode: nthing.owner == Meteor.userId(),
   };
 })
 (withStyles(styles)(NThingDetail)));

@@ -44,13 +44,7 @@ class ItemExplorer extends Component {
 
   addThing = () => {
     const { history } = this.props;
-    Meteor.call('nthings.new', (error, thing_id)=> {
-      if (error) {
-        console.warn(error);
-        return;
-      }
-      history.push(`/nthingdetail/${thing_id}`);
-    });
+    history.push(`/nthingdetail/new`);
   }
 
   render() {

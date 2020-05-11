@@ -21,7 +21,7 @@ const styles = {
 
   },
   button: {
-    
+
   }
 };
 
@@ -67,7 +67,7 @@ class SelectPicButton extends Component {
               Ingresá la URL de la imágen
             </DialogContentText>
             <TextField value={newPicUrl} onChange={this.handleUrlChange}
-              autoFocus margin="dense" id="name" label="Email Address"
+              autoFocus margin="dense" id="name" label=""
               type="text" fullWidth/>
           </DialogContent>
           <DialogActions>

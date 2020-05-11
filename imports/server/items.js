@@ -31,19 +31,23 @@ Meteor.publish('nthing_detail', (id) => {
 });
 
 Meteor.methods({
-  'nthings.new'(tags) {
+  'nthings.new'(nthing) {
+    console.warn('creating a thing');
     // Make sure the user is logged in before inserting a item
     if (! this.userId) {
       throw new Meteor.Error('not-authorized');
     }
 
-    return Items.insert({
-      pics: [`/generic_thing${Math.floor(Math.random() * 5) + 1  }.jpg`],
-      tags: [],
-      shortDescription: 'Nueva nThing',
-      createdAt: new Date(),
-      owner: this.userId
-    });
+    if (nthing._id) {
+      throw new Meteor.Error('cant-create-nthing-providing_id');
+    }
+
+    nthing.owner = this.userId;
+    nthing.createdAt = new Date();
+    nthing.tags = nthing.tags || [];
+    nthing.pics = nthing.pics || [];
+
+    return Items.insert(nthing);
   },
   'nthings.update'(n_thing) {
     console.warn('updating a thing');
