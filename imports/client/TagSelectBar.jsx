@@ -14,7 +14,6 @@ const styles = {
   root: {
     height: '50px',
     backgroundColor: 'white',
-    padding: '5px',
     paddingBottom: '10px',
     borderRadius: '5px'
   },

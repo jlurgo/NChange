@@ -59,6 +59,12 @@ const styles = {
     bottom: '10px',
     right: '10px',
     color: 'blue'
+  },
+  descriptionInput: {
+  },
+  confirmationBar: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   }
 };
 
@@ -81,6 +87,7 @@ class NThingDetail extends Component {
 
   handleSave = () => {
     const { nThing } = this.state;
+    console.warn('saving:', nThing);
     if (!nThing._id) {
       Meteor.call('nthings.new', nThing, (error, thing_id)=> {
         if (error) {
@@ -117,12 +124,6 @@ class NThingDetail extends Component {
   updateTags = (tags) => {
     const { nThing } = this.state;
     nThing.tags = tags;
-    this.setState(nThing);
-  }
-
-  updateShortDescription = (e) => {
-    const { nThing } = this.state;
-    nThing.shortDescription = e.target.value;
     this.setState(nThing);
   }
 
@@ -174,25 +175,17 @@ class NThingDetail extends Component {
         }
         {
           inEditMode ?
-            <TextField defaultValue={nThing.shortDescription}
-              onChange={this.updateShortDescription}
-              margin="dense" label="Título" type="text" fullWidth/> :
-            <Typography variant="h4">
-              {nThing.shortDescription}
-            </Typography>
-        }
-        {
-          inEditMode ?
-            <TextField defaultValue={nThing.longDescription}
-              onChange={this.updateLongDescription} multiline
-              margin="dense" label="Descripción" type="text" fullWidth/> :
+            <TextField defaultValue={nThing.longDescription} type="text"
+              className={classes.descriptionInput} label="Descripción" multiline
+              onChange={this.updateLongDescription} variant="outlined" fullWidth
+            /> :
             <Typography variant="h6">
               {nThing.longDescription}
             </Typography>
         }
         {
           inEditMode &&
-            <div>
+            <div className={classes.confirmationBar}>
               <Button onClick={this.handleClose} color="secondary">
                 Cancelar
               </Button>
