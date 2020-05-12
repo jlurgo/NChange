@@ -41,8 +41,6 @@ const styles = {
   },
   picContainer: {
     position: 'relative',
-    borderRight: '2px dashed black',
-    borderBottom: '2px dashed black',
   },
   pic: {
     height: '100%',
