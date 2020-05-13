@@ -53,7 +53,8 @@ class ItemExplorer extends Component {
       <div className={classes.root}>
         <ItemFilterBar filter={this.state.filter} onFilterChange={this.setFilter} />
         <ItemList filter={this.state.filter} showItemsDeleteButton
-          showItemsLikeButton classes={{root: classes.listRoot}}/>
+          showItemsNchangeButton
+          classes={{root: classes.listRoot}}/>
         <Fab onClick={this.addThing} className={classes.addButton} color="primary" aria-label="add">
           <AddIcon />
         </Fab>

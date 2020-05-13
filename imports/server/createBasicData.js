@@ -146,6 +146,8 @@ export function createBasicData() {
   nchng = {
     jeroJoseBiciXTomateYMesa: {
       _id: "thr9Quij6GNtbynaz",
+      creator: usr.jero._id,
+      draft: false,
       nChangers: [usr.jero._id, usr.jose._id],
       detail: [
         { user: usr.jose._id, action: 'take',
@@ -175,6 +177,8 @@ export function createBasicData() {
     },
     jeroCharlo2BicisXPinza: {
       _id: "thr9fwefej6GNtbynaz",
+      creator: usr.charlo._id,
+      draft: false,
       nChangers: [usr.jero._id, usr.charlo._id],
       detail: [
         { user: usr.charlo._id, action: 'take',
@@ -207,6 +211,8 @@ export function createBasicData() {
     jeroCharloJoseEmpty: {
       _id: "thr9fwefwereGNtbynaz",
       nChangers: [usr.jero._id, usr.charlo._id, usr.jose._id],
+      creator: usr.jose._id,
+      draft: true,
       detail: [
       ],
       activity: [

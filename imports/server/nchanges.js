@@ -10,7 +10,7 @@ import { NChangesController } from './NChangesController';
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
   const usr = Meteor.userId();
-  return NChanges.find({'nChangers': usr});
+  return NChanges.find({'nChangers': usr, $or: [{ draft: false },{ creator: usr }]});
 });
 
 Meteor.publish('nchange_detail', (nchange_id) => {
@@ -46,19 +46,50 @@ const rejectIfUserDoesNotOwnTheThing = (nthing_id) => {
   }
 };
 
+const rejectUserNotCreator = (nchange_id) => {
+  check(nchange_id, String);
+
+  const nchange = NChanges.findOne({_id: nchange_id, creator: this.userId});
+  if (!nchange) {
+    throw new Meteor.Error('you-are-not-creator-of-this-nchange');
+  }
+};
+
+
 // API
 Meteor.methods({
-  'nchanges.new'() {
+  'nchanges.new'(invited_nchanger, initial_actions) {
     console.warn('creating new nChange');
     rejectUnloggedUsers();
-
+    const nChangers = [ this.userId ]
+    if(invited_nchanger) {
+      nChangers.push(invited_nchanger);
+    }
+    let detail = [];
+    if (initial_actions) {
+      detail = initial_actions
+    }
     return NChanges.insert({
-      nChangers: [ this.userId ],
-      detail: [ ],
+      nChangers: nChangers,
+      detail: detail,
+      draft: true,
       activity: [
         {timestamp: new Date(), action: 'create', user: this.userId}
       ],
+      creator: this.userId,
       createdAt: new Date(),
+    });
+  },
+  'nchanges.send'(nchange_id) {
+    console.warn('adding message to nchange');
+    rejectUnloggedUsers();
+    rejectUsersNotInNChange(nchange_id);
+    rejectUserNotCreator(nchange_id);
+
+    NChanges.update({_id: nchange_id}, {
+      $set: {
+        draft: false
+      }
     });
   },
   'nchanges.takeItem'(nchange_id, nthing_id) {

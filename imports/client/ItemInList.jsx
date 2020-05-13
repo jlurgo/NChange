@@ -12,6 +12,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TagBar from "./TagBar";
@@ -119,6 +120,22 @@ class ItemInList extends Component {
     e.stopPropagation();
   }
 
+  handleNchangeClick = (e) => {
+    const { item, history } = this.props;
+    e.stopPropagation();
+    Meteor.call('nchanges.new', item.owner,
+      [{user: Meteor.userId(), action: 'take',
+        nThing: item._id, from: item.owner}],
+      (error, nchange_id) => {
+        if (error) {
+          console.warn(error);
+          return;
+        }
+        history.push(`/nchangedetail/${nchange_id}`);
+      });
+
+  }
+
   handleClick = (e) => {
     const { onClick, item } = this.props;
     if(onClick) {
@@ -130,7 +147,7 @@ class ItemInList extends Component {
 
   render() {
     const { item, showDeleteButton, showLikeButton, onPlusButtonClick,
-      onMinusButtonClick, classes } = this.props;
+      showNchangeButton, onMinusButtonClick, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
@@ -162,6 +179,12 @@ class ItemInList extends Component {
                 <FavoriteIcon className={classes.likeIconLiked} fontSize= 'small'/> :
                 <FavoriteBorderIcon fontSize= 'small'/>
               }
+            </IconButton>
+          }
+          { !is_my_own_thing && showNchangeButton &&
+            <IconButton className={classes.button + ' ' + classes.minusIcon}
+              onClick={this.handleNchangeClick}>
+               <SettingsEthernetIcon fontSize= 'small'/>
             </IconButton>
           }
           { is_my_own_thing && showDeleteButton &&

@@ -12,6 +12,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
+import SendIcon from '@material-ui/icons/Send';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -93,6 +94,11 @@ class NChangeInList extends Component {
     e.stopPropagation();
   }
 
+  sendNchange = (e) => {
+    Meteor.call('nchanges.send', this.props.nchange._id);
+    e.stopPropagation();
+  }
+
   onInputItemClick = (item_id) => {
     const { nchange } = this.props;
     const take_action = _.where(nchange.detail,
@@ -124,6 +130,13 @@ class NChangeInList extends Component {
   renderOkButton = (user_gives_and_receives) => {
     const { nchange, classes } = this.props;
 
+    if (nchange.draft)
+      return (
+        <IconButton className={classes.okButton} onClick={this.sendNchange}>
+            <SendIcon fontSize='large'/>
+        </IconButton>
+      )
+
     if (nchange.approved)
       return (
         <IconButton className={classes.okButton + ' ' + classes.finishedOkButton}>
@@ -149,7 +162,6 @@ class NChangeInList extends Component {
 
   render() {
     const { nchange, classes, history } = this.props;
-
     const user_input_items = _.where(nchange.detail,
       { action: 'take', user: Meteor.userId()});
 
