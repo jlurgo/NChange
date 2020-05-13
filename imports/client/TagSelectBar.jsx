@@ -66,6 +66,13 @@ class TagSelectBar extends Component {
     });
   }
 
+  handleSearchBlur = (e) => {
+    this.setState({
+      searchText: '',
+      searching: false
+    });
+  }
+
   handleSearchClick = () => {
     this.setState({
       searchText: '',
@@ -76,10 +83,18 @@ class TagSelectBar extends Component {
   handleKeyPress = (e) => {
     const { selectedTags, classes } = this.props;
     const { searching, searchText } = this.state;
-    if (e.keyCode != 13) return;
 
-    const new_tags = _.union(selectedTags, [this.camelizeTag(searchText)]);
-    if(searchText) this.props.onTagsChange(new_tags);
+    switch (e.keyCode) {
+      case 27: // esc
+        break;
+      case 13: // enter
+        if(!searchText) break;
+        const new_tags = _.union(selectedTags, [this.camelizeTag(searchText)]);
+        this.props.onTagsChange(new_tags);
+        break;
+      default:
+        return;
+    }
     this.setState({
       searchText: '',
       searching: false
@@ -136,6 +151,7 @@ class TagSelectBar extends Component {
         <div className={classes.input}>
           <TextField value={searchText} onChange={this.handleSearchChange}
             autoFocus onKeyDown={this.handleKeyPress}
+            onBlur={this.handleSearchBlur}
             inputProps={{ 'aria-label': 'naked' }}/>
         </div>
       </div>
