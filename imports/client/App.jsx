@@ -13,6 +13,7 @@ import ItemExplorer from './ItemExplorer';
 import NChangesExplorer from './NChangesExplorer';
 import NThingDetail from './NThingDetail';
 import NChangeDetail from './NChangeDetail';
+import NChangerDetail from './NChangerDetail';
 
 const styles = {
   root: {
@@ -76,6 +77,9 @@ class App extends Component {
                 </Route>
                 <Route exact path="/nchangedetail/:id">
                   <NChangeDetail classes={{root: this.props.classes.section}}/>
+                </Route>
+                <Route exact path="/nchangerdetail/:id">
+                  <NChangerDetail classes={{root: this.props.classes.section}}/>
                 </Route>
                 <Route path="/nthings">
                   <ItemExplorer classes={{root: this.props.classes.section}}/>

@@ -57,9 +57,11 @@ class NChangerAvatar extends Component {
     return (
       <div className={classes.root }>
         <IconButton classes={{root: button_class}}
-          onClick={() => {
-            console.warn('avatar clicked');
-            this.props.onClick(nChanger._id)}}>
+          onClick={(e) => {
+            e.stopPropagation();
+            if (this.props.onClick) this.props.onClick(nChanger._id);
+            else history.push(`/nchangerdetail/${nChanger._id}`);
+          }}>
           {
             user_image ?
               <img src= {user_image} className={pic_classes} /> :

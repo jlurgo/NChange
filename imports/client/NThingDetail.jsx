@@ -80,7 +80,7 @@ class NThingDetail extends Component {
   }
 
   handleClose = () => {
-    this.props.history.push(`/nthings`);
+    this.props.history.goBack();
   }
 
   handleSave = () => {
@@ -92,7 +92,7 @@ class NThingDetail extends Component {
           console.warn(error);
           return
         }
-        this.props.history.push(`/nthings`);
+        this.handleClose();
       });
       return
     }
@@ -101,7 +101,7 @@ class NThingDetail extends Component {
         console.warn(error);
         return
       }
-      this.props.history.push(`/nthings`);
+      this.handleClose();
     });
   }
 

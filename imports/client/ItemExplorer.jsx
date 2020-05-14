@@ -24,27 +24,18 @@ const styles = {
     flexShrink: 1,
     height: '100px',
     overflowY: 'auto',
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: '20px',
-    right: '20px'
   }
 };
 
 // App component - represents the whole app
 class ItemExplorer extends Component {
   state = {
-    filter: {},
+    filter: {owner: {$ne: Meteor.userId()}},
   }
 
   setFilter = (filter) => {
+    filter.owner = {$ne: Meteor.userId()};
     this.setState({filter});
-  }
-
-  addThing = () => {
-    const { history } = this.props;
-    history.push(`/nthingdetail/new`);
   }
 
   render() {
@@ -55,9 +46,6 @@ class ItemExplorer extends Component {
         <ItemList filter={this.state.filter} showItemsDeleteButton
           showItemsNchangeButton
           classes={{root: classes.listRoot}}/>
-        <Fab onClick={this.addThing} className={classes.addButton} color="primary" aria-label="add">
-          <AddIcon />
-        </Fab>
       </div>
     );
   }
