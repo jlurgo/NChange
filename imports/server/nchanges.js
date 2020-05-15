@@ -250,23 +250,19 @@ Meteor.methods({
       }}
     });
   },
-  'nchanges.add_nchanger'(nchange_id, nchanger_mail) {
-    console.warn('adding nchanger to nchange');
+  'nchanges.add_nchanger'(nchange_id, nchanger_id) {
+    console.warn('adding nchanger to nchange', nchanger_id);
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    console.warn('user mail:', nchanger_mail);
-    const user = Meteor.users.findOne({'services.google.email': nchanger_mail});
-    if (!user) throw new Meteor.Error('nchanger-not-found');
-    console.warn('user:', user);
     NChanges.update({_id: nchange_id}, { $push: {
-      nChangers: user._id
+      nChangers: nchanger_id
     }});
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
         timestamp: new Date(), user: this.userId, action: 'addnchanger',
-        addedNchanger: user._id,
+        addedNchanger: nchanger_id,
       }}
     });
   },

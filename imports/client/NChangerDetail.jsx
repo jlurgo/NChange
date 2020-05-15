@@ -67,17 +67,17 @@ class NChangerDetail extends Component {
   render() {
     const { nChanger, inEditMode, loading, classes, history } = this.props;
     if (loading) return <div>Loading...</div>
-
-    const user_image = nChanger && nChanger.services && nChanger.services.google
-     && nChanger.services.google.picture;
-
+    
     return (
       <Paper classes={{ root: classes.root }}>
         <div className={classes.topSection}>
-          <img src= {user_image} className={classes.userImage} />
+          <img src= {nChanger.pic} className={classes.userImage} />
           <div className={classes.userDataContainer}>
             <Typography variant="h4">
-              {`${nChanger.firstName} ${nChanger.lastName}` }
+              {`${nChanger.userName}` }
+            </Typography>
+            <Typography variant="h4">
+              {`${nChanger.fullName}` }
             </Typography>
             { inEditMode &&
               <Button onClick={()=>{Accounts.logout()}} color="secondary">

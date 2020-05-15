@@ -16,6 +16,9 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 
+import NChangerList from './NChangerList';
+
+
 const styles = {
   root: {
 
@@ -29,30 +32,29 @@ const styles = {
 class AddNChangerButton extends Component {
   state = {
     showNchangerSelectDialog: false,
-    nchangerMail: ''
+    searchTerm: ''
   }
 
   openDialog = () => {
     this.setState({showNchangerSelectDialog: true});
   }
 
-  handleMailChange = (e) => {
-    this.setState({nchangerMail: e.target.value});
+  handleSearchChange = (e) => {
+    this.setState({searchTerm: e.target.value});
   }
 
   handleClose = ( ) => {
-    this.setState({showNchangerSelectDialog: false, nchangerMail: ''});
+    this.setState({showNchangerSelectDialog: false, searchTerm: ''});
   }
 
-  handleOk = ( ) => {
-    const { nchangerMail } = this.state;
-    this.props.onSelect(nchangerMail);
+  handleSelect = ( nchanger_id) => {
+    this.props.onSelect(nchanger_id);
     this.handleClose();
   }
 
   render() {
-    const { classes } = this.props;
-    const { nchangerMail, showNchangerSelectDialog } = this.state;
+    const { excludedNChangers, classes } = this.props;
+    const { searchTerm, showNchangerSelectDialog } = this.state;
 
     return (
       <div className={ classes.root }>
@@ -63,21 +65,19 @@ class AddNChangerButton extends Component {
           aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Seleccionar Nchanger</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Ingresá el email del Nchanger
-            </DialogContentText>
-            <TextField value={nchangerMail} onChange={this.handleMailChange}
-              autoFocus margin="dense" id="name" label="Email"
-              type="text" fullWidth/>
+            <TextField value={searchTerm} onChange={this.handleSearchChange}
+              autoFocus margin="dense" id="name" label="nombre de usuario"
+              type="text" variant="outlined" fullWidth/>
+            <NChangerList onSelect={this.handleSelect}
+              filter={{
+                _id: { $nin: excludedNChangers},
+                userName: {
+                  $regex : `.*${searchTerm}.*`,
+                  $options : 'i'
+                }
+              }
+            }/>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancelar
-            </Button>
-            <Button onClick={this.handleOk} color="primary">
-              Ok
-            </Button>
-          </DialogActions>
         </Dialog>
       </div>
     );

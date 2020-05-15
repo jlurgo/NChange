@@ -114,11 +114,11 @@ class NChangeDetail extends Component {
     Meteor.call('nchanges.takeItem', nchange._id, item._id);
   }
 
-  onNchangerSelectedToOffer = (nchanger) => {
+  onNchangerSelectedToOffer = (nchanger_id) => {
     const { nchange } = this.props;
     const { nThingToOffer } = this.state;
     Meteor.call('nchanges.offerItem', nchange._id, this.state.nThingToOffer._id,
-      nchanger);
+      nchanger_id);
     this.closeChooseNchangerDialog();
   }
 
@@ -218,7 +218,7 @@ class NChangeDetail extends Component {
                 }
                 </div>
                 <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-                  onSelect={this.addNChanger}/>
+                  excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>
                 <LeaveNChangeButton nchange_id={nchange._id}
                   classes={{ root: classes.leaveNchangeButton}}/>
               </div>

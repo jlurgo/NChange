@@ -41,9 +41,6 @@ class NChangerAvatar extends Component {
 
     if (loading) return <div>Loading...</div>
 
-    const user_image = nChanger && nChanger.services && nChanger.services.google
-     && nChanger.services.google.picture;
-
     let pic_classes = classes.userImage;
     const is_logged_user = (nChanger._id == Meteor.userId());
 
@@ -63,8 +60,8 @@ class NChangerAvatar extends Component {
             else history.push(`/nchangerdetail/${nChanger._id}`);
           }}>
           {
-            user_image ?
-              <img src= {user_image} className={pic_classes} /> :
+            nChanger.pic ?
+              <img src= {nChanger.pic} className={pic_classes} /> :
               <AccountCircleOutlinedIcon fontSize= 'large'/>
           }
           {
@@ -78,7 +75,12 @@ class NChangerAvatar extends Component {
 }
 
 export default withTracker((props) => {
-  const { nChangerId } = props;
+  const { nChanger, nChangerId } = props;
+  if(nChanger) {
+    return {
+      nChanger: nChanger
+    };
+  }
   Meteor.subscribe('nchangers_list', {_id: nChangerId});
   const n_changer = Meteor.users.findOne({_id: nChangerId});
 

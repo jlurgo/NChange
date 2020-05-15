@@ -7,17 +7,14 @@ export function createBasicData() {
   const usr = {
     jero: {
       _id : "suta8bz7azTiZ3Xor",
-      firstName: "Jero",
-      lastName: "Test",
       createdAt: Date("2020-04-17T22:06:48.391Z"),
+      fullName: "Jerónimo Decol",
+      userName: "jDecol",
+      pic: "https://lh5.googleusercontent.com/-Yh6WB21dICs/AAAAAAAAAAI/AAAAAAAACuo/_Ui3TH-iyLMPvlAy1N5HAAU8rns9SYlLACLcDEAE/s32-c-k-no/photo.jpg",
       'services.password': { // password is "jero"
-          bcrypt: "$2b$10$Z3Pzl4vrKkvbwHXZtLL90eLuvA3whqA6Kjyig56DhhPjYgtCoBqVG"
-        },
-      'services.google': {
-        email: "jero@test.com",
-        name: "Jerónimo D'ecole",
-        picture: "https://lh5.googleusercontent.com/-Yh6WB21dICs/AAAAAAAAAAI/AAAAAAAACuo/_Ui3TH-iyLMPvlAy1N5HAAU8rns9SYlLACLcDEAE/s32-c-k-no/photo.jpg"
+        bcrypt: "$2b$10$Z3Pzl4vrKkvbwHXZtLL90eLuvA3whqA6Kjyig56DhhPjYgtCoBqVG"
       },
+      'services.google': null,
       emails: [
         {
           address: "jero@test.com",
@@ -27,17 +24,14 @@ export function createBasicData() {
     },
     jose: {
       _id: "ZnBYaurWkfXrTx6Mm",
-      firstName: "Jose",
-      lastName: "Test",
       createdAt: Date("2020-04-17T22:07:16.636Z"),
+      fullName: "José Tambucho",
+      userName: "JTambucho",
+      pic: "https://lh5.googleusercontent.com/-EShmwv2lFxs/AAAAAAAAAAI/AAAAAAAAAJc/nlGkmKaubaEwv7MoHmGthS9LoxbQbESMwCLcDEAE/s32-c-k-no/photo.jpg",
       'services.password': { // password is "jose"
         bcrypt: "$2b$10$yWDUKQlhABRumd6rs.MjJ.56mEwOgsm0WXAP7ZLnpTth8P1Ms3opq"
       },
-      'services.google': {
-        email: "jose@test.com",
-        name: "JoZbuyo",
-        picture: "https://lh5.googleusercontent.com/-EShmwv2lFxs/AAAAAAAAAAI/AAAAAAAAAJc/nlGkmKaubaEwv7MoHmGthS9LoxbQbESMwCLcDEAE/s32-c-k-no/photo.jpg"
-      },
+      'services.google': null,
       emails: [
         {
           address: "jose@test.com",
@@ -47,17 +41,14 @@ export function createBasicData() {
     },
     charlo: {
       _id: "oJMQe3eHZmqvrPS2B",
-      firstName: "Charlo",
-      lastName: "Test",
       createdAt: Date("2020-04-17T22:07:36.443Z"),
+      fullName: "Charlo Luerco",
+      userName: "cLuerco",
+      pic: "https://lh3.googleusercontent.com/a-/AOh14GhmCz_DnEclQXc-01e20EbRJbOPWF0PBs-cODyz",
       'services.password': { // password is "charlo"
         bcrypt: "$2b$10$YqOjUBWJ0lZ4waYGMoo8XezDMMgpWbzCCNy0CW9UVW8LEg64sn4Ky"
       },
-      'services.google': {
-        email: "charlo@test.com",
-        name: "Charlo Luerco",
-        picture: "https://lh3.googleusercontent.com/a-/AOh14Gih_3ZabVYBHgpMqQZaTagP9pwXwFcBZhwX_48xUQ=s28-c-k-no"
-      },
+      'services.google': null,
       emails: [
         {
           address: "charlo@test.com",
@@ -223,6 +214,7 @@ export function createBasicData() {
     }
   }
   _.forEach(usr, (nchanger)=>{
+    Meteor.users.update(nchanger._id, {$unset: {'services.google': ''}})
     Meteor.users.upsert(nchanger._id, {$set: nchanger});
   });
   console.warn("test users created ");

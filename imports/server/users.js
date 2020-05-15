@@ -12,8 +12,9 @@ Meteor.publish('nchangers_list', (filter) => {
     filter,
     {
       fields: {
-        'services.google.name': 1,
-        'services.google.picture': 1
+        userName: 1,
+        fullName: 1,
+        pic: 1
       },
       limit: 100
     });
@@ -26,10 +27,9 @@ Meteor.publish('nchanger_detail', (nchanger_id) => {
     {_id: nchanger_id},
     {
       fields: {
-        firstName: 1,
-        lastName: 1,
-        'services.google.name': 1,
-        'services.google.picture': 1
+        fullName: 1,
+        userName: 1,
+        pic: 1
       }
     });
 });
