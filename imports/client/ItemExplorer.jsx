@@ -44,7 +44,7 @@ class ItemExplorer extends Component {
       <div className={classes.root}>
         <ItemFilterBar filter={this.state.filter} onFilterChange={this.setFilter} />
         <ItemList filter={this.state.filter} showItemsDeleteButton
-          showItemsNchangeButton
+          showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
       </div>
     );

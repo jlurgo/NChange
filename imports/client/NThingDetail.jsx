@@ -12,6 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
@@ -125,9 +127,21 @@ class NThingDetail extends Component {
     this.setState(nThing);
   }
 
+  updateStock  = (e) => {
+    const { nThing } = this.state;
+    nThing.stock = e.target.value;;
+    this.setState(nThing);
+  }
+
   updateLongDescription = (e) => {
     const { nThing } = this.state;
     nThing.longDescription = e.target.value;
+    this.setState(nThing);
+  }
+
+  handleStockCheckChange = (e) => {
+    const { nThing } = this.state;
+    nThing.stock = e.target.checked ? 1 : undefined;
     this.setState(nThing);
   }
 
@@ -170,6 +184,26 @@ class NThingDetail extends Component {
           <TagSelectBar selectedTags={nThing.tags}
             onTagsChange={this.updateTags}/> :
           <TagBar tags={nThing.tags}/>
+        }
+        {
+          inEditMode &&
+            <div className={classes.stockSection}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={nThing.stock !== undefined}
+                    onChange={this.handleStockCheckChange}
+                    color="primary"
+                  />
+                }
+                label="Stock"/>
+              { (nThing.stock !== undefined) &&
+                <TextField defaultValue={nThing.stock} type="number"
+                  className={classes.stockInput}
+                  onChange={this.updateStock}
+                />
+              }
+            </div>
         }
         {
           inEditMode ?

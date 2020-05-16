@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { NChanges, Items } from '../shared/collections';
 import { _ } from 'meteor/underscore';
-import { rejectUnloggedUsers } from './utils';
+import { matchObjects, rejectUnloggedUsers } from './utils';
 import { NChangesController } from './NChangesController';
 
 // publications
@@ -92,43 +92,79 @@ Meteor.methods({
       }
     });
   },
-  'nchanges.takeItem'(nchange_id, nthing_id) {
+  'nchanges.takeItem'(nchange_id, nthing_id, qty) {
     console.warn('taking item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    const item = Items.findOne({_id: nthing_id});
-    NChanges.update({_id: nchange_id}, {
-      $push: { detail: {
-        user: this.userId, action: 'take',
-        nThing: item._id, from: item.owner}}
-    });
-    NChanges.update({_id: nchange_id}, {
-      $push: { activity: {
-        timestamp: new Date(), user: this.userId, action: 'take',
-        nThing: item._id, from: item.owner}}
-    });
+    const nthing = Items.findOne({_id: nthing_id});
+    const nchange = NChanges.findOne(nchange_id);
+    const action_query = {
+      nThing: nthing_id, user: this.userId, action: 'take', from: nthing.owner
+    };
+    let current_take_action = _.findWhere(nchange.detail, action_query);
+    if (current_take_action) {
+      NChanges.update({_id: nchange_id, detail: current_take_action },
+        { $set: { "detail.$.qty" : qty }});
+    } else {
+      current_take_action = _.extend({qty: qty }, action_query);
+      NChanges.update({_id: nchange_id }, {
+        $push: {detail: current_take_action }});
+    }
+    const last_message = _.last(nchange.activity);
+    if(matchObjects(last_message, action_query)) {
+      // last message was a take from this user, just update qty and date
+      NChanges.update({_id: nchange_id, activity: last_message },
+        { $set: {
+          "activity.$.qty" : qty,
+          "activity.$.timestamp" : new Date()
+        }});
+    } else {
+      const message = _.extend({timestamp: new Date()}, current_take_action);
+      NChanges.update({_id: nchange_id }, {
+        $push: { activity: message }});
+    }
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
   },
-  'nchanges.offerItem'(nchange_id, nthing_id, receiver_id) {
+  'nchanges.offerItem'(nchange_id, nthing_id, receiver_id, qty) {
     console.warn('offering item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
     rejectIfUserDoesNotOwnTheThing(nthing_id);
 
-    const item = Items.findOne({_id: nthing_id});
-    NChanges.update({_id: nchange_id}, {
-      $push: { detail: {
-        user: receiver_id, action: 'take',
-        nThing: item._id, from: this.userId}}
-    });
-    NChanges.update({_id: nchange_id}, {
-      $push: { activity: {
-        timestamp: new Date(), user: this.userId, action: 'offer',
-        nThing: item._id, to: receiver_id}}
-    });
+    const nthing = Items.findOne({_id: nthing_id});
+    const nchange = NChanges.findOne(nchange_id);
+    const action_query = {
+      nThing: nthing_id, user: receiver_id, action: 'take', from: this.userId
+    };
+    let current_take_action = _.findWhere(nchange.detail, action_query);
+    if (current_take_action) {
+      NChanges.update({_id: nchange_id, detail: current_take_action },
+        { $set: { "detail.$.qty" : qty }});
+    } else {
+      current_take_action = _.extend({qty: qty }, action_query);
+      NChanges.update({_id: nchange_id }, {
+        $push: {detail: current_take_action }});
+    }
+    const last_message = _.last(nchange.activity);
+    const message_query = {
+      nThing: nthing_id, user: this.userId, action: 'offer', to: receiver_id
+    }
+    if(matchObjects(last_message, message_query)) {
+      // last message was a take from this user, just update qty and date
+      NChanges.update({_id: nchange_id, activity: last_message },
+        { $set: {
+          "activity.$.qty" : qty,
+          "activity.$.timestamp" : new Date()
+        }});
+    } else {
+      const message = _.extend({timestamp: new Date(), qty: qty},
+                                message_query);
+      NChanges.update({_id: nchange_id }, {
+        $push: { activity: message }});
+    }
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
@@ -228,11 +264,21 @@ Meteor.methods({
       const take_actions = _.where(nchange.detail, {
         user: nchanger, action: 'take'
       });
-      const taken_items = _.map(take_actions, (action) => {
-        return action.nThing;
+      take_actions.forEach((action)=>{
+        const nthing = Items.findOne({_id: action.nThing },
+          {fields: {_id: 0 }});
+        if(nthing.stock) {
+          const new_nthing = _.extend({}, nthing, {
+            owner: nchanger,
+            stock: action.qty
+          });
+          Items.insert(new_nthing);
+          Items.update({_id: action.nThing },
+            {$set: {stock: nthing.stock - action.qty}});
+        } else {
+          Items.update({_id: action.nThing }, {$set: {owner: nchanger}});
+        }
       });
-      Items.update({_id: { $in: taken_items }}, {$set: { owner: nchanger}},
-        {multi: true});
     })
   },
   'nchanges.dont_approve'(nchange_id) {

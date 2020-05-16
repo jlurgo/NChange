@@ -11,6 +11,8 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { withStyles } from '@material-ui/core/styles';
 
+import NChangerAvatar from './NChangerAvatar';
+
 import { Items } from "../shared/collections";
 
 const styles = {
@@ -22,8 +24,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    overflow: 'hidden',
-    borderRadius: '50%',
     marginLeft: '10px',
     marginRight: '10px'
   },
@@ -32,11 +32,39 @@ const styles = {
     height: '100%',
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'cover'
+    objectFit: 'cover',
+    overflow: 'hidden',
+    borderRadius: '50%',
   },
   icon: {
     color: 'white',
   },
+  nchangerAvatar: {
+    position: 'absolute',
+    top: '0px',
+    right: '-15px',
+    zIndex: '1'
+  },
+  nchangerAvatarImage: {
+    height: '30px',
+    width: '30px',
+  },
+  qtyIndicator: {
+    position: 'absolute',
+    top: '-2px',
+    right: '-7px',
+    height: '20px',
+    width: '20px',
+    backgroundColor: 'red',
+    color: 'white',
+    borderRadius: '50%',
+    textAlign: 'center',
+    paddingTop: '2px',
+    boxSizing: 'border-box',
+    fontSize: 'small',
+    fontWeight: 'bold',
+    zIndex: '2'
+  }
 };
 
 // It's an item being exchanged in an nchange
@@ -70,6 +98,9 @@ class ItemInChange extends Component {
     const { itemInChange, loading, classes } = this.props;
     const { width } = this.state;
 
+    const nchanger_id = (itemInChange.user == Meteor.userId()) ?
+      itemInChange.from : itemInChange.user;
+
     return (loading || !itemInChange.nThing) ?
       <div>Loading</div> :
       <div key={itemInChange.nThing._id} className={classes.root }
@@ -79,6 +110,14 @@ class ItemInChange extends Component {
           alt={itemInChange.nThing.shortDescription} />
         <ResizeDetector handleWidth onResize={this.onResize}
           targetDomEl={this.rootRef.current} />
+        <div className={classes.qtyIndicator}>
+          {itemInChange.qty || 1}
+        </div>
+        <NChangerAvatar
+          classes={{root:classes.nchangerAvatar,
+            userImage:classes.nchangerAvatarImage}}
+          nChangerId={nchanger_id}
+          onClick={()=> {}}/>
       </div>
   }
 }

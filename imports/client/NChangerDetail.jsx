@@ -53,6 +53,7 @@ const styles = {
     padding: '10px',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    flexWrap: 'wrap'
   },
 };
 
@@ -67,18 +68,20 @@ class NChangerDetail extends Component {
   render() {
     const { nChanger, inEditMode, loading, classes, history } = this.props;
     if (loading) return <div>Loading...</div>
-    
+
     return (
       <Paper classes={{ root: classes.root }}>
         <div className={classes.topSection}>
           <img src= {nChanger.pic} className={classes.userImage} />
           <div className={classes.userDataContainer}>
-            <Typography variant="h4">
-              {`${nChanger.userName}` }
-            </Typography>
-            <Typography variant="h4">
-              {`${nChanger.fullName}` }
-            </Typography>
+            <div>
+              <Typography variant="h4">
+                {`${nChanger.userName}` }
+              </Typography>
+              <Typography variant="h5">
+                {`${nChanger.fullName}` }
+              </Typography>
+            </div>
             { inEditMode &&
               <Button onClick={()=>{Accounts.logout()}} color="secondary">
                 log out
@@ -90,7 +93,7 @@ class NChangerDetail extends Component {
           {`Inventario` }
         </Typography>
         <ItemList filter={{owner: nChanger._id}} showItemsDeleteButton={inEditMode}
-          showItemsNchangeButton
+          showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
         { inEditMode &&
           <Fab onClick={this.addThing} className={classes.addButton} color="primary" aria-label="add">

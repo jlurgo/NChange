@@ -8,6 +8,7 @@ import { _ } from 'meteor/underscore';
 
 import { NChanges } from "../shared/collections";
 
+import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import GroupIcon from '@material-ui/icons/Group';
 import IconButton from '@material-ui/core/IconButton';
@@ -22,6 +23,7 @@ import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
 import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
+import ItemInList from './ItemInList';
 import NChangeActivity from './NChangeActivity';
 import SendChatMessageBox from './SendChatMessageBox';
 import LeaveNChangeButton from './LeaveNChangeButton';
@@ -91,6 +93,24 @@ const styles = {
   },
   showAllButtonSelected: {
     background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 40%, rgb(142, 193, 218) 50%, rgba(226,237,2,0) 70%)'
+  },
+  itemChoosingNchangerToOffer: {
+    position: 'relative',
+    flex: '1 1 100px',
+    width: '100%',
+    maxWidth: '400px'
+  },
+  chooseNchangerDialog: {
+    position: 'absolute',
+    backgroundColor: '#808080e8',
+    display: 'flex',
+    top: '13px',
+    left: '9px',
+    right: '0px',
+    zIndex: '10',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    color: 'white'
   }
 };
 
@@ -102,7 +122,7 @@ class NChangeDetail extends Component {
     showChooseNchangerDialog: false
   }
 
-  handleOnItemClick = (item) => {
+  onThingPlusButtonClick = (item) => {
     const { nchange } = this.props;
     if(item.owner == Meteor.userId()) {
       this.setState({
@@ -111,15 +131,27 @@ class NChangeDetail extends Component {
       });
       return;
     }
-    Meteor.call('nchanges.takeItem', nchange._id, item._id);
+
+    const current_take_action = _.findWhere(nchange.detail, {
+      nThing: item._id, user: Meteor.userId(), action: 'take'
+    });
+    const qty = current_take_action ? (current_take_action.qty || 1) + 1 : 1;
+    Meteor.call('nchanges.takeItem', nchange._id, item._id, qty);
   }
 
   onNchangerSelectedToOffer = (nchanger_id) => {
     const { nchange } = this.props;
     const { nThingToOffer } = this.state;
-    Meteor.call('nchanges.offerItem', nchange._id, this.state.nThingToOffer._id,
-      nchanger_id);
-    this.closeChooseNchangerDialog();
+    console.warn('nThingToOffer:', nThingToOffer);
+    console.warn('nchange:', nchange);
+    const current_take_action = _.findWhere(nchange.detail, {
+      nThing: nThingToOffer._id, from: nThingToOffer.owner, action: 'take',
+      user: nchanger_id
+    });
+    console.warn('current_take_action:', current_take_action);
+    const qty = current_take_action ? (current_take_action.qty || 1) + 1 : 1;
+    Meteor.call('nchanges.offerItem', nchange._id, nThingToOffer._id,
+      nchanger_id, qty);
   }
 
   closeChooseNchangerDialog = ( ) => {
@@ -158,7 +190,7 @@ class NChangeDetail extends Component {
 
   render() {
     const { nchange, loading, classes, history } = this.props;
-    const { thingsFilter } = this.state;
+    const { showChooseNchangerDialog, nThingToOffer, thingsFilter } = this.state;
     if (loading) return <div>Loading...</div>
     const user_id = Meteor.userId();
 
@@ -186,13 +218,8 @@ class NChangeDetail extends Component {
 
     const all_taken_things = _.union(user_input_items, user_output_items)
 
-    const new_filter = all_taken_things.length > 0 ?
-      _.extend({}, thingsFilter, {_id: { $nin: all_taken_things}}) :
-      thingsFilter;
-
     return (
       <div className={classes.root }>
-        {this.renderChooseNchangerDialog()}
         <NChangeInList
           key={nchange._id} nchange={nchange}
           classes={{root: classes.detailBar}}
@@ -205,9 +232,16 @@ class NChangeDetail extends Component {
           { !nchange.approved &&
             <div className={classes.thingsSection}>
               <div className={classes.nThings}>
-                <ItemList filter={new_filter}
-                  onItemClick={this.handleOnItemClick}
-                  classes={{root: classes.listRoot}}/>
+                {showChooseNchangerDialog ?
+                  <div className={classes.itemChoosingNchangerToOffer}>
+                    {this.renderChooseNchangerDialog()}
+                    <ItemInList key={nThingToOffer._id} onClick={()=>{}}
+                      item={nThingToOffer}/>
+                  </div> :
+                  <ItemList filter={thingsFilter}
+                    onThingPlusButtonClick={this.onThingPlusButtonClick}
+                    classes={{root: classes.listRoot}}/>
+                }
               </div>
               <div className={classes.nChangers}>
                 {this.renderShowAllButton()}
@@ -259,27 +293,23 @@ class NChangeDetail extends Component {
     const { showChooseNchangerDialog } = this.state;
 
     return (
-      <Dialog open={showChooseNchangerDialog} onClose={this.closeChooseNchangerDialog}
-        aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">¿A quien se lo dás?</DialogTitle>
-        <DialogContent>
-          <div className={classes.nChangers}>
-          {
-            _.without(nchange.nChangers, Meteor.userId()).map((nchanger_id) => {
-              return (
-              <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
-                onClick={this.onNchangerSelectedToOffer}/>
-              );
-            })
-          }
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.closeChooseNchangerDialog} color="primary">
-            Cancelar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <div className={classes.nChangers + ' ' + classes.chooseNchangerDialog}>
+        <Typography noWrap variant="h5">
+          A quien?
+        </Typography>
+        {
+          _.without(nchange.nChangers, Meteor.userId()).map((nchanger_id) => {
+            return (
+            <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
+              onClick={this.onNchangerSelectedToOffer}/>
+            );
+          })
+        }
+        <IconButton onClick={this.closeChooseNchangerDialog}
+          style={{color: 'white'}}>
+          <CloseIcon fontSize= 'small'/>
+        </IconButton>
+      </div>
     );
   }
 }

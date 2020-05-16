@@ -78,7 +78,7 @@ class NChangeActivity extends Component {
         <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
-            quiere 1
+            quiere {entry.qty}
           </Typography>
           <NThingIcon nThingId={entry.nThing}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
@@ -104,7 +104,7 @@ class NChangeActivity extends Component {
         <div className={classes.entry} key={i}>
           <NChangerAvatar nChangerId={entry.user}/>
           <Typography noWrap variant="h6" className={classes.entryText}>
-            ofrece 1
+            ofrece {entry.qty}
           </Typography>
           <NThingIcon nThingId={entry.nThing}/>
           <Typography noWrap variant="h6" className={classes.entryText}>

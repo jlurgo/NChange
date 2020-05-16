@@ -147,7 +147,8 @@ class ItemInList extends Component {
 
   render() {
     const { item, showDeleteButton, showLikeButton, onPlusButtonClick,
-      showNchangeButton, onMinusButtonClick, classes } = this.props;
+      showNewNchangeButton, onMinusButtonClick,
+      classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
@@ -181,7 +182,7 @@ class ItemInList extends Component {
               }
             </IconButton>
           }
-          { !is_my_own_thing && showNchangeButton &&
+          { !is_my_own_thing && showNewNchangeButton &&
             <IconButton className={classes.button + ' ' + classes.minusIcon}
               onClick={this.handleNchangeClick}>
                <SettingsEthernetIcon fontSize= 'small'/>
