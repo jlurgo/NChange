@@ -67,10 +67,10 @@ class TagSelectBar extends Component {
   }
 
   handleSearchBlur = (e) => {
-    this.setState({
-      searchText: '',
-      searching: false
-    });
+    // this.setState({
+    //   searchText: '',
+    //   searching: false
+    // });
   }
 
   handleSearchClick = () => {
