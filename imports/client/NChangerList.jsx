@@ -32,8 +32,8 @@ class NChangerList extends Component {
       <div className={classes.root}>
         {nchangers.map((nchanger) => {
           return (
-            <div className={classes.nChanger}>
-              <NChangerAvatar nChanger={nchanger} key={nchanger._id}
+            <div className={classes.nChanger} key={nchanger._id}>
+              <NChangerAvatar nChanger={nchanger}
                 onClick={onSelect}/>
               <Typography variant="h6">
                 {`${nchanger.userName}` }

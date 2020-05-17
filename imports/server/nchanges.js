@@ -10,7 +10,10 @@ import { NChangesController } from './NChangesController';
 // Only publish nchanges where the user is taking part
 Meteor.publish('user_n_changes', () => {
   const usr = Meteor.userId();
-  return NChanges.find({'nChangers': usr, $or: [{ draft: false },{ creator: usr }]});
+  return NChanges.find(
+    {nChangers: usr, $or: [{ draft: false },{ creator: usr }]},
+    {sort: { lastUpdated: -1 } }
+  );
 });
 
 Meteor.publish('nchange_detail', (nchange_id) => {
@@ -78,6 +81,7 @@ Meteor.methods({
       ],
       creator: this.userId,
       createdAt: new Date(),
+      lastUpdated: new Date(),
     });
   },
   'nchanges.send'(nchange_id) {
@@ -88,7 +92,8 @@ Meteor.methods({
 
     NChanges.update({_id: nchange_id}, {
       $set: {
-        draft: false
+        draft: false,
+        lastUpdated: new Date(),
       }
     });
   },
@@ -126,6 +131,7 @@ Meteor.methods({
         $push: { activity: message }});
     }
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.offerItem'(nchange_id, nthing_id, receiver_id, qty) {
     console.warn('offering item');
@@ -166,6 +172,7 @@ Meteor.methods({
         $push: { activity: message }});
     }
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.releaseItem'(nchange_id, nthing_id) {
     console.warn('releasing item');
@@ -189,6 +196,7 @@ Meteor.methods({
         nThing: item._id, from: item.owner}}
     });
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.retrieveItem'(nchange_id, nthing_id, taker_id) {
     console.warn('retrieving item');
@@ -210,6 +218,7 @@ Meteor.methods({
         nThing: item._id, from: taker_id}}
     });
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.approve'(nchange_id) {
     console.warn('approving nchange');
@@ -241,6 +250,7 @@ Meteor.methods({
         timestamp: new Date(), user: this.userId, action: 'approve',
       }}
     });
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
     // check if all participants approved the nchange
     // getting the nchange again to get latest
     nchange = NChanges.findOne({_id: nchange_id});
@@ -280,6 +290,7 @@ Meteor.methods({
         }
       });
     })
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.dont_approve'(nchange_id) {
     console.warn('not approving nchange');
@@ -295,6 +306,7 @@ Meteor.methods({
         timestamp: new Date(), user: this.userId, action: 'unapprove',
       }}
     });
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.add_nchanger'(nchange_id, nchanger_id) {
     console.warn('adding nchanger to nchange', nchanger_id);
@@ -311,6 +323,7 @@ Meteor.methods({
         addedNchanger: nchanger_id,
       }}
     });
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.new_chat_message'(nchange_id, message) {
     console.warn('adding message to nchange');
@@ -323,6 +336,7 @@ Meteor.methods({
         message: message
       }}
     });
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
   'nchanges.leave'(nchange_id) {
     console.warn('leaving nchange');
@@ -349,5 +363,6 @@ Meteor.methods({
     NChanges.update({_id: nchange_id}, { $pull: {
       detail: { from: this.userId }
     }});
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
 });

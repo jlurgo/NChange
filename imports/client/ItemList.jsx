@@ -31,7 +31,8 @@ class ItemList extends Component {
           onMinusButtonClick={this.props.onThingMinusButtonClick}
           showDeleteButton={this.props.showItemsDeleteButton}
           showLikeButton={this.props.showItemsLikeButton}
-          showNewNchangeButton={this.props.showItemsNewNchangeButton}/>
+          showNewNchangeButton={this.props.showItemsNewNchangeButton}
+          getStock={this.props.getItemStock}/>
       );
     });
   }

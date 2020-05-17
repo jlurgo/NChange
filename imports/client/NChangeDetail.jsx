@@ -6,6 +6,8 @@ import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 
+import NChange from "../shared/NChange"
+
 import { NChanges } from "../shared/collections";
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -125,42 +127,47 @@ class NChangeDetail extends Component {
   onThingPlusButtonClick = (item) => {
     const { nchange } = this.props;
     if(item.owner == Meteor.userId()) {
-      this.setState({
-        showChooseNchangerDialog: true,
-        nThingToOffer: item
+      // offer
+      const other_nchangers = _.filter(nchange.nChangers, (nchanger) => {
+        return nchanger !== Meteor.userId();
       });
+      if(other_nchangers.length>1){
+        this.setState({
+          showChooseNchangerDialog: true,
+          nThingToOffer: item
+        });
+      } else {
+        this.offerThingToNchanger(other_nchangers[0], item);
+      }
       return;
     }
 
-    const current_take_action = _.findWhere(nchange.detail, {
-      nThing: item._id, user: Meteor.userId(), action: 'take'
-    });
-    const qty = current_take_action ? (current_take_action.qty || 1) + 1 : 1;
+    // take
+    const qty = nchange.thingQtyTakenBy(item._id, Meteor.userId()) + 1;
     Meteor.call('nchanges.takeItem', nchange._id, item._id, qty);
   }
 
   onNchangerSelectedToOffer = (nchanger_id) => {
-    const { nchange } = this.props;
     const { nThingToOffer } = this.state;
-    console.warn('nThingToOffer:', nThingToOffer);
-    console.warn('nchange:', nchange);
+    this.offerThingToNchanger(nchanger_id, nThingToOffer);
+  }
+
+  offerThingToNchanger = (nchanger_id, item) => {
+    const { nchange } = this.props;
     const current_take_action = _.findWhere(nchange.detail, {
-      nThing: nThingToOffer._id, from: nThingToOffer.owner, action: 'take',
-      user: nchanger_id
+      nThing: item._id, from: item.owner, action: 'take', user: nchanger_id
     });
-    console.warn('current_take_action:', current_take_action);
     const qty = current_take_action ? (current_take_action.qty || 1) + 1 : 1;
-    Meteor.call('nchanges.offerItem', nchange._id, nThingToOffer._id,
-      nchanger_id, qty);
+    Meteor.call('nchanges.offerItem', nchange._id, item._id, nchanger_id, qty);
   }
 
   closeChooseNchangerDialog = ( ) => {
     this.setState({showChooseNchangerDialog: false, nchangerMail: ''});
   }
 
-  addNChanger = (nchanger_mail) => {
+  addNChanger = (nchanger_id) => {
     const { nchange } = this.props;
-    Meteor.call('nchanges.add_nchanger', nchange._id, nchanger_mail,
+    Meteor.call('nchanges.add_nchanger', nchange._id, nchanger_id,
       (err, res) => {
         if (err) alert('nChanger no encontrado');
       });
@@ -188,6 +195,11 @@ class NChangeDetail extends Component {
     });
   }
 
+  getItemStock = (nthing) => {
+    const { nchange } = this.props;
+    return nchange.getRemainingThingStock(nthing);
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
     const { showChooseNchangerDialog, nThingToOffer, thingsFilter } = this.state;
@@ -204,19 +216,10 @@ class NChangeDetail extends Component {
       return <div>Loading...</div>
     }
 
-    // we filter out from the available things list the items already visible
-    // in the top bar
-    const user_input_items = _.chain(nchange.detail)
-      .where({ action: 'take', user: Meteor.userId()})
-      .pluck('nThing')
-      .value();
-
-    const user_output_items = _.chain(nchange.detail)
-      .where({ action: 'take', from: Meteor.userId()})
-      .pluck('nThing')
-      .value();
-
-    const all_taken_things = _.union(user_input_items, user_output_items)
+    // if an item gets out of stock we close the choose nchanger mini Dialog
+    nThingToOffer && showChooseNchangerDialog &&
+      nchange.getRemainingThingStock(nThingToOffer) <= 0 &&
+      this.closeChooseNchangerDialog();
 
     return (
       <div className={classes.root }>
@@ -236,9 +239,9 @@ class NChangeDetail extends Component {
                   <div className={classes.itemChoosingNchangerToOffer}>
                     {this.renderChooseNchangerDialog()}
                     <ItemInList key={nThingToOffer._id} onClick={()=>{}}
-                      item={nThingToOffer}/>
+                      item={nThingToOffer} getItemStock={this.getItemStock}/>
                   </div> :
-                  <ItemList filter={thingsFilter}
+                  <ItemList filter={thingsFilter} getItemStock={this.getItemStock}
                     onThingPlusButtonClick={this.onThingPlusButtonClick}
                     classes={{root: classes.listRoot}}/>
                 }
@@ -263,13 +266,13 @@ class NChangeDetail extends Component {
     );
   }
 
-  renderNChanger = (n_changer_id) => {
+  renderNChanger = (nchanger_id) => {
     const { nchange, classes } = this.props;
-    const approved_by_user = _.contains(nchange.approvals, n_changer_id);
     return (
-      <NChangerAvatar nChangerId={n_changer_id} key={n_changer_id}
-        thumbsUp={approved_by_user} onClick={this.handleNchangerClick}
-        selected={this.state.selectedNchanger == n_changer_id}/>
+      <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
+        thumbsUp={nchange.approvedBy(nchanger_id)}
+        onClick={this.handleNchangerClick}
+        selected={this.state.selectedNchanger == nchanger_id}/>
     );
   }
 
@@ -320,7 +323,7 @@ export default withRouter(withTracker((props) => {
   if (!nchange_sub.ready()) return { loading: true };
   const n_change = NChanges.findOne({_id: nchange_id});
   return {
-    nchange: n_change
+    nchange: new NChange(n_change)
   };
 })
 (withStyles(styles)(NChangeDetail)));

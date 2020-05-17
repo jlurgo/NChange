@@ -28,7 +28,8 @@ const styles = {
     margin: '5px',
     cursor: 'pointer',
     overflow: 'hidden',
-    width: '100%'
+    width: '100%',
+    maxWidth: '400px'
   },
   pic: {
     height: '100%',
@@ -57,10 +58,10 @@ const styles = {
     marginBottom: '5px'
   },
   plusIcon: {
-    backgroundColor: '#41b53f'
+    backgroundColor: '#41b53f !important'
   },
   minusIcon: {
-    backgroundColor: '#41b53f'
+    backgroundColor: '#41b53f !important'
   },
   tagBarRoot: {
     flexWrap: 'wrap-reverse',
@@ -76,12 +77,28 @@ const styles = {
     color: 'red',
   },
   removeThingIcon: {
-    backgroundColor: '#ff8a12',
+    backgroundColor: '#ff8a12 !important',
   },
   ownerAvatar: {
     position: 'absolute',
     left: '2px',
     top: '5px'
+  },
+  stockIndicator: {
+    position: 'absolute',
+    top: '-2px',
+    right: '-7px',
+    height: '20px',
+    width: '20px',
+    backgroundColor: 'red',
+    color: 'white',
+    borderRadius: '50%',
+    textAlign: 'center',
+    paddingTop: '2px',
+    boxSizing: 'border-box',
+    fontSize: 'small',
+    fontWeight: 'bold',
+    zIndex: '2'
   }
 };
 
@@ -110,7 +127,7 @@ class ItemInList extends Component {
 
   handlePlusClick = (e) => {
     const { onPlusButtonClick, item } = this.props;
-    onPlusButtonClick(item);
+    this.getStock() > 0 && onPlusButtonClick(item);
     e.stopPropagation();
   }
 
@@ -123,16 +140,17 @@ class ItemInList extends Component {
   handleNchangeClick = (e) => {
     const { item, history } = this.props;
     e.stopPropagation();
-    Meteor.call('nchanges.new', item.owner,
-      [{user: Meteor.userId(), action: 'take',
-        nThing: item._id, from: item.owner}],
-      (error, nchange_id) => {
-        if (error) {
-          console.warn(error);
-          return;
-        }
-        history.push(`/nchangedetail/${nchange_id}`);
-      });
+    this.getStock() > 0 &&
+      Meteor.call('nchanges.new', item.owner,
+        [{user: Meteor.userId(), action: 'take',
+          nThing: item._id, from: item.owner}],
+        (error, nchange_id) => {
+          if (error) {
+            console.warn(error);
+            return;
+          }
+          history.push(`/nchangedetail/${nchange_id}`);
+        });
 
   }
 
@@ -145,11 +163,17 @@ class ItemInList extends Component {
     this.props.history.push(`/nthingdetail/${item._id}`)
   }
 
+  getStock = () => {
+    const { item, getStock } = this.props;
+    return getStock ? getStock(item) : (item.stock === undefined) ? 1 : item.stock;
+  }
+
   render() {
     const { item, showDeleteButton, showLikeButton, onPlusButtonClick,
       showNewNchangeButton, onMinusButtonClick,
       classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
+
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
         <img src={item.pics[0]} alt={item.shortDescription}
@@ -182,7 +206,7 @@ class ItemInList extends Component {
               }
             </IconButton>
           }
-          { !is_my_own_thing && showNewNchangeButton &&
+          { !is_my_own_thing && showNewNchangeButton && this.getStock() > 0 &&
             <IconButton className={classes.button + ' ' + classes.minusIcon}
               onClick={this.handleNchangeClick}>
                <SettingsEthernetIcon fontSize= 'small'/>
@@ -194,6 +218,9 @@ class ItemInList extends Component {
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
+          <div className={classes.stockIndicator}>
+            {this.getStock()}
+          </div>
         </div>
       </Paper>
     );

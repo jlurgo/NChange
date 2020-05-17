@@ -30,11 +30,18 @@ const styles = {
 // App component - represents the whole app
 class ItemExplorer extends Component {
   state = {
-    filter: {owner: {$ne: Meteor.userId()}},
+    filter: {owner: {$ne: Meteor.userId()}, $or: [
+      {stock: {$gt: 0}},
+      {stock: {$exists: false}}
+    ]},
   }
 
   setFilter = (filter) => {
     filter.owner = {$ne: Meteor.userId()};
+    $or: [
+      {stock: {$gt: 0}},
+      {stock: {$exists: false}}
+    ]
     this.setState({filter});
   }
 
@@ -42,7 +49,8 @@ class ItemExplorer extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <ItemFilterBar filter={this.state.filter} onFilterChange={this.setFilter} />
+        <ItemFilterBar filter={this.state.filter}
+          onFilterChange={this.setFilter} />
         <ItemList filter={this.state.filter} showItemsDeleteButton
           showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>

@@ -28,6 +28,7 @@ export const NChangesController = {
 
     nchanges_using_thing.forEach((nchange_id) => {
       this.retractAllApprovalsFromNchange(nchange_id);
+      NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
     });
   },
   retractAllApprovalsFromNchange(nchange_id) {
@@ -44,5 +45,6 @@ export const NChangesController = {
         }}
       });
     });
+    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   }
 }

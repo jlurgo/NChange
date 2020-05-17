@@ -127,7 +127,7 @@ class NChangeInList extends Component {
     });
   }
 
-  renderOkButton = (user_gives_and_receives) => {
+  renderOkButton = () => {
     const { nchange, classes } = this.props;
 
     if (nchange.draft)
@@ -144,8 +144,7 @@ class NChangeInList extends Component {
         </IconButton>
       )
 
-    const approved_by_me = _.contains(nchange.approvals, Meteor.userId());
-    if (approved_by_me)
+    if (nchange.approvedBy(Meteor.userId()))
       return (
         <IconButton className={classes.okButton + ' ' + classes.approvedOkButton}
           onClick={this.dontApproveNchange}>
@@ -153,7 +152,8 @@ class NChangeInList extends Component {
         </IconButton>
       )
     return (
-      <IconButton className={classes.okButton} disabled={!user_gives_and_receives}
+      <IconButton className={classes.okButton}
+        disabled={!nchange.nchangerCanApprove(Meteor.userId())}
         onClick={this.approveNchange}>
           <ThumbUpOutlinedIcon fontSize='large'/>
       </IconButton>
@@ -162,14 +162,7 @@ class NChangeInList extends Component {
 
   render() {
     const { nchange, classes, history } = this.props;
-    const user_input_items = _.where(nchange.detail,
-      { action: 'take', user: Meteor.userId()});
-
-    const user_output_items = _.where(nchange.detail,
-      { action: 'take', from: Meteor.userId()});
-
-    const user_gives_and_receives =
-      user_input_items.length > 0 && user_output_items.length > 0
+    const user_id = Meteor.userId();
 
     return (
       <Paper className={classes.root} onClick={()=>{
@@ -177,13 +170,15 @@ class NChangeInList extends Component {
         }} >
           <div className={classes.itemList}>
             <div className={classes.animatedBackground}></div>
-            { this.renderItems(user_output_items, this.onOutputItemClick) }
+            { this.renderItems(nchange.getNchangerOutputThings(user_id),
+                this.onOutputItemClick) }
           </div>
-          { this.renderOkButton(user_gives_and_receives) }
+          { this.renderOkButton() }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>
-            { this.renderItems(user_input_items, this.onInputItemClick) }
+            { this.renderItems(nchange.getNchangerInputThings(user_id),
+                this.onInputItemClick) }
           </div>
       </Paper>
     );

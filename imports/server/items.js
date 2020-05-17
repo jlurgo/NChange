@@ -7,9 +7,9 @@ import { NChangesController } from './NChangesController';
 // returns limited data from items to show on filtered lists
 Meteor.publish('filtered_items_summary', (filter, limit) => {
   const item_for_list_projection = {
-    shortDescription: 1,
     pics: { $slice: 1 }, // return only first picture
     tags: 1,
+    stock: 1,
     owner: 1,
     likedBy: 1, // TODO: only return user like {$elemMatch: {userId : this.userId}}
   };

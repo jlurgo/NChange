@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom'
 
 import { NChanges } from "../shared/collections";
+import NChange from "../shared/NChange"
 
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -63,6 +64,7 @@ export default withTracker((props) => {
   const nchanges_sub = Meteor.subscribe('user_n_changes');
   return {
     loading: !nchanges_sub.ready(),
-    nChanges: NChanges.find().fetch(),
+    nChanges: NChanges.find({}, {sort: { lastUpdated: -1 } }).map((nchange)=>{
+      return new NChange(nchange)}),
   };
 })(withStyles(styles)(withRouter(NChangesExplorer)));
