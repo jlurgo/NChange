@@ -20,6 +20,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle'
+import SwipeableViews from 'react-swipeable-views';
+import ResizeDetector  from 'react-resize-detector';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
@@ -46,18 +48,22 @@ const styles = {
     display: 'flex',
     overflowX: 'auto'
   },
+  slider: {
+    flex: '1 1 auto',
+    display: 'flex',
+  },
   historySection: {
-    flex: '1 1 50%',
+    flex: '1 1 30%',
     display: 'flex',
     flexDirection: 'column',
     marginRight: '5px',
-    maxWidth: '500px',
+    height: '100%'
   },
   thingsSection: {
-    flex: '1 1 50%',
+    flex: '1 1 70%',
     display: 'flex',
     flexDirection: 'column',
-    marginLeft: '5px'
+    height: '100%',
   },
   nChangers: {
     flex: '0 0 auto',
@@ -123,6 +129,11 @@ class NChangeDetail extends Component {
     selectedNchanger: 'all',
     showChooseNchangerDialog: false
   }
+
+  constructor() {
+    super();
+    this.rootRef = React.createRef();
+  };
 
   onThingPlusButtonClick = (item) => {
     const { nchange } = this.props;
@@ -200,9 +211,17 @@ class NChangeDetail extends Component {
     return nchange.getRemainingThingStock(nthing);
   }
 
+  onResize = (width) => {
+    this.setState({
+      width
+    })
+  }
+
   render() {
     const { nchange, loading, classes, history } = this.props;
-    const { showChooseNchangerDialog, nThingToOffer, thingsFilter } = this.state;
+    const { showChooseNchangerDialog, nThingToOffer, thingsFilter,
+      width } = this.state;
+
     if (loading) return <div>Loading...</div>
     const user_id = Meteor.userId();
 
@@ -221,46 +240,70 @@ class NChangeDetail extends Component {
       nchange.getRemainingThingStock(nThingToOffer) <= 0 &&
       this.closeChooseNchangerDialog();
 
+    const use_slider = width<800;
     return (
-      <div className={classes.root }>
+      <div className={classes.root } ref={this.rootRef}>
         <NChangeInList
           key={nchange._id} nchange={nchange}
           classes={{root: classes.detailBar}}
         />
         <div className={classes.bottomSection}>
-          <div className={classes.historySection}>
-            <NChangeActivity activity={nchange.activity}/>
-            <SendChatMessageBox onSend={this.sendMessage}/>
-          </div>
-          { !nchange.approved &&
-            <div className={classes.thingsSection}>
-              <div className={classes.nThings}>
-                {showChooseNchangerDialog ?
-                  <div className={classes.itemChoosingNchangerToOffer}>
-                    {this.renderChooseNchangerDialog()}
-                    <ItemInList key={nThingToOffer._id} onClick={()=>{}}
-                      item={nThingToOffer} getItemStock={this.getItemStock}/>
-                  </div> :
-                  <ItemList filter={thingsFilter} getItemStock={this.getItemStock}
-                    onThingPlusButtonClick={this.onThingPlusButtonClick}
-                    classes={{root: classes.listRoot}}/>
-                }
-              </div>
-              <div className={classes.nChangers}>
-                {this.renderShowAllButton()}
-                {this.renderNChanger(user_id)}
-                <div className={classes.nChangersList}>
-                {
-                  _.without(nchange.nChangers, user_id).map(this.renderNChanger)
-                }
-                </div>
-                <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-                  excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>
-                <LeaveNChangeButton nchange_id={nchange._id}
-                  classes={{ root: classes.leaveNchangeButton}}/>
-              </div>
-            </div>
+          {use_slider && <SwipeableViews slideClassName={classes.slider}
+            containerStyle={{ flex: '1 1 auto'}}
+            style={{ display: 'flex', flexDirection: 'column'}} enableMouseEvents>
+              {this.renderActivitySection()}
+              {!nchange.approved && this.renderThingsSection()}
+            </SwipeableViews>
           }
+          {!use_slider && this.renderActivitySection()}
+          {!use_slider && !nchange.approved && this.renderThingsSection()}
+        </div>
+        <ResizeDetector handleWidth onResize={this.onResize}
+          targetDomEl={this.rootRef.current} />
+      </div>
+    );
+  }
+
+  renderActivitySection = () => {
+    const { nchange, classes } = this.props;
+    return (
+      <div className={classes.historySection}>
+        <NChangeActivity activity={nchange.activity}/>
+        <SendChatMessageBox onSend={this.sendMessage}/>
+      </div>
+    );
+  }
+
+  renderThingsSection = () => {
+    const { nchange, loading, classes, history } = this.props;
+    const { showChooseNchangerDialog, nThingToOffer, thingsFilter } = this.state;
+    const user_id = Meteor.userId();
+    return (
+      <div className={classes.thingsSection}>
+        <div className={classes.nThings}>
+          {showChooseNchangerDialog ?
+            <div className={classes.itemChoosingNchangerToOffer}>
+              {this.renderChooseNchangerDialog()}
+              <ItemInList key={nThingToOffer._id} onClick={()=>{}}
+                item={nThingToOffer} getItemStock={this.getItemStock}/>
+            </div> :
+            <ItemList filter={thingsFilter} getItemStock={this.getItemStock}
+              onThingPlusButtonClick={this.onThingPlusButtonClick}
+              classes={{root: classes.listRoot}}/>
+          }
+        </div>
+        <div className={classes.nChangers}>
+          {this.renderShowAllButton()}
+          {this.renderNChanger(user_id)}
+          <div className={classes.nChangersList}>
+          {
+            _.without(nchange.nChangers, user_id).map(this.renderNChanger)
+          }
+          </div>
+          <AddNChangerButton classes={{ root: classes.addNchangerButton}}
+            excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>
+          <LeaveNChangeButton nchange_id={nchange._id}
+            classes={{ root: classes.leaveNchangeButton}}/>
         </div>
       </div>
     );
