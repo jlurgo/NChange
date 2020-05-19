@@ -28,8 +28,8 @@ const styles = {
     margin: '5px',
     cursor: 'pointer',
     overflow: 'hidden',
-    width: '100%',
-    maxWidth: '400px'
+    maxWidth: '44vw',
+    maxHeight: '44vw',
   },
   pic: {
     height: '100%',

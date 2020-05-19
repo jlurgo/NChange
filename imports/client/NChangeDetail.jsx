@@ -12,7 +12,7 @@ import { NChanges } from "../shared/collections";
 
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import GroupIcon from '@material-ui/icons/Group';
+import ChatIcon from '@material-ui/icons/Chat';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -119,14 +119,21 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     color: 'white'
-  }
+  },
+  showActivityButton: {
+    position: 'absolute',
+    bottom: '10px',
+    left: '10px',
+    backgroundColor: 'yellow !important'
+  },
 };
 
 //
 class NChangeDetail extends Component {
 
   state = {
-    selectedNchanger: Meteor.userId()
+    selectedNchanger: Meteor.userId(),
+    showActivity: false
   }
 
   constructor() {
@@ -169,18 +176,23 @@ class NChangeDetail extends Component {
 
   onResize = (width) => {
     this.setState({
-      width
+      smallScreen: width<800
+    })
+  }
+
+  showActivity = () => {
+    this.setState({
+      showActivity: !this.state.showActivity
     })
   }
 
   render() {
     const { nchange, loading, classes, history } = this.props;
-    const { selectedNchanger, showChooseNchangerDialog, nThingToOffer,
-       width } = this.state;
+    const { selectedNchanger, smallScreen, showActivity } = this.state;
 
     if (loading) return <div>Loading...</div>
     const user_id = Meteor.userId();
-    const use_slider = width<800;
+
     return (
       <div className={classes.root } ref={this.rootRef}>
         {this.renderNchangersSection()}
@@ -189,15 +201,13 @@ class NChangeDetail extends Component {
           classes={{root: classes.detailBar}}
         />
         <div className={classes.bottomSection}>
-          {use_slider && <SwipeableViews slideClassName={classes.slider}
-            containerStyle={{ flex: '1 1 auto'}}
-            style={{ display: 'flex', flexDirection: 'column'}} enableMouseEvents>
-              {this.renderActivitySection()}
-              {!nchange.approved && this.renderThingsSection()}
-            </SwipeableViews>
+          {(!smallScreen || showActivity) && this.renderActivitySection()}
+          {(!smallScreen || !showActivity) && !nchange.approved && this.renderThingsSection()}
+          { smallScreen &&
+            <IconButton className={classes.showActivityButton} onClick={this.showActivity}>
+              <ChatIcon fontSize= 'large'/>
+            </IconButton>
           }
-          {!use_slider && this.renderActivitySection()}
-          {!use_slider && !nchange.approved && this.renderThingsSection()}
         </div>
         <ResizeDetector handleWidth onResize={this.onResize}
           targetDomEl={this.rootRef.current} />
