@@ -126,13 +126,13 @@ class NChangeInList extends Component {
   }
 
   renderItems(items, onClick) {
-    const { nchange, nChangerId, classes } = this.props;
+    const { nchange, nChangerId, enableItemRemoving, classes } = this.props;
     return items.map((item) => {
       return (
         <ItemInChange
           key={item.nThing}
           itemInChange={item}
-          onClick={onClick}
+          onClick={enableItemRemoving && onClick}
           nChangerId={nChangerId}
         />
       );
@@ -182,7 +182,7 @@ class NChangeInList extends Component {
   }
 
   render() {
-    const { nchange, nChangerId, classes, history } = this.props;
+    const { nchange, nChangerId, classes, history, enableItemRemoving } = this.props;
 
     return (
       <Paper className={classes.root} onClick={()=>{

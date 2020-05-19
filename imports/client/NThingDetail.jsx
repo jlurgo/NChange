@@ -29,7 +29,7 @@ const styles = {
   },
   picsSection: {
     position: 'relative',
-    flex: '0 0 50vh',
+    flex: '0 0 30vh',
     flexWrap: 'nowrap',
     alignItems: 'stretch',
     overflowX: 'auto',

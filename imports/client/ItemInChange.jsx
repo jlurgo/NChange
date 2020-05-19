@@ -85,7 +85,7 @@ class ItemInChange extends Component {
 
   handleClick = (e) => {
     this.props.onClick && this.props.onClick(this.props.itemInChange.nThing._id);
-    e.stopPropagation();
+    this.props.onClick && e.stopPropagation();
   };
 
   onResize = (width) => {

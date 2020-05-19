@@ -198,7 +198,7 @@ class NChangeDetail extends Component {
         {this.renderNchangersSection()}
         <NChangeInList
           nChangerId={selectedNchanger} key={nchange._id} nchange={nchange}
-          classes={{root: classes.detailBar}}
+          classes={{root: classes.detailBar}} enableItemRemoving={true}
         />
         <div className={classes.bottomSection}>
           {(!smallScreen || showActivity) && this.renderActivitySection()}

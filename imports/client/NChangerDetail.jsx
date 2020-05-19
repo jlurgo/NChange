@@ -22,7 +22,6 @@ const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '5px',
   },
   listRoot: {
     flexGrow: 1,
@@ -37,7 +36,8 @@ const styles = {
   },
   topSection: {
     flex: '0 0 auto',
-    display: 'flex'
+    display: 'flex',
+    padding: '5px'
   },
   userImage: {
     height: '300px',
