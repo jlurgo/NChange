@@ -97,7 +97,7 @@ Meteor.methods({
       }
     });
   },
-  'nchanges.takeItem'(nchange_id, nthing_id, qty) {
+  'nchanges.takeItem'(nchange_id, nchanger_id, nthing_id, qty) {
     console.warn('taking item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
@@ -106,7 +106,7 @@ Meteor.methods({
     const nthing = Items.findOne({_id: nthing_id});
     const nchange = NChanges.findOne(nchange_id);
     const action_query = {
-      nThing: nthing_id, user: this.userId, action: 'take', from: nthing.owner
+      nThing: nthing_id, user: nchanger_id, action: 'take', from: nthing.owner
     };
     let current_take_action = _.findWhere(nchange.detail, action_query);
     if (current_take_action) {
@@ -133,88 +133,41 @@ Meteor.methods({
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
     NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
-  'nchanges.offerItem'(nchange_id, nthing_id, receiver_id, qty) {
-    console.warn('offering item');
-    rejectUnloggedUsers();
-    rejectUsersNotInNChange(nchange_id);
-    rejectOperationOnFinishedNchange(nchange_id);
-    rejectIfUserDoesNotOwnTheThing(nthing_id);
-
-    const nthing = Items.findOne({_id: nthing_id});
-    const nchange = NChanges.findOne(nchange_id);
-    const action_query = {
-      nThing: nthing_id, user: receiver_id, action: 'take', from: this.userId
-    };
-    let current_take_action = _.findWhere(nchange.detail, action_query);
-    if (current_take_action) {
-      NChanges.update({_id: nchange_id, detail: current_take_action },
-        { $set: { "detail.$.qty" : qty }});
-    } else {
-      current_take_action = _.extend({qty: qty }, action_query);
-      NChanges.update({_id: nchange_id }, {
-        $push: {detail: current_take_action }});
-    }
-    const last_message = _.last(nchange.activity);
-    const message_query = {
-      nThing: nthing_id, user: this.userId, action: 'offer', to: receiver_id
-    }
-    if(matchObjects(last_message, message_query)) {
-      // last message was a take from this user, just update qty and date
-      NChanges.update({_id: nchange_id, activity: last_message },
-        { $set: {
-          "activity.$.qty" : qty,
-          "activity.$.timestamp" : new Date()
-        }});
-    } else {
-      const message = _.extend({timestamp: new Date(), qty: qty},
-                                message_query);
-      NChanges.update({_id: nchange_id }, {
-        $push: { activity: message }});
-    }
-    NChangesController.retractAllApprovalsFromNchange(nchange_id);
-    NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
-  },
-  'nchanges.releaseItem'(nchange_id, nthing_id) {
+  'nchanges.releaseItem'(nchange_id, nchanger_id, nthing_id) {
     console.warn('releasing item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    //TODO: check that the user is the one taking the item to avoid releasing
-    // others takings
-
-    const user_id = Meteor.userId();
     const item = Items.findOne({_id: nthing_id});
     NChanges.update({_id: nchange_id}, {
       $pull: { detail: {
-        user: user_id, action: 'take',
+        user: nchanger_id, action: 'take',
         nThing: item._id, from: item.owner}},
     });
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
-        timestamp: new Date(), user: this.userId, action: 'release',
+        timestamp: new Date(), user: nchanger_id, action: 'release',
         nThing: item._id, from: item.owner}}
     });
     NChangesController.retractAllApprovalsFromNchange(nchange_id);
     NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   },
-  'nchanges.retrieveItem'(nchange_id, nthing_id, taker_id) {
+  'nchanges.retrieveItem'(nchange_id, nchanger_id, nthing_id, taker_id) {
     console.warn('retrieving item');
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
-    rejectIfUserDoesNotOwnTheThing(nthing_id);
 
-    const user_id = Meteor.userId();
     const item = Items.findOne({_id: nthing_id});
     NChanges.update({_id: nchange_id}, {
       $pull: { detail: {
         user: taker_id, action: 'take',
-        nThing: nthing_id, from: this.userId}},
+        nThing: nthing_id, from: nchanger_id}},
     });
     NChanges.update({_id: nchange_id}, {
       $push: { activity: {
-        timestamp: new Date(), user: this.userId, action: 'retrieve',
+        timestamp: new Date(), user: nchanger_id, action: 'retrieve',
         nThing: item._id, from: taker_id}}
     });
     NChangesController.retractAllApprovalsFromNchange(nchange_id);

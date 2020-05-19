@@ -95,10 +95,10 @@ class ItemInChange extends Component {
   };
 
   render() {
-    const { itemInChange, loading, classes } = this.props;
+    const { nChangerId, itemInChange, loading, classes } = this.props;
     const { width } = this.state;
 
-    const nchanger_id = (itemInChange.user == Meteor.userId()) ?
+    const nchanger_id = (itemInChange.user == nChangerId) ?
       itemInChange.from : itemInChange.user;
 
     return (loading || !itemInChange.nThing) ?

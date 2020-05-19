@@ -72,6 +72,16 @@ const styles = {
     marginRight: '-30px',
     zIndex: '1'
   },
+  otherUserAvatar: {
+    flex: '0 0 auto',
+    marginLeft: '-42px',
+    marginRight: '-42px',
+    zIndex: '1'
+  },
+  otherUserAvatarImage: {
+    height: '60px',
+    width: '60px',
+  },
   approvedOkButton: {
     color: '#41b53f',
   },
@@ -100,35 +110,46 @@ class NChangeInList extends Component {
   }
 
   onInputItemClick = (item_id) => {
-    const { nchange } = this.props;
+    const { nchange, nChangerId } = this.props;
     const take_action = _.where(nchange.detail,
-      { action: 'take', nThing: item_id, user: Meteor.userId()});
-    Meteor.call('nchanges.releaseItem', this.props.nchange._id, item_id,
+      { action: 'take', nThing: item_id, user: nChangerId});
+    Meteor.call('nchanges.releaseItem', nchange._id, nChangerId, item_id,
       take_action.from);
   }
 
   onOutputItemClick = (item_id) => {
-    const { nchange } = this.props;
+    const { nchange, nChangerId } = this.props;
     const take_action = _.findWhere(nchange.detail,
-      { action: 'take', nThing: item_id, from: Meteor.userId()});
-    Meteor.call('nchanges.retrieveItem', this.props.nchange._id, item_id,
+      { action: 'take', nThing: item_id, from: nChangerId});
+    Meteor.call('nchanges.retrieveItem', nchange._id, nChangerId, item_id,
       take_action.user);
   }
 
   renderItems(items, onClick) {
+    const { nchange, nChangerId, classes } = this.props;
     return items.map((item) => {
       return (
         <ItemInChange
           key={item.nThing}
           itemInChange={item}
           onClick={onClick}
+          nChangerId={nChangerId}
         />
       );
     });
   }
 
-  renderOkButton = () => {
-    const { nchange, classes } = this.props;
+  renderMiddleButton = () => {
+    const { nchange, nChangerId, classes } = this.props;
+    console.warn(nChangerId);
+    console.warn(Meteor.userId());
+    if (nChangerId !== Meteor.userId())
+      return (
+        <NChangerAvatar
+          classes={{root:classes.otherUserAvatar,
+            userImage:classes.otherUserAvatarImage}}
+          nChangerId={nChangerId}/>
+      )
 
     if (nchange.draft)
       return (
@@ -161,8 +182,7 @@ class NChangeInList extends Component {
   }
 
   render() {
-    const { nchange, classes, history } = this.props;
-    const user_id = Meteor.userId();
+    const { nchange, nChangerId, classes, history } = this.props;
 
     return (
       <Paper className={classes.root} onClick={()=>{
@@ -170,14 +190,14 @@ class NChangeInList extends Component {
         }} >
           <div className={classes.itemList}>
             <div className={classes.animatedBackground}></div>
-            { this.renderItems(nchange.getNchangerOutputThings(user_id),
-                this.onOutputItemClick) }
+            { this.renderItems(nchange.getNchangerOutputThings(nChangerId),
+                this.onOutputItemClick, nChangerId) }
           </div>
-          { this.renderOkButton() }
+          { this.renderMiddleButton() }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>
-            { this.renderItems(nchange.getNchangerInputThings(user_id),
+            { this.renderItems(nchange.getNchangerInputThings(nChangerId),
                 this.onInputItemClick) }
           </div>
       </Paper>

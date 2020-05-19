@@ -46,4 +46,8 @@ export default class NChange {
   nchangerCanApprove = (nchanger_id) => {
     return this.nChangerGivesAndReceives(nchanger_id);
   }
+
+  getOtherNchangersId = (nchanger_id) => {
+    return _.without(this.nChangers, nchanger_id);
+  }
 }
