@@ -201,9 +201,10 @@ class NChangeDetail extends Component {
           classes={{root: classes.detailBar}} enableItemRemoving={true}
         />
         <div className={classes.bottomSection}>
-          {(!smallScreen || showActivity) && this.renderActivitySection()}
+          {(!smallScreen || showActivity || nchange.approved) &&
+            this.renderActivitySection()}
           {(!smallScreen || !showActivity) && !nchange.approved && this.renderThingsSection()}
-          { smallScreen &&
+          { smallScreen && !nchange.approved &&
             <IconButton className={classes.showActivityButton} onClick={this.showActivity}>
               <ChatIcon fontSize= 'large'/>
             </IconButton>
@@ -247,13 +248,19 @@ class NChangeDetail extends Component {
     const { nchange, classes } = this.props;
     return (
       <div className={classes.nChangers}>
+        {this.renderNChanger(Meteor.userId())}
         <div className={classes.nChangersList}>
-          { nchange.nChangers.map(this.renderNChanger) }
+          {
+          _.without(nchange.nChangers, Meteor.userId())
+            .map(this.renderNChanger)
+          }
         </div>
-        <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-          excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>
-        <LeaveNChangeButton nchange_id={nchange._id}
-          classes={{ root: classes.leaveNchangeButton}}/>
+        {!nchange.approved &&
+          <AddNChangerButton classes={{ root: classes.addNchangerButton}}
+          excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>}
+        {!nchange.approved &&
+          <LeaveNChangeButton nchange_id={nchange._id}
+          classes={{ root: classes.leaveNchangeButton}}/>}
       </div>
     );
   }
