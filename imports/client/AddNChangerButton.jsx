@@ -59,7 +59,7 @@ class AddNChangerButton extends Component {
     return (
       <div className={ classes.root }>
         <IconButton className={classes.button} onClick={this.openDialog}>
-          <AddIcon fontSize= 'large'/>
+          <AddIcon fontSize= 'small'/>
         </IconButton>
         <Dialog open={showNchangerSelectDialog} onClose={this.handleClose}
           aria-labelledby="form-dialog-title">

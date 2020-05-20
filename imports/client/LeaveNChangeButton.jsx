@@ -54,7 +54,7 @@ class LeaveNChangeButton extends Component {
     return (
       <div className={ classes.root }>
         <IconButton className={classes.button} onClick={this.openDialog}>
-          <ExitToAppIcon fontSize= 'large'/>
+          <ExitToAppIcon fontSize= 'small'/>
         </IconButton>
         <Dialog open={showConfirmDialog} onClose={this.closeDialog}
           aria-labelledby="form-dialog-title">
