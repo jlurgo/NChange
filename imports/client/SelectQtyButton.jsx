@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
 
+import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Slider from '@material-ui/core/Slider';
@@ -13,46 +14,33 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = {
   root: {
-    position: 'relative'
+    position: 'relative',
+    height: '44px',
+    width: '44px',
+    backgroundColor: '#41b53f',
+    borderRadius: '50%',
+    display: 'flex'
   },
   disabledButton: {
     backgroundColor: 'gray !important',
     cursor: 'unset'
   },
   sliderContainer: {
-    position: 'absolute',
-    top: '35px',
-    left: '-1px',
-    bottom: '35px',
-    right: '0px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: '7px',
+    marginLeft: '-3px',
   },
   rail: {
     width: '0px !important'
   },
-  button: {
-    width: '40px',
-    height: '35px',
-    display: 'flex',
-    justifyContent: 'center',
-    boxSizing: 'border-box'
+  thumb: {
+    width: '20px',
+    height: '20px'
   },
   plus: {
-    alignItems: 'start',
-    paddingTop: '5px',
     backgroundColor: '#41b53f',
-    borderRadius: '15px 15px 0px 0px'
   },
   minus: {
-    alignItems: 'flex-end',
-    paddingBottom: '5px',
     backgroundColor: '#41b53f',
-    borderRadius: '0px 0px 15px 15px',
-  },
-  disabled: {
-    backgroundColor: 'gray',
   },
   selectingValue: {
     position: 'absolute',
@@ -150,40 +138,56 @@ class SelectQtyButton extends Component {
       onPlusClick, onMinusClick } = this.props;
     const { valueInSlide, selectingValue, valueBeingSelected } = this.state;
 
-    let plus_button_classes = classes.button + ' ' + classes.plus;
-    if (nChange.getRemainingThingStock(nThing) <= 0)
-      plus_button_classes += ' ' + classes.disabled;
+    const plus_button_classes = classes.button + ' ' + classes.plus;
+    const minus_button_classes = classes.button + ' ' + classes.minus;
 
-    let minus_button_classes = classes.button + ' ' + classes.minus;
-      if (nChange.thingQtyTakenBy(nThing._id, nChangerId) <= 0)
-        minus_button_classes += ' ' + classes.disabled;
-    //console.warn('render', this.getValueFromSlide(valueInSlide));
+    let show_plus_button = false;
+    let show_minus_button = false;
+    let show_slider = false;
+
+    if (nChange.getRemainingThingStock(nThing, nChangerId) == 1) {
+      if (nChange.thingQtyTakenBy(nThing._id, nChangerId) == 0) {
+        show_plus_button = true;
+      } else if (nChange.thingQtyTakenBy(nThing._id, nChangerId) == 1) {
+        show_minus_button = true;
+      }
+    }
+
+    if (nChange.getRemainingThingStock(nThing, nChangerId) > 1)
+      show_slider = true;
+
     return (
       <div className={classes.root } onClick={(e) => {e.stopPropagation();}}>
-        <div className={plus_button_classes}
-          onClick={this.handlePlusClick}>
-          <AddIcon fontSize= 'small'/>
-        </div>
-        <div className={classes.sliderContainer}
-          style={selectingValue ? {top: '0px', bottom: '0px'} : {}}>
-          <Slider
-            orientation="vertical"
-            value={valueInSlide}
-            track={false}
-            classes={{rail:classes.rail}}
-            onChangeCommitted={this.handleValueSelected}
-            onChange={this.handleValueSelecting}
-          />
-        </div>
+        { show_plus_button &&
+          <IconButton className={plus_button_classes}
+            onClick={this.handlePlusClick}>
+            <AddIcon fontSize= 'small'/>
+          </IconButton>
+        }
+        { show_minus_button &&
+          <IconButton className={minus_button_classes}
+            onClick={this.handleMinusClick}>
+            <RemoveIcon fontSize= 'small'/>
+          </IconButton>
+        }
+        { show_slider &&
+          <div className={classes.sliderContainer}>
+            <Slider
+              orientation="vertical"
+              value={valueInSlide}
+              track={false}
+              classes={{rail:classes.rail, thumb: classes.thumb}}
+              onChangeCommitted={this.handleValueSelected}
+              onChange={this.handleValueSelecting}
+            />
+          </div>
+        }
         { selectingValue &&
           <Typography noWrap variant="h5" className={classes.selectingValue}>
             {valueBeingSelected ? valueBeingSelected : 0}
           </Typography>
         }
-        <div className={minus_button_classes}
-          onClick={this.handleMinusClick}>
-          <RemoveIcon fontSize= 'small'/>
-        </div>
+
       </div>
     );
   }
