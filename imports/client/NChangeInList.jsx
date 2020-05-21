@@ -141,8 +141,6 @@ class NChangeInList extends Component {
 
   renderMiddleButton = () => {
     const { nchange, nChangerId, classes } = this.props;
-    console.warn(nChangerId);
-    console.warn(Meteor.userId());
     if (nChangerId !== Meteor.userId())
       return (
         <NChangerAvatar

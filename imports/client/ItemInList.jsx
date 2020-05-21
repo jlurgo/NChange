@@ -10,15 +10,15 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+
 import TagBar from "./TagBar";
 import NChangerAvatar from "./NChangerAvatar";
+import SelectQtyButton from "./SelectQtyButton";
 
 import { Items } from "../shared/collections";
+
 
 const styles = {
   root: {
@@ -47,7 +47,7 @@ const styles = {
   },
   buttonBar: {
     position: 'absolute',
-    top: '5px',
+    bottom: '5px',
     right: '5px',
     display: 'flex',
     flexDirection: 'column',
@@ -56,12 +56,6 @@ const styles = {
   },
   button: {
     marginBottom: '5px'
-  },
-  plusIcon: {
-    backgroundColor: '#41b53f !important'
-  },
-  minusIcon: {
-    backgroundColor: '#41b53f !important'
   },
   tagBarRoot: {
     flexWrap: 'wrap-reverse',
@@ -86,15 +80,15 @@ const styles = {
   },
   stockIndicator: {
     position: 'absolute',
-    top: '-2px',
-    right: '-7px',
-    height: '20px',
-    width: '20px',
+    top: '8px',
+    right: '8px',
+    height: '30px',
+    width: '30px',
     backgroundColor: 'red',
     color: 'white',
     borderRadius: '50%',
     textAlign: 'center',
-    paddingTop: '2px',
+    paddingTop: '7px',
     boxSizing: 'border-box',
     fontSize: 'small',
     fontWeight: 'bold',
@@ -125,18 +119,6 @@ class ItemInList extends Component {
     e.stopPropagation();
   }
 
-  handlePlusClick = (e) => {
-    const { onPlusButtonClick, item } = this.props;
-    this.getStock() > 0 && onPlusButtonClick(item);
-    e.stopPropagation();
-  }
-
-  handleMinusClick = (e) => {
-    const { onMinusButtonClick, item } = this.props;
-    onMinusButtonClick(item);
-    e.stopPropagation();
-  }
-
   handleNchangeClick = (e) => {
     const { item, history } = this.props;
     e.stopPropagation();
@@ -164,14 +146,15 @@ class ItemInList extends Component {
   }
 
   getStock = () => {
-    const { item, getStock } = this.props;
-    return getStock ? getStock(item) : (item.stock === undefined) ? 1 : item.stock;
+    const { item, nChange } = this.props;
+    return nChange ?
+      nChange.getRemainingThingStock(item) :
+      (item.stock === undefined) ? 1 : item.stock;
   }
 
   render() {
-    const { item, showDeleteButton, showLikeButton, onPlusButtonClick,
-      showNewNchangeButton, onMinusButtonClick,
-      classes } = this.props;
+    const { item, showDeleteButton, showLikeButton, showNewNchangeButton,
+      showQtyButton, nChange, nChangerId, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
 
     return (
@@ -183,25 +166,21 @@ class ItemInList extends Component {
         </div>
         <NChangerAvatar nChangerId={item.owner}
           classes={{root: classes.ownerAvatar}}/>
+        <div className={classes.stockIndicator}>
+          {this.getStock()}
+        </div>
         <div className={classes.buttonBar}>
-          { onPlusButtonClick &&
-            <IconButton className={classes.button + ' ' + classes.plusIcon}
-              onClick={this.handlePlusClick}>
-               <AddIcon fontSize= 'small'/>
-            </IconButton>
-          }
-          { onMinusButtonClick &&
-            <IconButton className={classes.button + ' ' + classes.minusIcon}
-              onClick={this.handleMinusClick}>
-               <RemoveIcon fontSize= 'small'/>
-            </IconButton>
+          { showQtyButton &&
+            <SelectQtyButton nThing={item} nChange={nChange}
+              nChangerId={nChangerId}/>
           }
           { !is_my_own_thing && showLikeButton &&
             <IconButton aria-label={`star ${item.shortDescription}`}
               className={classes.button + ' ' + classes.likeIcon}
               onClick={this.handleLikeButtonClick}>
               {this.itemliked() ?
-                <FavoriteIcon className={classes.likeIconLiked} fontSize= 'small'/> :
+                <FavoriteIcon className={classes.likeIconLiked}
+                  fontSize= 'small'/> :
                 <FavoriteBorderIcon fontSize= 'small'/>
               }
             </IconButton>
@@ -218,9 +197,6 @@ class ItemInList extends Component {
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
-          <div className={classes.stockIndicator}>
-            {this.getStock()}
-          </div>
         </div>
       </Paper>
     );

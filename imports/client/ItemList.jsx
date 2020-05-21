@@ -22,29 +22,28 @@ const styles = {
 // ItemList component - receives a list of items and dislays them
 class ItemList extends Component {
 
-  renderItems() {
-    return this.props.items.map((item) => {
-      return (
-        <ItemInList key={item._id} item={item}
-          onClick={this.props.onItemClick}
-          onPlusButtonClick={this.props.onThingPlusButtonClick}
-          onMinusButtonClick={this.props.onThingMinusButtonClick}
-          showDeleteButton={this.props.showItemsDeleteButton}
-          showLikeButton={this.props.showItemsLikeButton}
-          showNewNchangeButton={this.props.showItemsNewNchangeButton}
-          getStock={this.props.getItemStock}/>
-      );
-    });
-  }
-
   render() {
     const { classes, loading } = this.props;
 
     if(loading) return <LoadingPane/>
     return (
       <div className={classes.root}>
-        { this.renderItems() }
+        { this.renderThings() }
       </div>
+    );
+  }
+
+  renderThings = () => {
+    return this.props.items.map(this.props.renderThing || this.renderThing);
+  }
+
+  renderThing = (nthing) => {
+    return (
+      <ItemInList key={nthing._id} item={nthing}
+        onClick={this.props.onItemClick}
+        showDeleteButton={this.props.showItemsDeleteButton}
+        showLikeButton={this.props.showItemsLikeButton}
+        showNewNchangeButton={this.props.showItemsNewNchangeButton}/>
     );
   }
 }

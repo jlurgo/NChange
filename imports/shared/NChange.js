@@ -7,9 +7,10 @@ export default class NChange {
     _.extend(this, nchange);
   }
 
-  getRemainingThingStock = (nthing) => {
+  getRemainingThingStock = (nthing, nchanger_to_exclude) => {
     const remaining_stock = _.chain(this.detail)
       .where({action: 'take', nThing: nthing._id})
+      .filter((a) => { return a.user !== nchanger_to_exclude})
       .reduce((memo_stock, action) => {
         return (memo_stock - (action.qty || 1));
       }, nthing.stock === undefined ? 1 : nthing.stock)

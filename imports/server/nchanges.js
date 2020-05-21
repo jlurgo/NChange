@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { NChanges, Items } from '../shared/collections';
+import NChange from "../shared/NChange"
 import { _ } from 'meteor/underscore';
 import { matchObjects, rejectUnloggedUsers } from './utils';
 import { NChangesController } from './NChangesController';
@@ -104,7 +105,14 @@ Meteor.methods({
     rejectOperationOnFinishedNchange(nchange_id);
 
     const nthing = Items.findOne({_id: nthing_id});
-    const nchange = NChanges.findOne(nchange_id);
+    const nchange = new NChange(NChanges.findOne(nchange_id));
+    
+    if(qty<=0) {
+      Meteor.call('nchanges.releaseItem', nchange._id, nchanger_id, nthing._id,
+        nthing.owner);
+      return;
+    }
+
     const action_query = {
       nThing: nthing_id, user: nchanger_id, action: 'take', from: nthing.owner
     };

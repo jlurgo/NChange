@@ -11,7 +11,6 @@ import NChange from "../shared/NChange"
 import { NChanges } from "../shared/collections";
 
 import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
 import ChatIcon from '@material-ui/icons/Chat';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
@@ -141,18 +140,9 @@ class NChangeDetail extends Component {
     this.rootRef = React.createRef();
   };
 
-  onThingPlusButtonClick = (item) => {
-    const { nchange } = this.props;
-    const { selectedNchanger } = this.state;
-    // take
-    const qty = nchange.thingQtyTakenBy(item._id, selectedNchanger) + 1;
-    Meteor.call('nchanges.takeItem', nchange._id, selectedNchanger,
-      item._id, qty);
-  }
-
   addNChanger = (nchanger_id) => {
-    const { nchange } = this.props;
-    Meteor.call('nchanges.add_nchanger', nchange._id, nchanger_id,
+    const { nChange } = this.props;
+    Meteor.call('nchanges.add_nchanger', nChange._id, nchanger_id,
       (err, res) => {
         if (err) alert('nChanger no encontrado');
       });
@@ -163,15 +153,9 @@ class NChangeDetail extends Component {
   }
 
   handleNchangerClick = (nchanger_id) => {
-    const { nchange } = this.props;
     this.setState({
       selectedNchanger: nchanger_id
     });
-  }
-
-  getItemStock = (nthing) => {
-    const { nchange } = this.props;
-    return nchange.getRemainingThingStock(nthing);
   }
 
   onResize = (width) => {
@@ -187,7 +171,7 @@ class NChangeDetail extends Component {
   }
 
   render() {
-    const { nchange, loading, classes, history } = this.props;
+    const { nChange, loading, classes, history } = this.props;
     const { selectedNchanger, smallScreen, showActivity } = this.state;
 
     if (loading) return <div>Loading...</div>
@@ -197,14 +181,14 @@ class NChangeDetail extends Component {
       <div className={classes.root } ref={this.rootRef}>
         {this.renderNchangersSection()}
         <NChangeInList
-          nChangerId={selectedNchanger} key={nchange._id} nchange={nchange}
+          nChangerId={selectedNchanger} key={nChange._id} nchange={nChange}
           classes={{root: classes.detailBar}} enableItemRemoving={true}
         />
         <div className={classes.bottomSection}>
-          {(!smallScreen || showActivity || nchange.approved) &&
+          {(!smallScreen || showActivity || nChange.approved) &&
             this.renderActivitySection()}
-          {(!smallScreen || !showActivity) && !nchange.approved && this.renderThingsSection()}
-          { smallScreen && !nchange.approved &&
+          {(!smallScreen || !showActivity) && !nChange.approved && this.renderThingsSection()}
+          { smallScreen && !nChange.approved &&
             <IconButton className={classes.showActivityButton} onClick={this.showActivity}>
               <ChatIcon fontSize= 'large'/>
             </IconButton>
@@ -217,59 +201,68 @@ class NChangeDetail extends Component {
   }
 
   renderActivitySection = () => {
-    const { nchange, classes } = this.props;
+    const { nChange, classes } = this.props;
     return (
       <div className={classes.historySection}>
-        <NChangeActivity activity={nchange.activity}/>
+        <NChangeActivity activity={nChange.activity}/>
         <SendChatMessageBox onSend={this.sendMessage}/>
       </div>
     );
   }
 
   renderThingsSection = () => {
-    const { nchange, loading, classes, history } = this.props;
-    const { selectedNchanger, showChooseNchangerDialog, nThingToOffer } = this.state;
+    const { nChange, classes } = this.props;
+    const { selectedNchanger } = this.state;
     const user_id = Meteor.userId();
     const thingsFilter = { owner:
-      { $in: nchange.getOtherNchangersId(selectedNchanger)}
+      { $in: nChange.getOtherNchangersId(selectedNchanger)}
     }
     return (
       <div className={classes.thingsSection}>
         <div className={classes.nThings}>
-          <ItemList filter={thingsFilter} getItemStock={this.getItemStock}
-            onThingPlusButtonClick={this.onThingPlusButtonClick}
+          <ItemList filter={thingsFilter} renderThing={this.renderThingInList}
             classes={{root: classes.listRoot}}/>
         </div>
       </div>
     );
   }
 
+  renderThingInList = (nthing) => {
+    const { nChange, classes } = this.props;
+    const { selectedNchanger } = this.state;
+
+    return (
+      <ItemInList key={nthing._id} item={nthing}
+        showQtyButton={true} nChange={nChange} nChangerId={selectedNchanger}/>
+    );
+  }
+
   renderNchangersSection = () => {
-    const { nchange, classes } = this.props;
+    const { nChange, classes } = this.props;
     return (
       <div className={classes.nChangers}>
         {this.renderNChanger(Meteor.userId())}
         <div className={classes.nChangersList}>
           {
-          _.without(nchange.nChangers, Meteor.userId())
+          _.without(nChange.nChangers, Meteor.userId())
             .map(this.renderNChanger)
           }
         </div>
-        {!nchange.approved &&
+        {!nChange.approved &&
           <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-          excludedNChangers={nchange.nChangers} onSelect={this.addNChanger}/>}
-        {!nchange.approved &&
-          <LeaveNChangeButton nchange_id={nchange._id}
+          excludedNChangers={nChange.nChangers} onSelect={this.addNChanger}/>}
+        {!nChange.approved &&
+          <LeaveNChangeButton nchange_id={nChange._id}
           classes={{ root: classes.leaveNchangeButton}}/>}
       </div>
     );
   }
 
   renderNChanger = (nchanger_id) => {
-    const { nchange, classes } = this.props;
+    const { nChange, classes } = this.props;
     return (
       <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
-        thumbsUp={nchange.approvedBy(nchanger_id)}
+        thumbsUp={nChange.approvedBy(nchanger_id)}
         onClick={this.handleNchangerClick}
         selected={this.state.selectedNchanger == nchanger_id}/>
     );
@@ -282,7 +275,7 @@ export default withRouter(withTracker((props) => {
   if (!nchange_sub.ready()) return { loading: true };
   const n_change = NChanges.findOne({_id: nchange_id});
   return {
-    nchange: new NChange(n_change)
+    nChange: new NChange(n_change)
   };
 })
 (withStyles(styles)(NChangeDetail)));
