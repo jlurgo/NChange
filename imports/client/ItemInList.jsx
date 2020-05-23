@@ -97,7 +97,7 @@ const styles = {
 };
 
 
-// Item component - represents a single todo item
+// Item component - represents a single item
 class ItemInList extends Component {
 
   handleLikeButtonClick = (e) => {

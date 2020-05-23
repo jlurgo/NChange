@@ -25,9 +25,30 @@ const styles = {
     backgroundColor: 'gray !important',
     cursor: 'unset'
   },
+  sliderButtonOverlay: {
+    position: 'absolute',
+    top: '0px',
+    right: '0px',
+    left: '0px',
+    bottom: '0px',
+    backgroundColor: '#41b53f',
+    borderRadius: '50%',
+    zIndex: '1'
+  },
   sliderContainer: {
-    marginTop: '7px',
-    marginLeft: '-3px',
+    position: 'absolute',
+    top: '-30px',
+    right: '0px',
+    left: '0px',
+    bottom: '-30px',
+  },
+  slider: {
+    position: 'absolute',
+    top: '4px',
+    right: '0px',
+    left: '17px',
+    bottom: '0px',
+    padding: '0px !important'
   },
   rail: {
     width: '0px !important'
@@ -44,9 +65,39 @@ const styles = {
   },
   selectingValue: {
     position: 'absolute',
-    right: '110%',
-    top: '25%'
-  }
+    top: '12%',
+    right: '79%',
+    backgroundColor: 'gray',
+    color: 'white',
+    paddingLeft: '15px',
+    paddingTop: '2px',
+    paddingBottom: '0px',
+    paddingRight: '15px',
+    zIndex: '0',
+    borderRadius: '17px 0px 0px 17px',
+  },
+  microPlusIcon: {
+    position: 'absolute',
+    top: '-8px',
+    right: '14px',
+    height: '16px',
+    width: '16px',
+    textAlign: 'center',
+    backgroundColor: 'gray',
+    color: 'white',
+    borderRadius: '50%',
+  },
+  microMinusIcon: {
+    position: 'absolute',
+    bottom: '-8px',
+    right: '14px',
+    height: '16px',
+    width: '16px',
+    textAlign: 'center',
+    backgroundColor: 'gray',
+    color: 'white',
+    borderRadius: '50%',
+  },
 };
 
 //
@@ -80,63 +131,87 @@ class SelectQtyButton extends Component {
   handleValueSelected = (e, v) => {
     const { nThing, nChange, nChangerId } = this.props;
     const { valueBeingSelected } = this.state;
+
+    e.stopPropagation();
     this.lastTimeout && Meteor.clearTimeout(this.lastTimeout);
     this.setState({
       selectingValue: false,
       valueInSlide: 50
     });
-    e.stopPropagation();
     Meteor.call('nchanges.takeItem', nChange._id, nChangerId,
       nThing._id, valueBeingSelected);
   }
 
-  getValueFromSlide = (slide_value) => {
+  getValueFromSlide = (slide_value, new_middle_value) => {
     const { nThing, nChange, nChangerId } = this.props;
-    const { valueBeingSelected } = this.state;
-    const ret_value = (valueBeingSelected ? valueBeingSelected : 0) +
-      (
-        Math.floor(Math.abs(slide_value - 50)/10) *
-        ((slide_value >= 50) ? 1 : -1)
-      )
+    const { valueBeingSelected, middleValue } = this.state;
+
+    const slide_value_centered = slide_value - 50;
+    const ret_value = middleValue + Math.floor((slide_value_centered / 5));
     if (ret_value < 0) return 0;
     const remaining_stock = nChange.getRemainingThingStock(nThing, nChangerId);
     if (ret_value > remaining_stock) return remaining_stock;
     return ret_value;
   }
 
-  updateValueBeingSelectedPeriodically = (period) => {
+  updateMiddleValuePeriodically = () => {
+    const { nThing, nChange, nChangerId } = this.props;
+    const { valueBeingSelected, middleValue, valueInSlide } = this.state;
+    this.lastTimeout && Meteor.clearTimeout(this.lastTimeout);
     if (!this.state.selectingValue) return
+    const remaining_stock = nChange.getRemainingThingStock(nThing, nChangerId);
+    let increment = Math.sign(valueInSlide - 50);
+    if((Math.abs(valueInSlide - 50) - 40) == 10) increment = increment * 5;
+
+    let new_middle_value = parseInt(middleValue) + increment;
+    if(new_middle_value <= 0) new_middle_value = 0;
+    if(new_middle_value >= remaining_stock) new_middle_value = remaining_stock;
+
+    let new_value_being_selected = this.getValueFromSlide(valueInSlide, new_middle_value)
+    if (new_value_being_selected <= 0) new_value_being_selected = 0;
+    if (new_value_being_selected >= remaining_stock) new_value_being_selected = remaining_stock;
+
+    const new_state = {
+      middleValue: new_middle_value,
+      valueBeingSelected: new_value_being_selected,
+    }
+    this.setState(new_state);
+
+    const new_interval = ((Math.abs(valueInSlide - 50) - 40) == 10) ? 30 : 200;
+
     this.lastTimeout = Meteor.setTimeout(() => {
-      this.setState({
-        valueBeingSelected: this.getValueFromSlide(this.state.valueInSlide)
-      });
-      this.updateValueBeingSelectedPeriodically();
-    }, 50 * (6 - Math.floor(Math.abs(this.state.valueInSlide - 50)/10)));
-    //Math.floor(Math.abs(slide_value - 50)/10) Math.pow((50 - Math.abs(this.state.valueInSlide - 50)) + 1, 1.5));
+      this.updateMiddleValuePeriodically();
+    }, new_interval);
   }
 
   handleValueSelecting = _.throttle((e, new_slide_value) => {
     const { nThing, nChange, nChangerId } = this.props;
     const { selectingValue, valueBeingSelected } = this.state;
     if (!selectingValue) {
+      const actual_take = nChange.thingQtyTakenBy(nThing._id, nChangerId);
       this.setState({
         selectingValue: true,
-        valueBeingSelected: nChange.thingQtyTakenBy(nThing._id, nChangerId)
+        valueBeingSelected: actual_take,
+        middleValue: actual_take,
       });
       return;
     }
-    this.lastTimeout && Meteor.clearTimeout(this.lastTimeout);
-    this.updateValueBeingSelectedPeriodically();
-    this.setState({
+    const new_state = {
       valueInSlide: new_slide_value,
-      valueBeingSelected: this.getValueFromSlide(new_slide_value)
-    });
-  }, 200);
+    };
+    if(Math.abs(new_slide_value - 50) >= 40){
+      this.updateMiddleValuePeriodically();
+    } else {
+      this.lastTimeout && Meteor.clearTimeout(this.lastTimeout);
+      new_state.valueBeingSelected = this.getValueFromSlide(new_slide_value);
+    }
+    this.setState(new_state);
+  }, 50, {trailing: false});
 
   render() {
     const { nThing, nChange, nChangerId, classes,
       onPlusClick, onMinusClick } = this.props;
-    const { valueInSlide, selectingValue, valueBeingSelected } = this.state;
+    const { valueInSlide, selectingValue, valueBeingSelected, middleValue } = this.state;
 
     const plus_button_classes = classes.button + ' ' + classes.plus;
     const minus_button_classes = classes.button + ' ' + classes.minus;
@@ -171,15 +246,19 @@ class SelectQtyButton extends Component {
           </IconButton>
         }
         { show_slider &&
-          <div className={classes.sliderContainer}>
-            <Slider
-              orientation="vertical"
-              value={valueInSlide}
-              track={false}
-              classes={{rail:classes.rail, thumb: classes.thumb}}
-              onChangeCommitted={this.handleValueSelected}
-              onChange={this.handleValueSelecting}
-            />
+          <div className={classes.sliderButtonOverlay}>
+            <div className={classes.microPlusIcon}> + </div>
+            <div className={classes.microMinusIcon}> - </div>
+            <div className={classes.sliderContainer}>
+              <Slider
+                orientation="vertical"
+                value={valueInSlide}
+                track={false}
+                classes={{root: classes.slider, rail:classes.rail, thumb: classes.thumb}}
+                onChangeCommitted={this.handleValueSelected}
+                onChange={this.handleValueSelecting}
+              />
+            </div>
           </div>
         }
         { selectingValue &&
@@ -193,6 +272,4 @@ class SelectQtyButton extends Component {
   }
 }
 
-// <Joystick managerListener={this.handleJoystickCreate}
-// containerStyle={styles.joystick} joyOptions={joy_opts}/>
 export default withStyles(styles)(SelectQtyButton);
