@@ -28,7 +28,6 @@ const styles = {
     margin: '5px',
     cursor: 'pointer',
     overflow: 'hidden',
-    maxWidth: '44vw',
     maxHeight: '44vw',
   },
   pic: {
@@ -69,6 +68,9 @@ const styles = {
   },
   likeIconLiked: {
     color: 'red',
+  },
+  newNchangeButton: {
+    backgroundColor: 'green'
   },
   removeThingIcon: {
     backgroundColor: '#ff8a12 !important',
@@ -186,7 +188,7 @@ class ItemInList extends Component {
             </IconButton>
           }
           { !is_my_own_thing && showNewNchangeButton && this.getStock() > 0 &&
-            <IconButton className={classes.button + ' ' + classes.minusIcon}
+            <IconButton className={classes.button + ' ' + classes.newNchangeButton}
               onClick={this.handleNchangeClick}>
                <SettingsEthernetIcon fontSize= 'small'/>
             </IconButton>
