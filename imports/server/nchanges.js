@@ -106,7 +106,7 @@ Meteor.methods({
 
     const nthing = Items.findOne({_id: nthing_id});
     const nchange = new NChange(NChanges.findOne(nchange_id));
-    
+
     if(qty<=0) {
       Meteor.call('nchanges.releaseItem', nchange._id, nchanger_id, nthing._id,
         nthing.owner);

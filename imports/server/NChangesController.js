@@ -34,17 +34,16 @@ export const NChangesController = {
   retractAllApprovalsFromNchange(nchange_id) {
     console.warn('retracting all approvals from nchange: ', nchange_id);
     const nchange = NChanges.findOne(nchange_id);
-    const approvals = _.where(nchange.detail, {action: 'approve'});
-    NChanges.update({_id: nchange_id}, { $pull: {
-      detail: { action: 'approve' }
-    }});
-    approvals.forEach((approval)=> {
+    nchange.approvals.forEach((nchanger_id)=> {
       NChanges.update({_id: nchange_id}, {
         $push: { activity: {
-          timestamp: new Date(), user: approval.user, action: 'unapprove',
+          timestamp: new Date(), user: nchanger_id, action: 'unapprove',
         }}
       });
     });
+    NChanges.update({_id: nchange_id}, { $set: {
+      approvals: []
+    }});
     NChanges.update({_id: nchange_id }, {$set: { lastUpdated: new Date() }});
   }
 }
