@@ -37,6 +37,20 @@ export const startBusinessRules = () => {
       }
   );
 
+  console.warn('ensuring that when an item stock change, it will be removed from previous nchanges ');
+  Items.find({
+  }, {
+    fields: { stock: 1 }
+  }).observe(
+      {
+        changed(old_thing, new_thing) {
+          console.warn(`thing: ${old_thing._id} changed
+            stock from ${old_thing.stock} to ${new_thing.stock}`);
+          NChangesController.removeThingFromAllCurrentNchanges(old_thing._id)
+        }
+      }
+  );
+
   // when a google user is inserted his personal data will be moved to the user root doc
   console.warn('when a google user is inserted personal data will be added to user doc');
   Meteor.users.find({
