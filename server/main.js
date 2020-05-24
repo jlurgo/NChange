@@ -4,7 +4,7 @@ import '../imports/server/items.js';
 import '../imports/server/nchanges.js';
 import '../imports/server/tags.js';
 import '../imports/server/users.js';
-import { createBasicData } from '../imports/server/createBasicData.js';
+// import { createBasicData } from '../imports/server/createBasicData.js';
 import { startBusinessRules } from '../imports/server/startBusinessRules.js';
 
 Meteor.startup(() => {
