@@ -11,6 +11,7 @@ Meteor.publish('filtered_items_summary', (filter, limit) => {
     tags: 1,
     stock: 1,
     owner: 1,
+    guardian: 1,
     likedBy: 1, // TODO: only return user like {$elemMatch: {userId : this.userId}}
   };
   console.warn(`subscribing to items summary with filter: ${JSON.stringify(filter)} and limit: ${limit}`);
@@ -37,12 +38,14 @@ Meteor.methods({
     if (! this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-
     if (nthing._id) {
       throw new Meteor.Error('cant-create-nthing-providing_id');
     }
-
+    if (nthing.stock < 1) {
+      throw new Meteor.Error('cant-create-nthing-without-stock');
+    }
     nthing.owner = this.userId;
+    nthing.guardian = this.userId;
     nthing.createdAt = new Date();
     nthing.tags = nthing.tags || [];
     nthing.pics = nthing.pics || [];
@@ -52,7 +55,7 @@ Meteor.methods({
   'nthings.update'(n_thing) {
     console.warn('updating a thing');
     // Make sure the user is logged and owns the thing
-    if (!this.userId || n_thing.owner != this.userId) {
+    if (!this.userId || (n_thing.owner != this.userId)) {
       throw new Meteor.Error('not-authorized');
     }
     n_thing.updatedAt = new Date();
@@ -70,6 +73,19 @@ Meteor.methods({
     }
     Items.update(itemId, { $set: {
       archived: true
+    }});
+  },
+  'nthings.markAsReceived'(nthing_id) {
+    check(nthing_id, String);
+    console.warn('marking a thing as received:', nthing_id);
+
+    const nthing = Items.findOne(nthing_id);
+    if (nthing.owner !== this.userId) {
+      // make sure only the owner can receive it
+      throw new Meteor.Error('not-authorized');
+    }
+    Items.update(nthing_id, { $set: {
+      guardian: this.userId
     }});
   },
   'nthings.setPrivate'(itemId, setToPrivate) {

@@ -127,7 +127,7 @@ class ItemInList extends Component {
     this.getStock() > 0 &&
       Meteor.call('nchanges.new', item.owner,
         [{user: Meteor.userId(), action: 'take',
-          nThing: item._id, from: item.owner}],
+          nThing: item._id, from: item.owner, qty: 1}],
         (error, nchange_id) => {
           if (error) {
             console.warn(error);
@@ -151,14 +151,13 @@ class ItemInList extends Component {
     const { item, nChange } = this.props;
     return nChange ?
       nChange.getRemainingThingStock(item) :
-      (item.stock === undefined) ? 1 : item.stock;
+      item.stock;
   }
 
   render() {
     const { item, showDeleteButton, showLikeButton, showNewNchangeButton,
       showQtyButton, nChange, nChangerId, classes } = this.props;
     const is_my_own_thing = (item.owner == Meteor.userId());
-
     return (
       <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
         <img src={item.pics[0]} alt={item.shortDescription}
@@ -193,7 +192,7 @@ class ItemInList extends Component {
                <SettingsEthernetIcon fontSize= 'small'/>
             </IconButton>
           }
-          { is_my_own_thing && showDeleteButton &&
+          { is_my_own_thing && (item.guardian == Meteor.userId()) && showDeleteButton &&
             <IconButton className={classes.button + ' ' + classes.removeThingIcon}
               onClick={this.handleRemoveClick}>
                <DeleteIcon fontSize= 'small'/>

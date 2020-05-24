@@ -18,6 +18,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
 import TagSelectBar from './TagSelectBar';
+import NChangerAvatar from "./NChangerAvatar";
 
 import { Items } from "../shared/collections";
 
@@ -59,6 +60,17 @@ const styles = {
     bottom: '10px',
     right: '10px',
     color: 'blue'
+  },
+  propertySection: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  stockSection: {
+    display: 'flex',
+    marginBottom: '10px'
+  },
+  stockLabel: {
+    marginRight: '10px'
   },
   descriptionInput: {
   },
@@ -107,6 +119,16 @@ class NThingDetail extends Component {
     });
   }
 
+  handleReceived = () => {
+    const { nThing } = this.state;
+    Meteor.call('nthings.markAsReceived', nThing._id, (error)=> {
+      if (error) {
+        console.warn(error);
+        return
+      }
+    });
+  }
+
   removePic = (pic) => {
     const { nThing } = this.state;
     nThing.pics = _.without(nThing.pics, pic);
@@ -146,12 +168,12 @@ class NThingDetail extends Component {
   }
 
   renderPic = (pic, i) => {
-    const { inEditMode, classes } = this.props;
+    const { inCreateMode, inEditMode, classes } = this.props;
     return  (
       <div className={classes.picContainer} key={i}>
         <img src={pic} alt={'picture'}
          className={classes.pic}/>
-         { inEditMode &&
+         { (inCreateMode || inEditMode) &&
            <IconButton className={classes.removePicIcon}
             onClick={() => this.removePic(pic)}>
               <DeleteForeverIcon fontSize= 'large'/>
@@ -162,10 +184,10 @@ class NThingDetail extends Component {
   }
 
   render() {
-    const { inEditMode, loading, classes, history } = this.props;
+    const { inCreateMode, inEditMode, loading, classes, history } = this.props;
     if (loading) return <div>Loading...</div>
 
-    const nThing = inEditMode ? this.state.nThing : this.props.nThing;
+    const nThing = (inCreateMode || inEditMode) ? this.state.nThing : this.props.nThing;
 
     return (
       <Paper classes={{ root: classes.root }}>
@@ -174,39 +196,48 @@ class NThingDetail extends Component {
             {
               nThing.pics && nThing.pics.map(this.renderPic)
             }
-            { inEditMode &&
+            { (inCreateMode || inEditMode) &&
               <SelectPicButton onSelect={this.addPic}
                 classes={{ button: classes.addPicIcon }}/>
             }
           </div>
         </div>
-        {inEditMode ?
-          <TagSelectBar selectedTags={nThing.tags}
-            onTagsChange={this.updateTags}/> :
-          <TagBar tags={nThing.tags}/>
-        }
         {
-          inEditMode &&
-            <div className={classes.stockSection}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={nThing.stock !== undefined}
-                    onChange={this.handleStockCheckChange}
-                    color="primary"
-                  />
-                }
-                label="Stock"/>
-              { (nThing.stock !== undefined) &&
-                <TextField defaultValue={nThing.stock} type="number"
-                  className={classes.stockInput}
-                  onChange={this.updateStock}
-                />
-              }
-            </div>
+          (inCreateMode || inEditMode) ?
+            <TagSelectBar selectedTags={nThing.tags}
+              onTagsChange={this.updateTags}/> :
+            <TagBar tags={nThing.tags}/>
         }
+        { !inCreateMode &&
+          <div className={classes.propertySection}>
+            <Typography variant="h5" >
+              Dueño:
+            </Typography>
+            <NChangerAvatar nChangerId={nThing.owner}/>
+            {(nThing.owner !== nThing.guardian) &&
+              <Typography variant="h5" >
+                Lo tiene:
+              </Typography>
+            }
+            {(nThing.owner !== nThing.guardian) &&
+              <NChangerAvatar nChangerId={nThing.guardian}/>
+            }
+          </div>
+        }
+        <div className={classes.stockSection}>
+          {
+            (inCreateMode || inEditMode) ?
+              <TextField defaultValue={nThing.stock} type="number"
+                className={classes.stockInput} variant="outlined"
+                onChange={this.updateStock} label="Stock"
+              /> :
+              <Typography variant="h5" className={classes.stockLabel} >
+                Stock: {nThing.stock}
+              </Typography>
+          }
+        </div>
         {
-          inEditMode ?
+          (inCreateMode || inEditMode) ?
             <TextField defaultValue={nThing.longDescription} type="text"
               className={classes.descriptionInput} label="Descripción" multiline
               onChange={this.updateLongDescription} variant="outlined" fullWidth
@@ -215,17 +246,27 @@ class NThingDetail extends Component {
               {nThing.longDescription}
             </Typography>
         }
-        {
-          inEditMode &&
-            <div className={classes.confirmationBar}>
+        <div className={classes.confirmationBar}>
+          {
+            (nThing.owner == Meteor.userId()) &&
+            (nThing.owner !== nThing.guardian) &&
+              <Button onClick={this.handleReceived} color="secondary">
+                marcar como recibido
+              </Button>
+          }
+          {
+            (inCreateMode || inEditMode) &&
               <Button onClick={this.handleClose} color="secondary">
                 Cancelar
               </Button>
+          }
+          {
+            (inCreateMode || inEditMode) &&
               <Button onClick={this.handleSave} color="primary">
                 Guardar
               </Button>
-            </div>
-        }
+          }
+        </div>
       </Paper>
     );
   }
@@ -236,7 +277,7 @@ export default withRouter(withTracker((props) => {
   if (thing_id == 'new') {
     return {
       nThing: {},
-      inEditMode: true,
+      inCreateMode: true,
     }
   }
 
@@ -249,7 +290,8 @@ export default withRouter(withTracker((props) => {
   const nthing = Items.findOne({_id: thing_id});
   return {
     nThing: nthing,
-    inEditMode: nthing.owner == Meteor.userId(),
+    inEditMode: (nthing.owner == Meteor.userId()) &&
+                (nthing.guardian == Meteor.userId()),
   };
 })
 (withStyles(styles)(NThingDetail)));

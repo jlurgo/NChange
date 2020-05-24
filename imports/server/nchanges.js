@@ -77,6 +77,7 @@ Meteor.methods({
       nChangers: nChangers,
       detail: detail,
       draft: true,
+      approvals: [],
       activity: [
         {timestamp: new Date(), action: 'create', user: this.userId}
       ],
@@ -99,7 +100,7 @@ Meteor.methods({
     });
   },
   'nchanges.takeItem'(nchange_id, nchanger_id, nthing_id, qty) {
-    console.warn('taking item');
+    console.warn('taking item:', nthing_id, qty);
     rejectUnloggedUsers();
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
@@ -238,16 +239,21 @@ Meteor.methods({
       take_actions.forEach((action)=>{
         const nthing = Items.findOne({_id: action.nThing },
           {fields: {_id: 0 }});
-        if(nthing.stock) {
+        console.warn('transfering thing: ', nthing, action);
+        if(nthing.stock == action.qty ) {
+          Items.update({_id: action.nThing }, {$set: {
+            owner: nchanger
+          }});
+        } else {
           const new_nthing = _.extend({}, nthing, {
             owner: nchanger,
-            stock: action.qty
+            guardian: nthing.guardian,
+            stock: action.qty,
+            createdAt: new Date(),
           });
           Items.insert(new_nthing);
           Items.update({_id: action.nThing },
             {$set: {stock: nthing.stock - action.qty}});
-        } else {
-          Items.update({_id: action.nThing }, {$set: {owner: nchanger}});
         }
       });
     })

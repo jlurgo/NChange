@@ -111,7 +111,7 @@ class ItemInChange extends Component {
         <ResizeDetector handleWidth onResize={this.onResize}
           targetDomEl={this.rootRef.current} />
           <div className={classes.qtyIndicator}>
-            {itemInChange.qty || 1}
+            {itemInChange.qty}
           </div>
         <NChangerAvatar
           classes={{root:classes.nchangerAvatar,
