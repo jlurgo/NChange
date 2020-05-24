@@ -37,7 +37,7 @@ class NChangeActivity extends Component {
 
   scrollToBottom = () => {
     this.activitiesEnd &&
-      this.activitiesEnd.scrollIntoView({ behavior: "smooth" });
+      this.activitiesEnd.scrollIntoView(false);
   }
 
   componentDidMount() {
