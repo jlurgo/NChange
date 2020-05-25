@@ -103,10 +103,10 @@ class NChangerDetail extends Component {
           <div className={classes.userDataContainer}>
             <div>
               <EditableTextField value={nChanger.userName}
-                label='Nombre de usuario' editable={inEditMode}
+                label='Nombre de usuario' editable={inEditMode} size='5'
                 onChange={this.updateUserName}/>
               <EditableTextField value={nChanger.fullName}
-                label='Nombre completo' editable={inEditMode}
+                label='Nombre completo' editable={inEditMode} size='5'
                 onChange={this.updateFullName}/>
             </div>
             { inEditMode &&

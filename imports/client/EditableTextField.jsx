@@ -18,7 +18,8 @@ import MuiAlert from '@material-ui/lab/Alert';
 const styles = {
   root: {
     display: 'flex',
-    marginTop: '5px'
+    marginBottom: '5px',
+    alignItems: 'center'
   },
   valueLabel: {
 
@@ -88,7 +89,7 @@ class EditableTextField extends Component {
           />
         }
         { !editing &&
-          <Typography variant="h4">
+          <Typography variant={`h${this.props.size}`}>
             { value }
           </Typography>
         }
