@@ -11,21 +11,28 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
+const get_size = (property) => {
+  let size = 45; // 'medium';
+  if (property == 'small') size = 20;
+  if (!isNaN(parseInt(property))) size = property;
+  return size;
+}
+
 const styles = {
   root: {
 
   },
-  userImage: {
-    height: '45px',
-    width: '45px',
-    borderRadius: '50%',
-  },
-  isLoggedUser: {
-    background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 0%, rgb(251, 255, 0) 26%, rgba(226,237,2,0) 70%)'
-  },
-  isSelected: {
-    background: '-webkit-radial-gradient(circle, rgba(226,237,2,0) 40%, rgb(142, 193, 218) 50%, rgba(226,237,2,0) 70%)'
-  },
+  userImage: props => ({
+    height: `${get_size(props.size)}px`,
+    width: `${get_size(props.size)}px`,
+    borderRadius: '50%'
+  }),
+  isLoggedUser: props => ({
+    background: `-webkit-radial-gradient(circle,rgb(251, 255, 0) ${get_size(props.size)/2}px, rgba(226,237,2,0) ${get_size(props.size)/2 + 4}px)`
+  }),
+  isSelected: props => ({
+    background: `-webkit-radial-gradient(circle,rgb(142, 193, 218) ${get_size(props.size)/2}px, rgba(226,237,2,0) ${get_size(props.size)/2 + 4}px)`
+  }),
   thumbUp: {
     position: 'absolute',
     top: '10px',

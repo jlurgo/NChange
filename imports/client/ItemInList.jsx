@@ -80,6 +80,11 @@ const styles = {
     left: '2px',
     top: '5px'
   },
+  guardianAvatar: {
+    position: 'absolute',
+    left: '2px',
+    top: '3px'
+  },
   stockIndicator: {
     position: 'absolute',
     top: '8px',
@@ -170,6 +175,10 @@ class ItemInList extends Component {
         <div className={classes.stockIndicator}>
           {this.getStock()}
         </div>
+        { (item.owner !== item.guardian) &&
+          <NChangerAvatar nChangerId={item.guardian}
+            classes={{root: classes.guardianAvatar}} size='small'/>
+        }
         <div className={classes.buttonBar}>
           { showQtyButton &&
             <SelectQtyButton nThing={item} nChange={nChange}

@@ -45,10 +45,6 @@ const styles = {
     right: '-15px',
     zIndex: '1'
   },
-  nchangerAvatarImage: {
-    height: '30px',
-    width: '30px',
-  },
   qtyIndicator: {
     position: 'absolute',
     top: '-2px',
@@ -85,7 +81,7 @@ class ItemInChange extends Component {
 
   handleClick = (e) => {
     this.props.onClick && this.props.onClick(this.props.itemInChange.nThing._id);
-    this.props.onClick && e.stopPropagation();
+    this.props.onClick && e.stopPropagation && e.stopPropagation();
   };
 
   onResize = (width) => {
@@ -114,10 +110,10 @@ class ItemInChange extends Component {
             {itemInChange.qty}
           </div>
         <NChangerAvatar
-          classes={{root:classes.nchangerAvatar,
-            userImage:classes.nchangerAvatarImage}}
+          classes={{root:classes.nchangerAvatar}}
+          size={30}
           nChangerId={nchanger_id}
-          onClick={()=> {}}/>
+          onClick={this.handleClick}/>
       </div>
   }
 }
