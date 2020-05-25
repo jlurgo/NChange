@@ -10,6 +10,9 @@ export const UsersController = {
     return this.getUserNameFromNames(first_name, last_name, suffix ? suffix + 1 : 1 );
   },
   usernameExists(user_name) {
-    return !!Meteor.users.findOne({userName: user_name});
+    return !!Meteor.users.findOne({ userName: {
+      $regex : "^" + user_name.toLowerCase() + "\\b",
+      $options: "i"
+    }});
   }
 }

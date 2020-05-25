@@ -116,9 +116,6 @@ class NChangerDetail extends Component {
             }
           </div>
         </div>
-        <Typography variant="h4">
-          {`Inventario` }
-        </Typography>
         <ItemList filter={{$or: [{ owner: nChanger._id}, { guardian: nChanger._id}]}} showItemsDeleteButton={inEditMode}
           showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
