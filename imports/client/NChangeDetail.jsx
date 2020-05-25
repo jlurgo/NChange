@@ -12,6 +12,7 @@ import { NChanges } from "../shared/collections";
 
 import CloseIcon from '@material-ui/icons/Close';
 import ChatIcon from '@material-ui/icons/Chat';
+import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,6 +22,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import SwipeableViews from 'react-swipeable-views';
 import ResizeDetector  from 'react-resize-detector';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
@@ -80,14 +85,17 @@ const styles = {
     flex: '1 1 auto',
     display: 'flex',
     alignItems: 'center',
+    overflowX: 'auto'
+  },
+  menuButton: {
+    flex: '0 0 auto',
+    backgroundColor: '#9d9d9d61 !important'
   },
   addNchangerButton: {
-    flex: '0 0 auto',
-    marginRight: '10px'
+    marginLeft: '10px'
   },
   leaveNchangeButton: {
-    flex: '0 0 auto',
-    marginRight: '5px'
+    marginLeft: '10px'
   },
   nThings: {
     flex: '1 1 auto',
@@ -132,7 +140,8 @@ class NChangeDetail extends Component {
 
   state = {
     selectedNchanger: Meteor.userId(),
-    showActivity: false
+    showActivity: false,
+    openMenu: false
   }
 
   constructor() {
@@ -168,6 +177,19 @@ class NChangeDetail extends Component {
     this.setState({
       showActivity: !this.state.showActivity
     })
+  }
+
+  openMenu = (e) => {
+    this.setState({
+      openMenu: true,
+      menuAnchor: e.currentTarget
+    });
+  }
+
+  closeMenu = () => {
+    this.setState({
+      openMenu: false
+    });
   }
 
   render() {
@@ -239,21 +261,43 @@ class NChangeDetail extends Component {
 
   renderNchangersSection = () => {
     const { nChange, classes } = this.props;
+    const { openMenu, menuAnchor } = this.state;
     return (
       <div className={classes.nChangers}>
-        {this.renderNChanger(Meteor.userId())}
         <div className={classes.nChangersList}>
+          {this.renderNChanger(Meteor.userId())}
           {
           _.without(nChange.nChangers, Meteor.userId())
             .map(this.renderNChanger)
           }
         </div>
         {!nChange.approved &&
-          <AddNChangerButton classes={{ root: classes.addNchangerButton}}
-          excludedNChangers={nChange.nChangers} onSelect={this.addNChanger}/>}
-        {!nChange.approved &&
-          <LeaveNChangeButton nchange_id={nChange._id}
-          classes={{ root: classes.leaveNchangeButton}}/>}
+          <IconButton className={classes.menuButton} onClick={this.openMenu}>
+            <MenuIcon fontSize= 'small'/>
+          </IconButton>
+        }
+        <Menu
+          id="customized-menu"
+          anchorEl={menuAnchor}
+          keepMounted
+          open={openMenu}
+          onClose={this.closeMenu}
+        >
+          <MenuItem>
+            <ListItemText primary="agregar participante" />
+            <ListItemIcon>
+              <AddNChangerButton classes={{ root: classes.addNchangerButton}}
+              excludedNChangers={nChange.nChangers} onSelect={this.addNChanger}/>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem>
+            <ListItemText primary="abandonar nchange" />
+            <ListItemIcon>
+              <LeaveNChangeButton nchange_id={nChange._id}
+              classes={{ root: classes.leaveNchangeButton}}/>
+            </ListItemIcon>
+          </MenuItem>
+        </Menu>
       </div>
     );
   }
