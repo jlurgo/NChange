@@ -15,6 +15,8 @@ import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 
 import ItemList from './ItemList';
+import EditableTextField from './EditableTextField';
+import SelectPicButton from "./SelectPicButton";
 
 import { Items } from "../shared/collections";
 
@@ -29,6 +31,11 @@ const styles = {
     height: '100px',
     overflowY: 'auto',
   },
+  selectPicButton: {
+    position: 'absolute',
+    bottom: '0px',
+    left: '30vh'
+  },
   addButton: {
     position: 'absolute',
     bottom: '20px',
@@ -37,7 +44,8 @@ const styles = {
   topSection: {
     flex: '0 0 auto',
     display: 'flex',
-    padding: '5px'
+    padding: '5px',
+    position: 'relative'
   },
   userImage: {
     height: '300px',
@@ -46,6 +54,7 @@ const styles = {
     flex: '0 0 auto',
     maxHeight: '30vh',
     maxWidth: '30vh',
+    objectFit: 'cover'
   },
   userDataContainer: {
     flex: '1 1 auto',
@@ -65,6 +74,22 @@ class NChangerDetail extends Component {
     history.push(`/nthingdetail/new`);
   }
 
+  updateUserName = (new_user_name, on_error_cb) => {
+    Meteor.call('users.setUserName', new_user_name, (err) => {
+      err && on_error_cb(err);
+    });
+  }
+
+  updateFullName = (new_full_name, on_error_cb) => {
+    Meteor.call('users.setFullName', new_full_name, (err) => {
+      err && on_error_cb(err);
+    });
+  }
+
+  selectPic = (url) => {
+    Meteor.call('users.setPic', url);
+  }
+
   render() {
     const { nChanger, inEditMode, loading, classes, history } = this.props;
     if (loading) return <div>Loading...</div>
@@ -72,15 +97,17 @@ class NChangerDetail extends Component {
     return (
       <Paper classes={{ root: classes.root }}>
         <div className={classes.topSection}>
-          <img src= {nChanger.pic} className={classes.userImage} />
+          <img src= {nChanger.pic} className={classes.userImage}/>
+          <SelectPicButton onSelect={this.selectPic}
+            classes={{ button: classes.selectPicButton }}/>
           <div className={classes.userDataContainer}>
             <div>
-              <Typography variant="h4">
-                {`${nChanger.userName}` }
-              </Typography>
-              <Typography variant="h5">
-                {`${nChanger.fullName}` }
-              </Typography>
+              <EditableTextField value={nChanger.userName}
+                label='Nombre de usuario' editable={inEditMode}
+                onChange={this.updateUserName}/>
+              <EditableTextField value={nChanger.fullName}
+                label='Nombre completo' editable={inEditMode}
+                onChange={this.updateFullName}/>
             </div>
             { inEditMode &&
               <Button onClick={()=>{Accounts.logout()}} color="secondary">

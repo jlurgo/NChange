@@ -25,7 +25,8 @@ const styles = {
   userImage: props => ({
     height: `${get_size(props.size)}px`,
     width: `${get_size(props.size)}px`,
-    borderRadius: '50%'
+    borderRadius: '50%',
+    objectFit: 'cover'
   }),
   isLoggedUser: props => ({
     background: `-webkit-radial-gradient(circle,rgb(251, 255, 0) ${get_size(props.size)/2}px, rgba(226,237,2,0) ${get_size(props.size)/2 + 4}px)`
