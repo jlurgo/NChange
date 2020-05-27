@@ -5,7 +5,9 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { _ } from 'meteor/underscore';
+import 'react-html5-camera-photo/build/css/index.css';
 
+import Camera from 'react-html5-camera-photo';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -20,8 +22,11 @@ const styles = {
   root: {
 
   },
+  cameraContainer: {
+    zoom: '0.5'
+  },
   button: {
-
+    
   }
 };
 
@@ -40,6 +45,11 @@ class SelectPicButton extends Component {
     this.setState({newPicUrl: e.target.value});
   }
 
+  handleTakePhoto = (pic_uri) => {
+    console.log('pic length: ', pic_uri.length);
+    this.setState({newPicUrl: pic_uri});
+  }
+
   handleClose = ( ) => {
     this.setState({showAddPictureDialog: false, newPicUrl: ''});
   }
@@ -55,7 +65,7 @@ class SelectPicButton extends Component {
     const { newPicUrl, showAddPictureDialog } = this.state;
 
     return (
-      <div className={ classes.root }>
+      <div>
         <IconButton className={classes.button} onClick={this.openDialog}>
           <AddAPhotoIcon fontSize= 'large'/>
         </IconButton>
@@ -64,17 +74,24 @@ class SelectPicButton extends Component {
           <DialogTitle id="form-dialog-title">Agregar imágen</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Ingresá la URL de la imágen
+              Ingresá la URL de la imágen o sacá una foto
             </DialogContentText>
+            <div className={classes.cameraContainer}>
+              <Camera
+                onTakePhoto={this.handleTakePhoto}
+                idealResolution={{width: 200, height: 200 }}
+                imageType='jpg'
+              />
+            </div>
             <TextField value={newPicUrl} onChange={this.handleUrlChange}
-              autoFocus margin="dense" id="name" label=""
+              autoFocus margin="dense" id="name" label="" variant= "outlined"
               type="text" fullWidth/>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleOk} color="primary">
+            <Button onClick={this.handleOk} color="primary" disabled={!newPicUrl}>
               Ok
             </Button>
           </DialogActions>
