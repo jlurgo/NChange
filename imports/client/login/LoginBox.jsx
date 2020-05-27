@@ -28,7 +28,6 @@ class LoginBox extends React.Component {
     return (
       <div>
         <div>
-          <h3 style={styles.title}> Sign In </h3>
           <LoginForm
             onError={utils.onError.bind(this)}
             clearErrors={utils.clearErrors.bind(this)}

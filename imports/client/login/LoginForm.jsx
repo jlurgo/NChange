@@ -28,7 +28,7 @@ export default class LoginForm extends React.Component {
           {services.map(service => (
             <OAuthButton
               service={service}
-              text={`Log in with google`}
+              text={`Entrar con google`}
               key={service}
             />
             ))}

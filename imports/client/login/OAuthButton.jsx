@@ -7,7 +7,6 @@ const styles = {
     height: '3rem',
     borderRadius: '5px',
     border: 'none',
-    marginBottom: 10,
     backgroundColor: 'white'
   },
 }
