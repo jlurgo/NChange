@@ -25,14 +25,17 @@ const styles = {
 
   },
   cameraContainer: {
-    zoom: '0.5'
+    zoom: '0.5',
+    borderRadius: '30px',
+    overflow: 'hidden',
   },
   previewContainer: {
-    position: 'relative'
+    position: 'relative',
   },
   picPreview: {
-    width: '325px',
-    height: '325px',
+    width: '100%',
+    height: '100%',
+    borderRadius: '15px',
   },
   discardButton: {
     position: 'absolute',
@@ -92,7 +95,7 @@ class SelectPicButton extends Component {
           <DialogTitle id="form-dialog-title">Agregar imágen</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              sacá una foto o ingresá la URL de la imágen
+              sacá una foto o ingresá la URL de una imágen
             </DialogContentText>
             {newPicData ?
               <div className={classes.previewContainer}>
@@ -107,7 +110,7 @@ class SelectPicButton extends Component {
                 <Camera
                   onTakePhotoAnimationDone={this.handleTakePhoto}
                   idealResolution={{width: 200, height: 200 }}
-                  imageType='jpg'
+                  imageType='jpg' isImageMirror={true}
                   idealFacingMode='environment'
                 />
               </div>
