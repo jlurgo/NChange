@@ -34,6 +34,8 @@ const styles = {
     flexWrap: 'nowrap',
     alignItems: 'stretch',
     overflowX: 'auto',
+    padding: '5px',
+    backgroundColor: '#bcbcbc',
   },
   picsList: {
     height: '100%',
@@ -43,16 +45,23 @@ const styles = {
     overflowX: 'auto',
   },
   picContainer: {
+    flex: '0 0 auto',
     position: 'relative',
+    overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: '5px',
+    marginRight: '5px',
   },
   pic: {
     height: '100%',
-    objectFit: 'contain'
+    width: '100%',
+    objectFit: 'cover',
   },
   removePicIcon: {
     position: 'absolute',
-    top: '10px',
-    right: '10px',
+    top: '0px',
+    right: '0px',
     color: 'red'
   },
   addPicIcon: {
