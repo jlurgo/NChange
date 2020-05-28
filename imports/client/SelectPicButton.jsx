@@ -81,6 +81,7 @@ class SelectPicButton extends Component {
                 onTakePhoto={this.handleTakePhoto}
                 idealResolution={{width: 200, height: 200 }}
                 imageType='jpg'
+                idealFacingMode = 'environment'
               />
             </div>
             <TextField value={newPicUrl} onChange={this.handleUrlChange}

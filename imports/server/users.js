@@ -56,7 +56,7 @@ Meteor.methods({
     return Meteor.users.update({_id: this.userId }, {$set: { fullName: new_full_name}});
   },
   'users.setPic'(new_url) {
-    console.warn('updating own pic ', new_url, this.userId);
+    console.warn('updating own pic ', this.userId);
     if (! this.userId) {
       throw new Meteor.Error('not-authorized');
     }
