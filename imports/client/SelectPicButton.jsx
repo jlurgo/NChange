@@ -17,6 +17,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import IconButton from '@material-ui/core/IconButton';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import CloseIcon from '@material-ui/icons/Close';
+
 
 const styles = {
   root: {
@@ -25,8 +27,20 @@ const styles = {
   cameraContainer: {
     zoom: '0.5'
   },
+  previewContainer: {
+    position: 'relative'
+  },
+  picPreview: {
+    width: '325px',
+    height: '325px',
+  },
+  discardButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px'
+  },
   button: {
-    
+
   }
 };
 
@@ -42,27 +56,31 @@ class SelectPicButton extends Component {
   }
 
   handleUrlChange = (e) => {
-    this.setState({newPicUrl: e.target.value});
+    this.setState({newPicUrl: e.target.value, newPicData: e.target.value});
   }
 
   handleTakePhoto = (pic_uri) => {
     console.log('pic length: ', pic_uri.length);
-    this.setState({newPicUrl: pic_uri});
+    this.setState({newPicData: pic_uri});
   }
 
-  handleClose = ( ) => {
-    this.setState({showAddPictureDialog: false, newPicUrl: ''});
+  handleClose = () => {
+    this.setState({showAddPictureDialog: false, newPicData: '', newPicUrl: ''});
   }
 
-  handleOk = ( ) => {
-    const { newPicUrl } = this.state;
-    this.props.onSelect(newPicUrl);
+  handleOk = () => {
+    const { newPicData } = this.state;
+    this.props.onSelect(newPicData);
     this.handleClose();
+  }
+
+  discardPic = () => {
+    this.setState({newPicData: '', newPicUrl: ''});
   }
 
   render() {
     const { classes } = this.props;
-    const { newPicUrl, showAddPictureDialog } = this.state;
+    const { newPicUrl, newPicData, showAddPictureDialog } = this.state;
 
     return (
       <div>
@@ -74,25 +92,35 @@ class SelectPicButton extends Component {
           <DialogTitle id="form-dialog-title">Agregar imágen</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Ingresá la URL de la imágen o sacá una foto
+              sacá una foto o ingresá la URL de la imágen
             </DialogContentText>
-            <div className={classes.cameraContainer}>
-              <Camera
-                onTakePhoto={this.handleTakePhoto}
-                idealResolution={{width: 200, height: 200 }}
-                imageType='jpg'
-                idealFacingMode = 'environment'
-              />
-            </div>
+            {newPicData ?
+              <div className={classes.previewContainer}>
+                <img className={classes.picPreview} src={newPicData}/>
+                <IconButton className={classes.discardButton}
+                  onClick={this.discardPic}>
+                  <CloseIcon fontSize='medium'/>
+                </IconButton>
+              </div>
+              :
+              <div className={classes.cameraContainer}>
+                <Camera
+                  onTakePhotoAnimationDone={this.handleTakePhoto}
+                  idealResolution={{width: 200, height: 200 }}
+                  imageType='jpg'
+                  idealFacingMode='environment'
+                />
+              </div>
+            }
             <TextField value={newPicUrl} onChange={this.handleUrlChange}
-              autoFocus margin="dense" id="name" label="" variant= "outlined"
-              type="text" fullWidth/>
+              margin="dense" id="name" placeholder="URL de la imágen"
+              variant= "outlined" type="text" fullWidth/>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleOk} color="primary" disabled={!newPicUrl}>
+            <Button onClick={this.handleOk} color="primary" disabled={!newPicData}>
               Ok
             </Button>
           </DialogActions>
