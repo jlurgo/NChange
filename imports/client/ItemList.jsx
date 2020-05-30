@@ -15,7 +15,7 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    justifyContent: 'space-evenly'
+    alignContent: 'flex-start'
   },
 };
 

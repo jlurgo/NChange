@@ -23,18 +23,16 @@ import { Items } from "../shared/collections";
 const styles = {
   root: {
     position: 'relative',
-    flex: '1 1 300px',
-    height: '300px',
-    margin: '5px',
-    cursor: 'pointer',
-    overflow: 'hidden',
-    maxHeight: '44vw',
+    height: '142px',
+    width: '142px',
+    margin: '10px',
   },
   pic: {
     height: '100%',
     width: '100%',
-    maxHeight: '100%',
-    objectFit: 'contain'
+    objectFit: 'cover',
+    borderRadius: '50%',
+    cursor: 'pointer',
   },
   bottomBar: {
     width: '100%',
@@ -46,8 +44,8 @@ const styles = {
   },
   buttonBar: {
     position: 'absolute',
-    bottom: '5px',
-    right: '5px',
+    bottom: '-8px',
+    right: '-8px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -77,8 +75,8 @@ const styles = {
   },
   ownerAvatar: {
     position: 'absolute',
-    left: '2px',
-    top: '5px'
+    left: '-12px',
+    top: '-12px'
   },
   guardianAvatar: {
     position: 'absolute',
@@ -87,8 +85,8 @@ const styles = {
   },
   stockIndicator: {
     position: 'absolute',
-    top: '8px',
-    right: '8px',
+    top: '6px',
+    right: '0px',
     height: '30px',
     width: '30px',
     backgroundColor: 'red',
@@ -106,6 +104,10 @@ const styles = {
 
 // Item component - represents a single item
 class ItemInList extends Component {
+
+  state = {
+    isExpanded: false
+  }
 
   handleLikeButtonClick = (e) => {
     const { item } = this.props;
@@ -159,32 +161,54 @@ class ItemInList extends Component {
       item.stock;
   }
 
+  handleMouseEnter = () => {
+    this.setState({
+      isExpanded: true
+    });
+  }
+
+  handleMouseLeave = () => {
+    this.setState({
+      isExpanded: false
+    });
+  }
+
   render() {
     const { item, showDeleteButton, showLikeButton, showNewNchangeButton,
-      showQtyButton, nChange, nChangerId, classes } = this.props;
+      showQtyButton, showTags, nChange, nChangerId, classes } = this.props;
+    const { isExpanded } = this.state;
+
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
-      <Paper onClick={this.handleClick} key={item._id} classes={{ root: classes.root }}>
+      <div onClick={this.handleClick} key={item._id} className={classes.root}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}>
         <img src={item.pics[0]} alt={item.shortDescription}
           className={classes.pic}/>
-        <div className={classes.bottomBar}>
-          <TagBar tags={item.tags} classes={{root: classes.tagBarRoot}}/>
-        </div>
-        <NChangerAvatar nChangerId={item.owner}
-          classes={{root: classes.ownerAvatar}}/>
-        <div className={classes.stockIndicator}>
-          {this.getStock()}
-        </div>
-        { (item.owner !== item.guardian) &&
+        { isExpanded && showTags &&
+            <div className={classes.bottomBar}>
+            <TagBar tags={item.tags} classes={{root: classes.tagBarRoot}}/>
+          </div>
+        }
+        { isExpanded &&
+          <NChangerAvatar nChangerId={item.owner}
+            classes={{root: classes.ownerAvatar}}/>
+        }
+        { isExpanded &&
+          <div className={classes.stockIndicator}>
+            {this.getStock()}
+          </div>
+        }
+        { isExpanded && (item.owner !== item.guardian) &&
           <NChangerAvatar nChangerId={item.guardian}
             classes={{root: classes.guardianAvatar}} size='small'/>
         }
         <div className={classes.buttonBar}>
-          { showQtyButton &&
+          { isExpanded && showQtyButton &&
             <SelectQtyButton nThing={item} nChange={nChange}
               nChangerId={nChangerId}/>
           }
-          { !is_my_own_thing && showLikeButton &&
+          { isExpanded && !is_my_own_thing && showLikeButton &&
             <IconButton aria-label={`star ${item.shortDescription}`}
               className={classes.button + ' ' + classes.likeIcon}
               onClick={this.handleLikeButtonClick}>
@@ -195,20 +219,22 @@ class ItemInList extends Component {
               }
             </IconButton>
           }
-          { !is_my_own_thing && showNewNchangeButton && this.getStock() > 0 &&
+          { isExpanded && !is_my_own_thing && showNewNchangeButton &&
+            this.getStock() > 0 &&
             <IconButton className={classes.button + ' ' + classes.newNchangeButton}
               onClick={this.handleNchangeClick}>
                <SettingsEthernetIcon fontSize= 'small'/>
             </IconButton>
           }
-          { is_my_own_thing && (item.guardian == Meteor.userId()) && showDeleteButton &&
+          { isExpanded && is_my_own_thing &&
+            (item.guardian == Meteor.userId()) && showDeleteButton &&
             <IconButton className={classes.button + ' ' + classes.removeThingIcon}
               onClick={this.handleRemoveClick}>
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
         </div>
-      </Paper>
+      </div>
     );
   }
 }
