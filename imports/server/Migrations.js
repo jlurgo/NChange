@@ -13,5 +13,10 @@ export default Migrations = {
     Items.find({ guardian: { $exists: false }}).forEach((nthing) => {
       Items.update({ _id: nthing._id }, {$set: { guardian: nthing.owner }});
     });
+    // nThings should have a thumbnail
+    Items.find({ thumbnail: { $exists: false }}).forEach((nthing) => {
+      if (!nthing.pics) return;
+      Items.update({ _id: nthing._id }, {$set: { thumbnail: nthing.pics[0] }});
+    });
   }
 };

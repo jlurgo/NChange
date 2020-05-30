@@ -43,7 +43,7 @@ class NThingIcon extends Component {
       <div key={nThing && nThing._id} className={classes.root }>
         { (loading || !nThing) ?
           <ExtensionIcon /> :
-          <img className={classes.pic} src={nThing.pics[0]} alt= ''/>
+          <img className={classes.pic} src={nThing.thumbnail} alt= ''/>
         }
       </div>
     );

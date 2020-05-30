@@ -102,7 +102,7 @@ class ItemInChange extends Component {
       <div key={itemInChange.nThing._id} className={classes.root }
         style={{height: width}}
         onClick={this.handleClick} ref={this.rootRef}>
-        <img className={classes.pic} src={itemInChange.nThing.pics[0]}
+        <img className={classes.pic} src={itemInChange.nThing.thumbnail}
           alt={itemInChange.nThing.shortDescription} />
         <ResizeDetector handleWidth onResize={this.onResize}
           targetDomEl={this.rootRef.current} />

@@ -14,6 +14,7 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 const get_size = (property) => {
   let size = 45; // 'medium';
   if (property == 'small') size = 20;
+  if (property == 'medium') size = 35;
   if (!isNaN(parseInt(property))) size = property;
   return size;
 }

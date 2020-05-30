@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withRouter } from 'react-router-dom'
 import { _ } from 'meteor/underscore';
+import { runningOnMobile } from './utils'
 
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,9 +13,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import { withStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 
 import TagBar from "./TagBar";
 import NChangerAvatar from "./NChangerAvatar";
+import NThingDetail from "./NThingDetail";
 import SelectQtyButton from "./SelectQtyButton";
 
 import { Items } from "../shared/collections";
@@ -26,6 +31,7 @@ const styles = {
     height: '142px',
     width: '142px',
     margin: '10px',
+    '-webkit-tap-highlight-color': 'transparent',
   },
   pic: {
     height: '100%',
@@ -33,6 +39,7 @@ const styles = {
     objectFit: 'cover',
     borderRadius: '50%',
     cursor: 'pointer',
+    border: '1px dashed black'
   },
   bottomBar: {
     width: '100%',
@@ -80,13 +87,13 @@ const styles = {
   },
   guardianAvatar: {
     position: 'absolute',
-    left: '2px',
-    top: '3px'
+    left: '-21px',
+    top: '22px'
   },
   stockIndicator: {
     position: 'absolute',
-    top: '6px',
-    right: '0px',
+    top: '7px',
+    right: '2px',
     height: '30px',
     width: '30px',
     backgroundColor: 'red',
@@ -106,7 +113,8 @@ const styles = {
 class ItemInList extends Component {
 
   state = {
-    isExpanded: false
+    isExpanded: false,
+    showDetail: false
   }
 
   handleLikeButtonClick = (e) => {
@@ -142,16 +150,31 @@ class ItemInList extends Component {
           }
           history.push(`/nchangedetail/${nchange_id}`);
         });
-
   }
 
   handleClick = (e) => {
     const { onClick, item } = this.props;
+    const { isExpanded, showDetail } = this.state;
+    e.preventDefault();
+    e.stopPropagation();
+    if (showDetail) return;
+
+    if(!isExpanded) {
+      this.setState({
+        isExpanded: true
+      });
+      return;
+    }
     if(onClick) {
       onClick(item);
       return;
     }
-    this.props.history.push(`/nthingdetail/${item._id}`)
+    this.setState({
+      isExpanded: false,
+      showDetail: true
+    });
+
+    //this.props.history.push(`/nthingdetail/${item._id}`)
   }
 
   getStock = () => {
@@ -162,6 +185,7 @@ class ItemInList extends Component {
   }
 
   handleMouseEnter = () => {
+    if(runningOnMobile()) return;
     this.setState({
       isExpanded: true
     });
@@ -173,17 +197,23 @@ class ItemInList extends Component {
     });
   }
 
+  handleDetailClose = () => {
+    this.setState({
+      isExpanded: false,
+      showDetail: false
+    });
+  }
+
   render() {
     const { item, showDeleteButton, showLikeButton, showNewNchangeButton,
       showQtyButton, showTags, nChange, nChangerId, classes } = this.props;
-    const { isExpanded } = this.state;
-
+    const { isExpanded, showDetail } = this.state;
     const is_my_own_thing = (item.owner == Meteor.userId());
     return (
       <div onClick={this.handleClick} key={item._id} className={classes.root}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}>
-        <img src={item.pics[0]} alt={item.shortDescription}
+        <img src={item.thumbnail} alt={item.shortDescription}
           className={classes.pic}/>
         { isExpanded && showTags &&
             <div className={classes.bottomBar}>
@@ -201,7 +231,7 @@ class ItemInList extends Component {
         }
         { isExpanded && (item.owner !== item.guardian) &&
           <NChangerAvatar nChangerId={item.guardian}
-            classes={{root: classes.guardianAvatar}} size='small'/>
+            classes={{root: classes.guardianAvatar}} size='medium'/>
         }
         <div className={classes.buttonBar}>
           { isExpanded && showQtyButton &&
@@ -233,6 +263,11 @@ class ItemInList extends Component {
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
+          <Dialog open={showDetail} onClose={this.handleDetailClose}
+            aria-labelledby="form-dialog-title">
+            <NThingDetail thingId={item._id} nChange={nChange}
+              nChangerId={nChangerId}/>
+          </Dialog>
         </div>
       </div>
     );

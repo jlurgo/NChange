@@ -14,6 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import SwipeableViews from 'react-swipeable-views';
 
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
@@ -26,36 +27,23 @@ const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '5px',
+    padding: '10px'
   },
   picsSection: {
     position: 'relative',
     flex: '0 0 30vh',
-    flexWrap: 'nowrap',
-    alignItems: 'stretch',
-    overflowX: 'auto',
-    padding: '5px',
-    backgroundColor: '#bcbcbc',
+    overflow: 'hidden',
+    width: '30vh'
   },
   picsList: {
-    height: '100%',
-    display: 'flex',
-    flexWrap: 'nowrap',
-    alignItems: 'stretch',
-    overflowX: 'auto',
+
   },
   picContainer: {
-    flex: '0 0 auto',
-    position: 'relative',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: '5px',
-    marginRight: '5px',
+    position: 'relative'
   },
   pic: {
-    height: '100%',
     width: '100%',
+    height: '29vh',
     objectFit: 'cover',
   },
   removePicIcon: {
@@ -103,7 +91,7 @@ class NThingDetail extends Component {
   }
 
   handleClose = () => {
-    this.props.history.goBack();
+    //this.props.history.goBack();
   }
 
   handleSave = () => {
@@ -148,6 +136,7 @@ class NThingDetail extends Component {
     const { nThing } = this.state;
     if (!nThing.pics)
       nThing.pics = [];
+    nThing.thumbnail = pic;
     nThing.pics.push(pic);
     this.setState(nThing);
   }
@@ -197,19 +186,17 @@ class NThingDetail extends Component {
     if (loading) return <div>Loading...</div>
 
     const nThing = (inCreateMode || inEditMode) ? this.state.nThing : this.props.nThing;
-
+    console.warn('render', this.state.nThing, this.props.nThing);
     return (
-      <Paper classes={{ root: classes.root }}>
+      <div className={classes.root}>
         <div className={classes.picsSection}>
-          <div className={classes.picsList}>
-            {
-              nThing.pics && nThing.pics.map(this.renderPic)
-            }
-            { (inCreateMode || inEditMode) &&
-              <SelectPicButton onSelect={this.addPic}
-                classes={{ button: classes.addPicIcon }}/>
-            }
-          </div>
+          <SwipeableViews className={classes.picsList}>
+            {nThing.pics && nThing.pics.map(this.renderPic)}
+          </SwipeableViews>
+          { (inCreateMode || inEditMode) &&
+            <SelectPicButton onSelect={this.addPic}
+              classes={{ button: classes.addPicIcon }}/>
+          }
         </div>
         {
           (inCreateMode || inEditMode) ?
@@ -256,7 +243,7 @@ class NThingDetail extends Component {
             </Typography>
         }
         <div className={classes.confirmationBar}>
-          {
+          { (!this.props.nChange) &&
             (nThing.owner == Meteor.userId()) &&
             (nThing.owner !== nThing.guardian) &&
               <Button onClick={this.handleReceived} color="secondary">
@@ -276,13 +263,13 @@ class NThingDetail extends Component {
               </Button>
           }
         </div>
-      </Paper>
+      </div>
     );
   }
 }
 
 export default withRouter(withTracker((props) => {
-  const thing_id = props.match.params.id
+  const thing_id = props.thingId || props.match.params.id
   if (thing_id == 'new') {
     return {
       nThing: {},
@@ -300,7 +287,8 @@ export default withRouter(withTracker((props) => {
   return {
     nThing: nthing,
     inEditMode: (nthing.owner == Meteor.userId()) &&
-                (nthing.guardian == Meteor.userId()),
+                (nthing.guardian == Meteor.userId()) &&
+                (!props.nChange),
   };
 })
 (withStyles(styles)(NThingDetail)));
