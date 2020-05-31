@@ -95,7 +95,7 @@ class NChangerDetail extends Component {
     if (loading) return <div>Loading...</div>
 
     return (
-      <Paper classes={{ root: classes.root }}>
+      <Paper classes={{ root: classes.root }} id='drawer-container'>
         <div className={classes.topSection}>
           <img src= {nChanger.pic} className={classes.userImage}/>
           <SelectPicButton onSelect={this.selectPic}

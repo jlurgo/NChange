@@ -16,7 +16,9 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    alignContent: 'flex-start'
+    alignContent: 'flex-start',
+    position: 'relative',
+    height: '100%'
   },
 };
 
@@ -28,7 +30,7 @@ class ItemList extends Component {
 
     if(loading) return <LoadingPane/>
     return (
-      <div className={classes.root}>
+      <div className={classes.root} id='drawer-container'>
         { this.renderThings() }
       </div>
     );
