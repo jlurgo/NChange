@@ -248,11 +248,12 @@ class NThingInList extends Component {
           }
           <Drawer open={showDetail} onClose={this.handleDetailClose}
             anchor='right'
-            PaperProps={{ style: { position: 'absolute' } }}
-            BackdropProps={{ style: { position: 'absolute' } }}
+            PaperProps={{ style: { position: 'absolute', maxWidth: '100%'} }}
+            BackdropProps={{ style: { position: 'absolute'} }}
             ModalProps={{
               container: document.getElementById('drawer-container'),
-              style: { position: 'absolute' }
+              style: { position: 'absolute', maxWidth: '100%', marginLeft: '5px',
+                  marginRight: '5px'}
             }}
             variant="temporary"
           >
