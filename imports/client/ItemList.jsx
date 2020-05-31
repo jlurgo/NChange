@@ -6,8 +6,9 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { _ } from 'meteor/underscore';
 
 import { Items } from "../shared/collections";
+import NThing from "../shared/NThing";
 
-import ItemInList from './ItemInList';
+import NThingInList from './NThingInList';
 import LoadingPane from './LoadingPane';
 
 const styles = {
@@ -39,10 +40,8 @@ class ItemList extends Component {
 
   renderThing = (nthing) => {
     return (
-      <ItemInList key={nthing._id} item={nthing}
+      <NThingInList key={nthing._id} nThing={nthing}
         onClick={this.props.onItemClick}
-        showDeleteButton={this.props.showItemsDeleteButton}
-        showLikeButton={this.props.showItemsLikeButton}
         showNewNchangeButton={this.props.showItemsNewNchangeButton}/>
     );
   }
@@ -55,13 +54,9 @@ export default withTracker((props) => {
     };
   }
   const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 50);
-  let items = Items.find(props.filter).fetch();
-  if(props.filter.tags) {
-    items = items.map((item)=>{
-      item.tags = _.difference(item.tags, props.filter.tags.$all);
-      return item;
-    });
-  }
+  const items = Items.find(props.filter).map((item)=>{
+    return new NThing(item);
+  });
   return {
     loading: !items_sub.ready(),
     items: items

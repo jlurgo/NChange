@@ -10,18 +10,22 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DeleteIcon from '@material-ui/icons/Delete';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import SwipeableViews from 'react-swipeable-views';
+import CloseIcon from '@material-ui/icons/Close';
 
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
 import TagSelectBar from './TagSelectBar';
 import NChangerAvatar from "./NChangerAvatar";
+import SelectQtyButton from "./SelectQtyButton";
 
 import { Items } from "../shared/collections";
+import NThing from "../shared/NThing";
 
 const styles = {
   root: {
@@ -29,9 +33,12 @@ const styles = {
     flexDirection: 'column',
     padding: '10px'
   },
+  topSection: {
+    display: 'flex',
+  },
   picsSection: {
     position: 'relative',
-    flex: '0 0 30vh',
+    flex: '1 1 30vh',
     overflow: 'hidden',
     width: '30vh'
   },
@@ -45,6 +52,9 @@ const styles = {
     width: '100%',
     height: '29vh',
     objectFit: 'cover',
+  },
+  controls: {
+    flex: '0 0 auto'
   },
   removePicIcon: {
     position: 'absolute',
@@ -91,23 +101,16 @@ class NThingDetail extends Component {
   }
 
   handleClose = () => {
-    //this.props.history.goBack();
+    if(this.props.onClose) {
+      this.props.onClose();
+    } else {
+      this.props.history.goBack();
+    }
   }
 
   handleSave = () => {
     const { nThing } = this.state;
-    console.warn('saving:', nThing);
-    if (!nThing._id) {
-      Meteor.call('nthings.new', nThing, (error, thing_id)=> {
-        if (error) {
-          console.warn(error);
-          return
-        }
-        this.handleClose();
-      });
-      return
-    }
-    Meteor.call('nthings.update', nThing, (error)=> {
+    nThing.save((error) => {
       if (error) {
         console.warn(error);
         return
@@ -159,70 +162,55 @@ class NThingDetail extends Component {
     this.setState(nThing);
   }
 
-  handleStockCheckChange = (e) => {
-    const { nThing } = this.state;
-    nThing.stock = e.target.checked ? 1 : undefined;
-    this.setState(nThing);
-  }
-
-  renderPic = (pic, i) => {
-    const { inCreateMode, inEditMode, classes } = this.props;
-    return  (
-      <div className={classes.picContainer} key={i}>
-        <img src={pic} alt={'picture'}
-         className={classes.pic}/>
-         { (inCreateMode || inEditMode) &&
-           <IconButton className={classes.removePicIcon}
-            onClick={() => this.removePic(pic)}>
-              <DeleteForeverIcon fontSize= 'large'/>
-           </IconButton>
-         }
-      </div>
-    );
-  }
-
   render() {
-    const { inCreateMode, inEditMode, loading, classes, history } = this.props;
+    const { nChange, nChangerId, loading,
+      classes, history } = this.props;
+    const { nThing } = this.state;
     if (loading) return <div>Loading...</div>
 
-    const nThing = (inCreateMode || inEditMode) ? this.state.nThing : this.props.nThing;
-    console.warn('render', this.state.nThing, this.props.nThing);
     return (
       <div className={classes.root}>
-        <div className={classes.picsSection}>
-          <SwipeableViews className={classes.picsList}>
-            {nThing.pics && nThing.pics.map(this.renderPic)}
-          </SwipeableViews>
-          { (inCreateMode || inEditMode) &&
-            <SelectPicButton onSelect={this.addPic}
-              classes={{ button: classes.addPicIcon }}/>
-          }
+        <div className={classes.topSection}>
+          <div className={classes.picsSection}>
+            <SwipeableViews className={classes.picsList}>
+              {nThing.pics && nThing.pics.map(this.renderPic)}
+            </SwipeableViews>
+          </div>
+          <div className={classes.controls}>
+            {this.renderCloseButton()}
+            { nThing.canBeUpdatedByMe() &&
+              <SelectPicButton onSelect={this.addPic}/>
+            }
+            { this.renderDeleteButton() }
+            { nChange &&
+              <SelectQtyButton nThing={nThing} nChange={nChange}
+                nChangerId={nChangerId}/>
+            }
+          </div>
         </div>
         {
-          (inCreateMode || inEditMode) ?
+          nThing.canBeUpdatedByMe() ?
             <TagSelectBar selectedTags={nThing.tags}
               onTagsChange={this.updateTags}/> :
             <TagBar tags={nThing.tags}/>
         }
-        { !inCreateMode &&
-          <div className={classes.propertySection}>
+        <div className={classes.propertySection}>
+          <Typography variant="h5" >
+            Dueño:
+          </Typography>
+          <NChangerAvatar nChangerId={nThing.owner}/>
+          {(nThing.owner !== nThing.guardian) &&
             <Typography variant="h5" >
-              Dueño:
+              entrega:
             </Typography>
-            <NChangerAvatar nChangerId={nThing.owner}/>
-            {(nThing.owner !== nThing.guardian) &&
-              <Typography variant="h5" >
-                Lo tiene:
-              </Typography>
-            }
-            {(nThing.owner !== nThing.guardian) &&
-              <NChangerAvatar nChangerId={nThing.guardian}/>
-            }
-          </div>
-        }
+          }
+          {(nThing.owner !== nThing.guardian) &&
+            <NChangerAvatar nChangerId={nThing.guardian}/>
+          }
+        </div>
         <div className={classes.stockSection}>
           {
-            (inCreateMode || inEditMode) ?
+            nThing.canBeUpdatedByMe() ?
               <TextField defaultValue={nThing.stock} type="number"
                 className={classes.stockInput} variant="outlined"
                 onChange={this.updateStock} label="Stock"
@@ -233,7 +221,7 @@ class NThingDetail extends Component {
           }
         </div>
         {
-          (inCreateMode || inEditMode) ?
+          nThing.canBeUpdatedByMe() ?
             <TextField defaultValue={nThing.longDescription} type="text"
               className={classes.descriptionInput} label="Descripción" multiline
               onChange={this.updateLongDescription} variant="outlined" fullWidth
@@ -243,21 +231,14 @@ class NThingDetail extends Component {
             </Typography>
         }
         <div className={classes.confirmationBar}>
-          { (!this.props.nChange) &&
-            (nThing.owner == Meteor.userId()) &&
-            (nThing.owner !== nThing.guardian) &&
-              <Button onClick={this.handleReceived} color="secondary">
-                marcar como recibido
-              </Button>
-          }
           {
-            (inCreateMode || inEditMode) &&
+            !nThing._id &&
               <Button onClick={this.handleClose} color="secondary">
                 Cancelar
               </Button>
           }
           {
-            (inCreateMode || inEditMode) &&
+            nThing.canBeUpdatedByMe() &&
               <Button onClick={this.handleSave} color="primary">
                 Guardar
               </Button>
@@ -266,29 +247,63 @@ class NThingDetail extends Component {
       </div>
     );
   }
+
+  renderPic = (pic, i) => {
+    const { classes } = this.props;
+    const { nThing } = this.state;
+    return  (
+      <div className={classes.picContainer} key={i}>
+        <img src={pic} alt={'picture'}
+         className={classes.pic}/>
+         { nThing.canBeUpdatedByMe() &&
+           <IconButton className={classes.removePicIcon}
+            onClick={() => this.removePic(pic)}>
+              <DeleteForeverIcon fontSize= 'medium'/>
+           </IconButton>
+         }
+      </div>
+    );
+  }
+
+  renderCloseButton = () => {
+    const { classes } = this.props;
+    return (
+      <IconButton className={classes.button} onClick={this.handleClose}>
+         <CloseIcon fontSize= 'medium'/>
+      </IconButton>
+    );
+  }
+
+  renderDeleteButton = () => {
+    const { classes, nChange } = this.props;
+    const { nThing } = this.state;
+    return nThing.canBeUpdatedByMe() && !nChange &&
+      <IconButton className={classes.button + ' ' + classes.removeThingIcon}
+        onClick={() => {
+          nThing.archive()
+        }}>
+         <DeleteIcon fontSize= 'small'/>
+      </IconButton>
+  }
 }
+
 
 export default withRouter(withTracker((props) => {
   const thing_id = props.thingId || props.match.params.id
-  if (thing_id == 'new') {
+  if (thing_id == 'new')
     return {
-      nThing: {},
-      inCreateMode: true,
+      nThing: new NThing()
     }
-  }
 
-  const item_sub = Meteor.subscribe('nthing_detail', thing_id);
-  if (!item_sub.ready())
+  const nthing_sub = Meteor.subscribe('nthing_detail', thing_id);
+  if (!nthing_sub.ready())
     return {
       loading: true
     }
 
   const nthing = Items.findOne({_id: thing_id});
   return {
-    nThing: nthing,
-    inEditMode: (nthing.owner == Meteor.userId()) &&
-                (nthing.guardian == Meteor.userId()) &&
-                (!props.nChange),
+    nThing: new NThing(nthing),
   };
 })
 (withStyles(styles)(NThingDetail)));

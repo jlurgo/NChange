@@ -31,7 +31,7 @@ import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
 import AddNChangerButton from './AddNChangerButton';
 import ItemList from './ItemList';
-import ItemInList from './ItemInList';
+import NThingInList from './NThingInList';
 import NChangeActivity from './NChangeActivity';
 import SendChatMessageBox from './SendChatMessageBox';
 import LeaveNChangeButton from './LeaveNChangeButton';
@@ -254,8 +254,8 @@ class NChangeDetail extends Component {
     const { selectedNchanger } = this.state;
 
     return (
-      <ItemInList key={nthing._id} item={nthing}
-        showQtyButton={true} nChange={nChange} nChangerId={selectedNchanger}/>
+      <NThingInList key={nthing._id} nThing={nthing}
+        nChange={nChange} nChangerId={selectedNchanger}/>
     );
   }
 

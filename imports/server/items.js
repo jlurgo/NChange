@@ -1,7 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { _ } from 'meteor/underscore';
 import { check } from 'meteor/check';
 import { Items } from '../shared/collections';
+import NThing from '../shared/NThing';
+
 import { NChangesController } from './NChangesController';
 
 // returns limited data from items to show on filtered lists
@@ -44,23 +47,24 @@ Meteor.methods({
     if (nthing.stock < 1) {
       throw new Meteor.Error('cant-create-nthing-without-stock');
     }
-    nthing.owner = this.userId;
-    nthing.guardian = this.userId;
+    nthing = new NThing(nthing);
     nthing.createdAt = new Date();
-    nthing.tags = nthing.tags || [];
-    nthing.pics = nthing.pics || [];
 
     return Items.insert(nthing);
   },
-  'nthings.update'(n_thing) {
+  'nthings.update'(nthing) {
     console.warn('updating a thing');
+    nthing = new NThing(nthing);
     // Make sure the user is logged and owns the thing
-    if (!this.userId || (n_thing.owner != this.userId)) {
-      throw new Meteor.Error('not-authorized');
-    }
-    n_thing.updatedAt = new Date();
+    // if (!nthing.canBeUpdatedByMe(this.userId)) {
+    //   throw new Meteor.Error('not-authorized');
+    // }
 
-    Items.update(n_thing._id, n_thing);
+    nthing.updatedAt = new Date();
+
+    Items.update(nthing._id, { $set: _.pick(nthing,
+      'tags', 'pics', 'thumbnail', 'stock', 'longDescription', 'updatedAt')
+    });
   },
   'nthings.archive'(itemId) {
     check(itemId, String);

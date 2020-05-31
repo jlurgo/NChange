@@ -116,7 +116,7 @@ class NChangerDetail extends Component {
             }
           </div>
         </div>
-        <ItemList filter={{$or: [{ owner: nChanger._id}, { guardian: nChanger._id}]}} showItemsDeleteButton={inEditMode}
+        <ItemList filter={{$or: [{ owner: nChanger._id}, { guardian: nChanger._id}]}}
           showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
         { inEditMode &&

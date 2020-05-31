@@ -88,7 +88,7 @@ class SelectPicButton extends Component {
     return (
       <div>
         <IconButton className={classes.button} onClick={this.openDialog}>
-          <AddAPhotoIcon fontSize= 'large'/>
+          <AddAPhotoIcon fontSize= 'medium'/>
         </IconButton>
         <Dialog open={showAddPictureDialog} onClose={this.handleClose}
           aria-labelledby="form-dialog-title">

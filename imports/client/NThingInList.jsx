@@ -109,40 +109,26 @@ const styles = {
 };
 
 
-// Item component - represents a single item
-class ItemInList extends Component {
+// Item component - represents a single nThing
+class NThingInList extends Component {
 
   state = {
     isExpanded: false,
     showDetail: false
   }
 
-  handleLikeButtonClick = (e) => {
-    const { item } = this.props;
-    this.itemliked() ?
-      Meteor.call('nthings.unlike', item._id) :
-      Meteor.call('nthings.like', item._id);
-    e.stopPropagation();
-  }
-
-  itemliked = () => {
-    const { item } = this.props;
-    return item.likedBy &&
-      !!_.findWhere(item.likedBy, {userId: Meteor.userId()});
-  }
-
-  handleRemoveClick = (e) => {
-    Meteor.call('nthings.archive', this.props.item._id);
+  handleArchiveClick = (e) => {
+    this.props.nThing.archive();
     e.stopPropagation();
   }
 
   handleNchangeClick = (e) => {
-    const { item, history } = this.props;
+    const { nThing, history } = this.props;
     e.stopPropagation();
     this.getStock() > 0 &&
-      Meteor.call('nchanges.new', item.owner,
+      Meteor.call('nchanges.new', nThing.owner,
         [{user: Meteor.userId(), action: 'take',
-          nThing: item._id, from: item.owner, qty: 1}],
+          nThing: nThing._id, from: nThing.owner, qty: 1}],
         (error, nchange_id) => {
           if (error) {
             console.warn(error);
@@ -153,7 +139,7 @@ class ItemInList extends Component {
   }
 
   handleClick = (e) => {
-    const { onClick, item } = this.props;
+    const { onClick, nThing } = this.props;
     const { isExpanded, showDetail } = this.state;
     e.preventDefault();
     e.stopPropagation();
@@ -166,7 +152,7 @@ class ItemInList extends Component {
       return;
     }
     if(onClick) {
-      onClick(item);
+      onClick(nThing);
       return;
     }
     this.setState({
@@ -174,14 +160,14 @@ class ItemInList extends Component {
       showDetail: true
     });
 
-    //this.props.history.push(`/nthingdetail/${item._id}`)
+    //this.props.history.push(`/nThingdetail/${nThing._id}`)
   }
 
   getStock = () => {
-    const { item, nChange } = this.props;
+    const { nThing, nChange } = this.props;
     return nChange ?
-      nChange.getRemainingThingStock(item) :
-      item.stock;
+      nChange.getRemainingThingStock(nThing) :
+      nThing.stock;
   }
 
   handleMouseEnter = () => {
@@ -205,23 +191,23 @@ class ItemInList extends Component {
   }
 
   render() {
-    const { item, showDeleteButton, showLikeButton, showNewNchangeButton,
-      showQtyButton, showTags, nChange, nChangerId, classes } = this.props;
+    const { nThing, showLikeButton, showNewNchangeButton,
+      showTags, nChange, nChangerId, classes } = this.props;
     const { isExpanded, showDetail } = this.state;
-    const is_my_own_thing = (item.owner == Meteor.userId());
+    const is_my_own_thing = (nThing.owner == Meteor.userId());
     return (
-      <div onClick={this.handleClick} key={item._id} className={classes.root}
+      <div onClick={this.handleClick} key={nThing._id} className={classes.root}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}>
-        <img src={item.thumbnail} alt={item.shortDescription}
+        <img src={nThing.thumbnail} alt={nThing.shortDescription}
           className={classes.pic}/>
         { isExpanded && showTags &&
             <div className={classes.bottomBar}>
-            <TagBar tags={item.tags} classes={{root: classes.tagBarRoot}}/>
+            <TagBar tags={nThing.tags} classes={{root: classes.tagBarRoot}}/>
           </div>
         }
         { isExpanded &&
-          <NChangerAvatar nChangerId={item.owner}
+          <NChangerAvatar nChangerId={nThing.owner}
             classes={{root: classes.ownerAvatar}}/>
         }
         { isExpanded &&
@@ -229,20 +215,20 @@ class ItemInList extends Component {
             {this.getStock()}
           </div>
         }
-        { isExpanded && (item.owner !== item.guardian) &&
-          <NChangerAvatar nChangerId={item.guardian}
+        { isExpanded && (nThing.owner !== nThing.guardian) &&
+          <NChangerAvatar nChangerId={nThing.guardian}
             classes={{root: classes.guardianAvatar}} size='medium'/>
         }
         <div className={classes.buttonBar}>
-          { isExpanded && showQtyButton &&
-            <SelectQtyButton nThing={item} nChange={nChange}
+          { isExpanded && nChange &&
+            <SelectQtyButton nThing={nThing} nChange={nChange}
               nChangerId={nChangerId}/>
           }
           { isExpanded && !is_my_own_thing && showLikeButton &&
-            <IconButton aria-label={`star ${item.shortDescription}`}
+            <IconButton aria-label={`star ${nThing.shortDescription}`}
               className={classes.button + ' ' + classes.likeIcon}
               onClick={this.handleLikeButtonClick}>
-              {this.itemliked() ?
+              {this.nThingliked() ?
                 <FavoriteIcon className={classes.likeIconLiked}
                   fontSize= 'small'/> :
                 <FavoriteBorderIcon fontSize= 'small'/>
@@ -256,17 +242,16 @@ class ItemInList extends Component {
                <SettingsEthernetIcon fontSize= 'small'/>
             </IconButton>
           }
-          { isExpanded && is_my_own_thing &&
-            (item.guardian == Meteor.userId()) && showDeleteButton &&
+          { isExpanded && !nChange && nThing.canBeUpdatedByMe() &&
             <IconButton className={classes.button + ' ' + classes.removeThingIcon}
-              onClick={this.handleRemoveClick}>
+              onClick={this.handleArchiveClick}>
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
           <Dialog open={showDetail} onClose={this.handleDetailClose}
             aria-labelledby="form-dialog-title">
-            <NThingDetail thingId={item._id} nChange={nChange}
-              nChangerId={nChangerId}/>
+            <NThingDetail thingId={nThing._id} nChange={nChange}
+              nChangerId={nChangerId} onClose={this.handleDetailClose}/>
           </Dialog>
         </div>
       </div>
@@ -274,4 +259,4 @@ class ItemInList extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(ItemInList));
+export default withRouter(withStyles(styles)(NThingInList));
