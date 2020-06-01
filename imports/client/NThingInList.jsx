@@ -13,7 +13,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
 
 import TagBar from "./TagBar";
 import NChangerAvatar from "./NChangerAvatar";
@@ -246,20 +245,8 @@ class NThingInList extends Component {
                <DeleteIcon fontSize= 'small'/>
             </IconButton>
           }
-          <Drawer open={showDetail} onClose={this.handleDetailClose}
-            anchor='right'
-            PaperProps={{ style: { position: 'absolute', maxWidth: '100%'} }}
-            BackdropProps={{ style: { position: 'absolute'} }}
-            ModalProps={{
-              container: document.getElementById('drawer-container'),
-              style: { position: 'absolute', maxWidth: '100%', marginLeft: '5px',
-                  marginRight: '5px'}
-            }}
-            variant="temporary"
-          >
-            <NThingDetail thingId={nThing._id} nChange={nChange}
-              nChangerId={nChangerId} onClose={this.handleDetailClose}/>
-          </Drawer>
+          <NThingDetail open={showDetail} thingId={nThing._id} nChange={nChange}
+            nChangerId={nChangerId} onClose={this.handleDetailClose}/>
         </div>
       </div>
     );

@@ -17,6 +17,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import SwipeableViews from 'react-swipeable-views';
 import CloseIcon from '@material-ui/icons/Close';
+import Drawer from '@material-ui/core/Drawer';
 
 import TagBar from "./TagBar";
 import SelectPicButton from "./SelectPicButton";
@@ -292,6 +293,25 @@ class NThingDetail extends Component {
   }
 }
 
+class NThingDetailDrawer extends Component {
+  render() {
+    console.log('drawing drawer', this.props);
+    return(
+      <Drawer open={this.props.open} onClose={this.props.onClose} anchor='right'
+        PaperProps={{ style: { position: 'absolute', maxWidth: '100%'} }}
+        BackdropProps={{ style: { position: 'absolute'} }}
+        ModalProps={{
+          container: document.getElementById('drawer-container'),
+          style: { position: 'absolute', maxWidth: '100%', marginLeft: '5px',
+              marginRight: '5px'}
+        }}
+        variant="temporary"
+      >
+        <NThingDetail {...this.props}/>
+      </Drawer>
+    );
+  }
+}
 
 export default withRouter(withTracker((props) => {
   const thing_id = props.thingId || props.match.params.id
@@ -311,4 +331,4 @@ export default withRouter(withTracker((props) => {
     nThing: new NThing(nthing),
   };
 })
-(withStyles(styles)(NThingDetail)));
+(withStyles(styles)(NThingDetailDrawer)));

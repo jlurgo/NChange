@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import ItemList from './ItemList';
 import EditableTextField from './EditableTextField';
 import SelectPicButton from "./SelectPicButton";
+import NThingDetail from "./NThingDetail";
 
 import { Items } from "../shared/collections";
 
@@ -70,9 +71,15 @@ const styles = {
 //
 class NChangerDetail extends Component {
 
+  state = {
+    showAddThingDialog: false
+  }
+
   addThing = () => {
     const { history } = this.props;
-    history.push(`/nthingdetail/new`);
+    this.setState({
+      showAddThingDialog: true
+    });
   }
 
   updateUserName = (new_user_name, on_error_cb) => {
@@ -91,8 +98,15 @@ class NChangerDetail extends Component {
     Meteor.call('users.setPic', url);
   }
 
+  handleAddThingClose = () => {
+    this.setState({
+      showAddThingDialog: false,
+    });
+  }
+
   render() {
     const { nChanger, inEditMode, loading, classes, history } = this.props;
+    const { showAddThingDialog } = this.state;
     if (loading) return <div>Loading...</div>
 
     return (
@@ -125,6 +139,7 @@ class NChangerDetail extends Component {
             <AddIcon />
           </Fab>
         }
+        <NThingDetail open={showAddThingDialog} thingId="new" onClose={this.handleAddThingClose}/>
       </Paper>
     );
   }
