@@ -60,7 +60,8 @@ const styles = {
     flex: '0 0 50px',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginLeft: '8px'
   },
   removePicIcon: {
     position: 'absolute',
@@ -300,6 +301,7 @@ class NThingDetailDrawer extends Component {
       <Drawer open={this.props.open} onClose={this.props.onClose} anchor='right'
         PaperProps={{ style: { position: 'absolute', maxWidth: '100%'} }}
         BackdropProps={{ style: { position: 'absolute'} }}
+        transitionDuration={5}
         ModalProps={{
           container: document.getElementById('drawer-container'),
           style: { position: 'absolute', maxWidth: '100%', marginLeft: '5px',

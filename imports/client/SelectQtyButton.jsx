@@ -78,25 +78,23 @@ const styles = {
   },
   microPlusIcon: {
     position: 'absolute',
-    top: '-8px',
+    top: '-1px',
     right: '14px',
     height: '16px',
     width: '16px',
     textAlign: 'center',
-    backgroundColor: 'gray',
-    color: 'white',
-    borderRadius: '50%',
+    fontWeight: 'bold',
+    fontSize: '16px'
   },
   microMinusIcon: {
     position: 'absolute',
-    bottom: '-8px',
+    bottom: '3px',
     right: '14px',
     height: '16px',
     width: '16px',
     textAlign: 'center',
-    backgroundColor: 'gray',
-    color: 'white',
-    borderRadius: '50%',
+    fontWeight: 'bold',
+    fontSize: '20px'
   },
 };
 
@@ -246,7 +244,8 @@ class SelectQtyButton extends Component {
           </IconButton>
         }
         { show_slider &&
-          <div className={classes.sliderButtonOverlay}>
+          <div className={classes.sliderButtonOverlay}
+            style={{overflow: selectingValue ? 'visible' : 'hidden'}}>
             <div className={classes.microPlusIcon}> + </div>
             <div className={classes.microMinusIcon}> - </div>
             <div className={classes.sliderContainer}>
