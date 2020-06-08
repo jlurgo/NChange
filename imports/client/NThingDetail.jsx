@@ -25,7 +25,7 @@ import TagSelectBar from './TagSelectBar';
 import NChangerAvatar from "./NChangerAvatar";
 import SelectQtyButton from "./SelectQtyButton";
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 import NThing from "../shared/NThing";
 
 const styles = {
@@ -296,7 +296,6 @@ class NThingDetail extends Component {
 
 class NThingDetailDrawer extends Component {
   render() {
-    console.log('drawing drawer', this.props);
     return(
       <Drawer open={this.props.open} onClose={this.props.onClose} anchor='right'
         PaperProps={{ style: { position: 'absolute', maxWidth: '100%'} }}
@@ -328,7 +327,7 @@ export default withRouter(withTracker((props) => {
       loading: true
     }
 
-  const nthing = Items.findOne({_id: thing_id});
+  const nthing = NThings.findOne({_id: thing_id});
   return {
     nThing: new NThing(nthing),
   };

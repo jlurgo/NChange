@@ -16,11 +16,11 @@ import SendIcon from '@material-ui/icons/Send';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
-import ItemInChange from './ItemInChange';
 import NChangerAvatar from './NChangerAvatar';
 import NThingIcon from './NThingIcon';
+import NThingInList from './NThingInList';
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 
 const styles = {
   root: {
@@ -32,7 +32,8 @@ const styles = {
     cursor: 'pointer',
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: 'unset'
+    backgroundColor: 'unset',
+    '-webkit-tap-highlight-color': 'transparent',
   },
   itemList: {
     flex: '1 1 100px',
@@ -95,52 +96,49 @@ const styles = {
 class NChangeInList extends Component {
 
   approveNchange = (e) => {
-    Meteor.call('nchanges.approve', this.props.nchange._id);
+    Meteor.call('nchanges.approve', this.props.nChange._id);
     e.stopPropagation();
   }
 
   dontApproveNchange = (e) => {
-    Meteor.call('nchanges.dont_approve', this.props.nchange._id);
+    Meteor.call('nchanges.dont_approve', this.nChange.nchange._id);
     e.stopPropagation();
   }
 
   sendNchange = (e) => {
-    Meteor.call('nchanges.send', this.props.nchange._id);
+    Meteor.call('nchanges.send', this.props.nChange._id);
     e.stopPropagation();
   }
 
   onInputItemClick = (item_id) => {
-    const { nchange, nChangerId } = this.props;
-    const take_action = _.where(nchange.detail,
+    const { nChange, nChangerId } = this.props;
+    const take_action = _.where(nChange.detail,
       { action: 'take', nThing: item_id, user: nChangerId});
-    Meteor.call('nchanges.releaseItem', nchange._id, nChangerId, item_id,
+    Meteor.call('nchanges.releaseItem', nChange._id, nChangerId, item_id,
       take_action.from);
   }
 
   onOutputItemClick = (item_id) => {
-    const { nchange, nChangerId } = this.props;
-    const take_action = _.findWhere(nchange.detail,
+    const { nChange, nChangerId } = this.props;
+    const take_action = _.findWhere(nChange.detail,
       { action: 'take', nThing: item_id, from: nChangerId});
-    Meteor.call('nchanges.retrieveItem', nchange._id, nChangerId, item_id,
+    Meteor.call('nchanges.retrieveItem', nChange._id, nChangerId, item_id,
       take_action.user);
   }
 
-  renderItems(items, onClick) {
-    const { nchange, nChangerId, enableItemRemoving, classes } = this.props;
-    return items.map((item) => {
+  renderThings(taken_things, onClick) {
+    const { nChange, nChangerId, enableItemRemoving, classes } = this.props;
+    console.log('rendering taken things:', taken_things);
+    return taken_things.map((taken_thing) => {
       return (
-        <ItemInChange
-          key={item.nThing}
-          itemInChange={item}
-          onClick={enableItemRemoving && onClick}
-          nChangerId={nChangerId}
-        />
+        <NThingInList key={taken_thing.nThing} nThingId={taken_thing.nThing}
+          nChange={nChange} nChangerId={nChangerId} size={'100px'}/>
       );
     });
   }
 
   renderMiddleButton = () => {
-    const { nchange, nChangerId, classes } = this.props;
+    const { nChange, nChangerId, classes } = this.props;
     if (nChangerId !== Meteor.userId())
       return (
         <NChangerAvatar
@@ -149,21 +147,21 @@ class NChangeInList extends Component {
           nChangerId={nChangerId}/>
       )
 
-    if (nchange.draft)
+    if (nChange.draft)
       return (
         <IconButton className={classes.okButton} onClick={this.sendNchange}>
             <SendIcon fontSize='large'/>
         </IconButton>
       )
 
-    if (nchange.approved)
+    if (nChange.approved)
       return (
         <IconButton className={classes.okButton + ' ' + classes.finishedOkButton}>
             <WbSunnyIcon fontSize='large'/>
         </IconButton>
       )
 
-    if (nchange.approvedBy(Meteor.userId()))
+    if (nChange.approvedBy(Meteor.userId()))
       return (
         <IconButton className={classes.okButton + ' ' + classes.approvedOkButton}
           onClick={this.dontApproveNchange}>
@@ -172,7 +170,7 @@ class NChangeInList extends Component {
       )
     return (
       <IconButton className={classes.okButton}
-        disabled={!nchange.nchangerCanApprove(Meteor.userId())}
+        disabled={!nChange.nchangerCanApprove(Meteor.userId())}
         onClick={this.approveNchange}>
           <ThumbUpOutlinedIcon fontSize='large'/>
       </IconButton>
@@ -180,22 +178,22 @@ class NChangeInList extends Component {
   }
 
   render() {
-    const { nchange, nChangerId, classes, history, enableItemRemoving } = this.props;
+    const { nChange, nChangerId, classes, history, enableItemRemoving } = this.props;
 
     return (
       <Paper className={classes.root} onClick={()=>{
-          history.push(`/nchangedetail/${nchange._id}`)
+          history.push(`/nchangedetail/${nChange._id}`)
         }} >
           <div className={classes.itemList}>
             <div className={classes.animatedBackground}></div>
-            { this.renderItems(nchange.getNchangerOutputThings(nChangerId),
+            { this.renderThings(nChange.getNchangerOutputThings(nChangerId),
                 this.onOutputItemClick, nChangerId) }
           </div>
           { this.renderMiddleButton() }
           <div className={classes.itemList + ' ' + classes.listOnTheRight} >
             <div className={classes.animatedBackground + ' ' +
               classes.animatedBackgroundRight}></div>
-            { this.renderItems(nchange.getNchangerInputThings(nChangerId),
+            { this.renderThings(nChange.getNchangerInputThings(nChangerId),
                 this.onInputItemClick) }
           </div>
       </Paper>

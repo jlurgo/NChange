@@ -18,18 +18,20 @@ import TagBar from "./TagBar";
 import NChangerAvatar from "./NChangerAvatar";
 import NThingDetail from "./NThingDetail";
 import SelectQtyButton from "./SelectQtyButton";
+import LoadingPane from './LoadingPane';
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 
 
 const styles = {
-  root: {
+  root: props => ({
+    flex: '0 0 auto',
     position: 'relative',
-    height: '142px',
-    width: '142px',
+    height: props.size || '142px',
+    width: props.size || '142px',
     margin: '10px',
     '-webkit-tap-highlight-color': 'transparent',
-  },
+  }),
   pic: {
     height: '100%',
     width: '100%',
@@ -191,6 +193,7 @@ class NThingInList extends Component {
     const { nThing, showLikeButton, showNewNchangeButton,
       showTags, nChange, nChangerId, classes } = this.props;
     const { isExpanded, showDetail } = this.state;
+    if(!nThing) return <LoadingPane/>
     const is_my_own_thing = (nThing.owner == Meteor.userId());
     return (
       <div onClick={this.handleClick} key={nThing._id} className={classes.root}
@@ -253,4 +256,22 @@ class NThingInList extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(NThingInList));
+export default withTracker((props) => {
+  if (props.nThing) {
+    return props;
+  }
+  console.log('nThing not provided');
+  console.log('provided id:', props.nThingId);
+  const item_sub = Meteor.subscribe('filtered_items_summary', {
+    _id: props.nThingId});
+
+  console.log('sub readyness:', item_sub.ready());
+  const nthing = NThings.findOne({_id: props.nThingId});
+  console.log('getting: ', nthing);
+  return {
+    nThing: nthing,
+    nChange: props.nChange,
+    nChangerId: props.nChangerId,
+  }
+
+})(withRouter(withStyles(styles)(NThingInList)));

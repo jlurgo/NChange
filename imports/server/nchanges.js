@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import { NChanges, Items } from '../shared/collections';
+import { NChanges, NThings } from '../shared/collections';
 import NChange from "../shared/NChange"
 import { _ } from 'meteor/underscore';
 import { matchObjects, rejectUnloggedUsers } from './utils';
@@ -44,7 +44,7 @@ const rejectOperationOnFinishedNchange = (nchange_id) => {
 const rejectIfUserDoesNotOwnTheThing = (nthing_id) => {
   check(nthing_id, String);
 
-  const nthing = Items.findOne(nthing_id);
+  const nthing = NThings.findOne(nthing_id);
   if (nthing.owner != Meteor.userId()) {
     throw new Meteor.Error('this-nthing-does-not-belong-to-the-user');
   }
@@ -105,7 +105,7 @@ Meteor.methods({
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    const nthing = Items.findOne({_id: nthing_id});
+    const nthing = NThings.findOne({_id: nthing_id});
     const nchange = new NChange(NChanges.findOne(nchange_id));
 
     if(qty<=0) {
@@ -148,7 +148,7 @@ Meteor.methods({
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    const item = Items.findOne({_id: nthing_id});
+    const item = NThings.findOne({_id: nthing_id});
     NChanges.update({_id: nchange_id}, {
       $pull: { detail: {
         user: nchanger_id, action: 'take',
@@ -168,7 +168,7 @@ Meteor.methods({
     rejectUsersNotInNChange(nchange_id);
     rejectOperationOnFinishedNchange(nchange_id);
 
-    const item = Items.findOne({_id: nthing_id});
+    const item = NThings.findOne({_id: nthing_id});
     NChanges.update({_id: nchange_id}, {
       $pull: { detail: {
         user: taker_id, action: 'take',
@@ -237,11 +237,11 @@ Meteor.methods({
         user: nchanger, action: 'take'
       });
       take_actions.forEach((action)=>{
-        const nthing = Items.findOne({_id: action.nThing },
+        const nthing = NThings.findOne({_id: action.nThing },
           {fields: {_id: 0 }});
         console.warn('transfering thing: ', nthing, action);
         if(nthing.stock == action.qty ) {
-          Items.update({_id: action.nThing }, {$set: {
+          NThings.update({_id: action.nThing }, {$set: {
             owner: nchanger
           }});
         } else {
@@ -251,8 +251,8 @@ Meteor.methods({
             stock: action.qty,
             createdAt: new Date(),
           });
-          Items.insert(new_nthing);
-          Items.update({_id: action.nThing },
+          NThings.insert(new_nthing);
+          NThings.update({_id: action.nThing },
             {$set: {stock: nthing.stock - action.qty}});
         }
       });

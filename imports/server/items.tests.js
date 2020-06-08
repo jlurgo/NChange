@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import { assert } from 'chai';
 
-import { Items } from '../shared/collections';
+import { NThings } from '../shared/collections';
 
 if (Meteor.isServer) {
   describe('Items', () => {
@@ -13,8 +13,8 @@ if (Meteor.isServer) {
       let itemId;
 
       beforeEach(() => {
-        Items.remove({});
-        itemId = Items.insert({
+        NThings.remove({});
+        itemId = NThings.insert({
           text: 'test item',
           createdAt: new Date(),
           owner: userId,
@@ -35,7 +35,7 @@ if (Meteor.isServer) {
 
         Meteor.call('nthings.archive', { userId });
         // Verify that the method does what we expected
-        assert.equal(Items.find().count(), 0);
+        assert.equal(NThings.find().count(), 0);
       });
     });
   });

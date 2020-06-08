@@ -11,7 +11,7 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import ExtensionIcon from '@material-ui/icons/Extension';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 
 const styles = {
   root: {
@@ -54,7 +54,7 @@ export default withTracker((props) => {
   const filter = {_id: props.nThingId};
   const item_sub = Meteor.subscribe('filtered_items_summary', filter);
 
-  const n_thing = Items.findOne(filter);
+  const n_thing = NThings.findOne(filter);
 
   return {
     loading: !item_sub.ready(),

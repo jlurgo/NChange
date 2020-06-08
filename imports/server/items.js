@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
 import { check } from 'meteor/check';
-import { Items } from '../shared/collections';
+import { NThings } from '../shared/collections';
 import NThing from '../shared/NThing';
 
 import { NChangesController } from './NChangesController';
@@ -21,7 +21,7 @@ Meteor.publish('filtered_items_summary', (filter, limit) => {
   filter.archived = {
     $exists: false
   }
-  return Items.find(filter, {
+  return NThings.find(filter, {
     fields: item_for_list_projection,
     limit: limit
   });
@@ -29,7 +29,7 @@ Meteor.publish('filtered_items_summary', (filter, limit) => {
 
 Meteor.publish('nthing_detail', (id) => {
   console.warn(`subscribing to nthing_detail with id: ${id}`);
-  return Items.find({
+  return NThings.find({
     _id: id
   });
 });
@@ -50,7 +50,7 @@ Meteor.methods({
     nthing = new NThing(nthing);
     nthing.createdAt = new Date();
 
-    return Items.insert(nthing);
+    return NThings.insert(nthing);
   },
   'nthings.update'(nthing) {
     console.warn('updating a thing');
@@ -62,7 +62,7 @@ Meteor.methods({
 
     nthing.updatedAt = new Date();
 
-    Items.update(nthing._id, { $set: _.pick(nthing,
+    NThings.update(nthing._id, { $set: _.pick(nthing,
       'tags', 'pics', 'thumbnail', 'stock', 'longDescription', 'updatedAt')
     });
   },
@@ -70,12 +70,12 @@ Meteor.methods({
     check(itemId, String);
     console.warn('archiving a thing');
 
-    const item = Items.findOne(itemId);
+    const item = NThings.findOne(itemId);
     if (item.owner !== this.userId) {
       // make sure only the owner can delete it
       throw new Meteor.Error('not-authorized');
     }
-    Items.update(itemId, { $set: {
+    NThings.update(itemId, { $set: {
       archived: true
     }});
   },
@@ -83,12 +83,12 @@ Meteor.methods({
     check(nthing_id, String);
     console.warn('marking a thing as received:', nthing_id);
 
-    const nthing = Items.findOne(nthing_id);
+    const nthing = NThings.findOne(nthing_id);
     if (nthing.owner !== this.userId) {
       // make sure only the owner can receive it
       throw new Meteor.Error('not-authorized');
     }
-    Items.update(nthing_id, { $set: {
+    NThings.update(nthing_id, { $set: {
       guardian: this.userId
     }});
   },
@@ -96,31 +96,31 @@ Meteor.methods({
     check(itemId, String);
     check(setToPrivate, Boolean);
 
-    const item = Items.findOne(itemId);
+    const item = NThings.findOne(itemId);
 
     // Make sure only the item owner can make a item private
     if (item.owner !== this.userId) {
       throw new Meteor.Error('not-authorized');
     }
 
-    Items.update(itemId, { $set: { private: setToPrivate } });
+    NThings.update(itemId, { $set: { private: setToPrivate } });
   },
   'nthings.like'(itemId) {
     check(itemId, String);
     console.warn(`liking item with id: ${itemId}`);
-    const item = Items.findOne(itemId);
+    const item = NThings.findOne(itemId);
     if (item.owner == this.userId) {
       throw new Meteor.Error('you cannot like your own items');
     }
-    Items.update(itemId, { $push: { likedBy: {userId: this.userId}} });
+    NThings.update(itemId, { $push: { likedBy: {userId: this.userId}} });
   },
   'nthings.unlike'(itemId) {
     check(itemId, String);
     console.warn(`unliking item with id: ${itemId}`);
-    const item = Items.findOne(itemId);
+    const item = NThings.findOne(itemId);
     if (item.owner == this.userId) {
       throw new Meteor.Error('you cannot unlike your own items');
     }
-    Items.update(itemId, { $pull: { likedBy: {userId: this.userId}}});
+    NThings.update(itemId, { $pull: { likedBy: {userId: this.userId}}});
   },
 });

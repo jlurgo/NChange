@@ -19,7 +19,7 @@ import EditableTextField from './EditableTextField';
 import SelectPicButton from "./SelectPicButton";
 import NThingDetail from "./NThingDetail";
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 
 const styles = {
   root: {

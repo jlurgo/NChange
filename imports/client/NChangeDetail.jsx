@@ -203,7 +203,7 @@ class NChangeDetail extends Component {
       <div className={classes.root } ref={this.rootRef}>
         {this.renderNchangersSection()}
         <NChangeInList
-          nChangerId={selectedNchanger} key={nChange._id} nchange={nChange}
+          nChangerId={selectedNchanger} key={nChange._id} nChange={nChange}
           classes={{root: classes.detailBar}} enableItemRemoving={true}
         />
         <div className={classes.bottomSection}>

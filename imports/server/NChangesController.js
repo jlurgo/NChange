@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import { NChanges, Items } from '../shared/collections';
+import { NChanges, NThings } from '../shared/collections';
 import { _ } from 'meteor/underscore';
 
 export const NChangesController = {

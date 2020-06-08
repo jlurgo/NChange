@@ -1,22 +1,22 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import { Items } from '../shared/collections';
+import { NThings } from '../shared/collections';
 import { NChangesController } from './NChangesController';
 import { UsersController } from './UsersController';
 
 export default Migrations = {
   run() {
     // nthings should have stock
-    Items.update({ stock: { $exists: false }}, {$set: { stock: 1 }}, { multi: true });
+    NThings.update({ stock: { $exists: false }}, {$set: { stock: 1 }}, { multi: true });
     // nthings should have a guardian
-    Items.find({ guardian: { $exists: false }}).forEach((nthing) => {
-      Items.update({ _id: nthing._id }, {$set: { guardian: nthing.owner }});
+    NThings.find({ guardian: { $exists: false }}).forEach((nthing) => {
+      NThings.update({ _id: nthing._id }, {$set: { guardian: nthing.owner }});
     });
     // nThings should have a thumbnail
-    Items.find({ thumbnail: { $exists: false }}).forEach((nthing) => {
+    NThings.find({ thumbnail: { $exists: false }}).forEach((nthing) => {
       if (!nthing.pics) return;
-      Items.update({ _id: nthing._id }, {$set: { thumbnail: nthing.pics[0] }});
+      NThings.update({ _id: nthing._id }, {$set: { thumbnail: nthing.pics[0] }});
     });
   }
 };

@@ -23,7 +23,7 @@ class NChangesList extends Component {
     const { classes } = this.props;
     return this.props.nChanges.map((nchange) => {
       return (
-        <NChangeInList key={nchange._id} nchange={nchange}
+        <NChangeInList key={nchange._id} nChange={nchange}
           nChangerId={Meteor.userId()}/>
       );
     });

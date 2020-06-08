@@ -1,4 +1,4 @@
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 import { NChanges } from "../shared/collections";
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
@@ -219,7 +219,7 @@ export function createBasicData() {
   });
   console.warn("test users created ");
   _.forEach(nthng, (nthing)=>{
-    Items.upsert(nthing._id, nthing);
+    NThings.upsert(nthing._id, nthing);
   });
   console.warn("test nthings created ");
   _.forEach(nchng, (nchange)=>{

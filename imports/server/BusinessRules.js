@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import { Items } from '../shared/collections';
+import { NThings } from '../shared/collections';
 import { NChangesController } from './NChangesController';
 import { UsersController } from './UsersController';
 
@@ -10,7 +10,7 @@ export default BusinessRules = {
     // observers
     // if an item is archived must be removed from all ongoing nchanges
     console.warn('ensuring that when an item is archived will be removed from ongoing nchanges ');
-    Items.find({
+    NThings.find({
       archived: true
     }, {
       fields: { archived: 1}
@@ -25,7 +25,7 @@ export default BusinessRules = {
 
     // if an item is archived must be removed from all ongoing nchanges
     console.warn('ensuring that when an item owners change, it will be removed from previous nchanges ');
-    Items.find({
+    NThings.find({
     }, {
       fields: { owner: 1 }
     }).observe(
@@ -39,7 +39,7 @@ export default BusinessRules = {
     );
 
     console.warn('ensuring that when an item stock changes, it will be removed from previous nchanges ');
-    Items.find({
+    NThings.find({
     }, {
       fields: { stock: 1 }
     }).observe(

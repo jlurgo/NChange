@@ -5,7 +5,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom'
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';

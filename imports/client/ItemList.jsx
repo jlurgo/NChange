@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { _ } from 'meteor/underscore';
 
-import { Items } from "../shared/collections";
+import { NThings } from "../shared/collections";
 import NThing from "../shared/NThing";
 
 import NThingInList from './NThingInList';
@@ -51,12 +51,10 @@ class ItemList extends Component {
 
 export default withTracker((props) => {
   if(props.items) {
-    return {
-      items: props.items
-    };
+    return props;
   }
   const items_sub = Meteor.subscribe('filtered_items_summary', props.filter, 50);
-  const items = Items.find(props.filter).map((item)=>{
+  const items = NThings.find(props.filter).map((item)=>{
     return new NThing(item);
   });
   return {
