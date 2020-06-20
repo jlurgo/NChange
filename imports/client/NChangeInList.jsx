@@ -7,20 +7,14 @@ import { _ } from 'meteor/underscore';
 
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import SendIcon from '@material-ui/icons/Send';
-import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
 import NChangerAvatar from './NChangerAvatar';
-import NThingIcon from './NThingIcon';
 import NThingInList from './NThingInList';
-
-import { NThings } from "../shared/collections";
 
 const styles = {
   root: {
@@ -34,6 +28,7 @@ const styles = {
     overflow: 'hidden',
     backgroundColor: 'unset',
     '-webkit-tap-highlight-color': 'transparent',
+    boxSizing: 'border-box'
   },
   itemList: {
     flex: '1 1 100px',
@@ -86,8 +81,11 @@ const styles = {
   approvedOkButton: {
     color: '#41b53f',
   },
-  finishedOkButton : {
+  finishedOkButton: {
     color: 'orange'
+  },
+  selected: {
+    boxShadow: '3px 3px 5px 0px rgba(0,0,0,0.75)'
   }
 };
 
@@ -128,7 +126,6 @@ class NChangeInList extends Component {
 
   renderThings(taken_things, onClick) {
     const { nChange, nChangerId, enableItemRemoving, classes } = this.props;
-    console.log('rendering taken things:', taken_things);
     return taken_things.map((taken_thing) => {
       return (
         <NThingInList key={taken_thing.nThing} nThingId={taken_thing.nThing}
@@ -178,24 +175,23 @@ class NChangeInList extends Component {
   }
 
   render() {
-    const { nChange, nChangerId, classes, history, enableItemRemoving } = this.props;
+    const { nChange, nChangerId, classes, onClick, selected } = this.props;
 
     return (
-      <Paper className={classes.root} onClick={()=>{
-          history.push(`/nchangedetail/${nChange._id}`)
-        }} >
-          <div className={classes.itemList}>
-            <div className={classes.animatedBackground}></div>
-            { this.renderThings(nChange.getNchangerOutputThings(nChangerId),
-                this.onOutputItemClick, nChangerId) }
-          </div>
-          { this.renderMiddleButton() }
-          <div className={classes.itemList + ' ' + classes.listOnTheRight} >
-            <div className={classes.animatedBackground + ' ' +
-              classes.animatedBackgroundRight}></div>
-            { this.renderThings(nChange.getNchangerInputThings(nChangerId),
-                this.onInputItemClick) }
-          </div>
+      <Paper className={classnames(classes.root, selected && classes.selected)} 
+        onClick={() => { onClick(nChange) }}>
+        <div className={classes.itemList}>
+          <div className={classes.animatedBackground}></div>
+          { this.renderThings(nChange.getNchangerOutputActions(nChangerId),
+              this.onOutputItemClick, nChangerId) }
+        </div>
+        { this.renderMiddleButton() }
+        <div className={classes.itemList + ' ' + classes.listOnTheRight} >
+          <div className={classes.animatedBackground + ' ' +
+            classes.animatedBackgroundRight}></div>
+          { this.renderThings(nChange.getNchangerInputActions(nChangerId),
+              this.onInputItemClick) }
+        </div>
       </Paper>
     );
   }

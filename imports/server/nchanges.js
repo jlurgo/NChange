@@ -109,11 +109,13 @@ Meteor.methods({
     const nchange = new NChange(NChanges.findOne(nchange_id));
 
     if(qty<=0) {
-      Meteor.call('nchanges.releaseItem', nchange._id, nchanger_id, nthing._id,
-        nthing.owner);
+      Meteor.call('nchanges.releaseItem', nchange._id, nchanger_id, nthing._id, nthing.owner);
       return;
     }
-
+    // adds nChanger to nChange if it's not already there
+    !_.contains(nchange.nChangers, nthing.owner) && 
+      Meteor.call('nchanges.add_nchanger', nchange_id, nthing.owner);
+    
     const action_query = {
       nThing: nthing_id, user: nchanger_id, action: 'take', from: nthing.owner
     };

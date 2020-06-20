@@ -208,7 +208,7 @@ class NThingDetail extends Component {
           <NChangerAvatar nChangerId={nThing.owner}/>
           {(nThing.owner !== nThing.guardian) &&
             <Typography variant="h5" >
-              entrega:
+              Guarda:
             </Typography>
           }
           {(nThing.owner !== nThing.guardian) &&
@@ -315,7 +315,7 @@ class NThingDetailDrawer extends Component {
 }
 
 export default withRouter(withTracker((props) => {
-  const thing_id = props.thingId || props.match.params.id
+  const thing_id = props.thingId || props.match.params.id;
   if (thing_id == 'new')
     return {
       nThing: new NThing()

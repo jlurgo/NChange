@@ -10,6 +10,8 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import PublicIcon from '@material-ui/icons/Public';
+import GroupIcon from '@material-ui/icons/Group';
 
 const get_size = (property) => {
   let size = 45; // 'medium';
@@ -45,13 +47,22 @@ const styles = {
 
 //
 class NChangerAvatar extends Component {
+
+  handleClick = (e) => {
+    const { nChangerId, nChanger, history } = this.props;
+    e.stopPropagation();
+    const nchanger_id = nChanger ? nChanger._id : nChangerId;
+    if (this.props.onClick) this.props.onClick(nchanger_id, e);
+    else history.push(`/nchangerdetail/${nchanger_id}`);
+  }
+
   render() {
-    const { nChanger, thumbsUp, loading, classes, history, selected } = this.props;
+    const { nChangerId, nChanger, thumbsUp, loading, classes, selected } = this.props;
 
     if (loading) return <div>Loading...</div>
 
     let pic_classes = classes.userImage;
-    const is_logged_user = (nChanger._id == Meteor.userId());
+    const is_logged_user = nChanger && (nChanger._id == Meteor.userId());
 
     let button_class = '';
     if (is_logged_user){
@@ -60,18 +71,22 @@ class NChangerAvatar extends Component {
     if (selected) {
       button_class = classes.isSelected;
     }
+
     return (
       <div className={classes.root }>
         <IconButton classes={{root: button_class}}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (this.props.onClick) this.props.onClick(nChanger._id);
-            else history.push(`/nchangerdetail/${nChanger._id}`);
-          }}>
+          onClick={this.handleClick}>
           {
-            nChanger.pic ?
-              <img src= {nChanger.pic} className={pic_classes} /> :
-              <AccountCircleOutlinedIcon fontSize= 'large'/>
+            nChangerId == 'world' &&
+            <PublicIcon fontSize= 'large'/>
+          }
+          {
+            nChangerId == 'nchange' &&
+            <GroupIcon fontSize= 'large'/>
+          }
+          {
+            (nChanger && nChanger.pic) &&
+              <img src= {nChanger.pic} className={pic_classes} /> 
           }
           {
             thumbsUp &&
@@ -88,6 +103,11 @@ export default withTracker((props) => {
   if(nChanger) {
     return {
       nChanger: nChanger
+    };
+  }
+  if(nChangerId == 'world' || nChangerId == 'nchange') {
+    return {
+      nChangerId: nChangerId
     };
   }
   Meteor.subscribe('nchangers_list', {_id: nChangerId});

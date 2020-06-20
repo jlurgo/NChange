@@ -260,14 +260,10 @@ export default withTracker((props) => {
   if (props.nThing) {
     return props;
   }
-  console.log('nThing not provided');
-  console.log('provided id:', props.nThingId);
   const item_sub = Meteor.subscribe('filtered_items_summary', {
     _id: props.nThingId});
 
-  console.log('sub readyness:', item_sub.ready());
   const nthing = NThings.findOne({_id: props.nThingId});
-  console.log('getting: ', nthing);
   return {
     nThing: nthing,
     nChange: props.nChange,

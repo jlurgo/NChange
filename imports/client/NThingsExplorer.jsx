@@ -4,14 +4,15 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom'
+import { _ } from 'meteor/underscore';
 
 import { NThings } from "../shared/collections";
 
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-import ItemList from './ItemList';
-import ItemFilterBar from './ItemFilterBar';
+import NThingList from './NThingList';
+import NThingFilterBar from './NThingFilterBar';
 
 const styles = {
   root: {
@@ -27,31 +28,27 @@ const styles = {
   }
 };
 
+
 // App component - represents the whole app
-class ItemExplorer extends Component {
+class NThingsExplorer extends Component {
   state = {
-    filter: {owner: {$ne: Meteor.userId()}, $or: [
-      {stock: {$gt: 0}},
-      {stock: {$exists: false}}
-    ]},
+    filter: {
+      owner: {$ne: Meteor.userId()},
+      stock: {$gt: 0}
+    }
   }
 
   setFilter = (filter) => {
-    filter.owner = {$ne: Meteor.userId()};
-    $or: [
-      {stock: {$gt: 0}},
-      {stock: {$exists: false}}
-    ]
-    this.setState({filter});
+    this.setState({ filter });
   }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <ItemFilterBar filter={this.state.filter}
+        <NThingFilterBar filter={this.state.filter}
           onFilterChange={this.setFilter} />
-        <ItemList filter={this.state.filter} showItemsArchiveButton
+        <NThingList filter={this.state.filter} showItemsArchiveButton
           showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
       </div>
@@ -59,4 +56,4 @@ class ItemExplorer extends Component {
   }
 }
 
-export default withStyles(styles)(withRouter(ItemExplorer));
+export default withStyles(styles)(withRouter(NThingsExplorer));

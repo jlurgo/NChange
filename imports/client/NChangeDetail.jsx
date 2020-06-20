@@ -10,30 +10,25 @@ import NChange from "../shared/NChange"
 
 import { NChanges } from "../shared/collections";
 
-import CloseIcon from '@material-ui/icons/Close';
+import ResizeDetector  from 'react-resize-detector';
 import ChatIcon from '@material-ui/icons/Chat';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle'
-import SwipeableViews from 'react-swipeable-views';
-import ResizeDetector  from 'react-resize-detector';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
 import NChangeInList from './NChangeInList';
 import NChangerAvatar from './NChangerAvatar';
+import NChangerSelector from './NChangerSelector';
+import NThingFilterBar from './NThingFilterBar';
 import AddNChangerButton from './AddNChangerButton';
-import ItemList from './ItemList';
+import NThingList from './NThingList';
 import NThingInList from './NThingInList';
-import NChangeActivity from './NChangeActivity';
-import SendChatMessageBox from './SendChatMessageBox';
 import LeaveNChangeButton from './LeaveNChangeButton';
 
 
@@ -43,31 +38,76 @@ const styles = {
     display: 'flex',
     flexDirection: 'column'
   },
-  detailBar: {
-    flex: '0 0 auto'
-  },
-  bottomSection: {
-    flex: '1 1 auto',
-    height: '100px',
+  topControlBar: {
+    flex: '0 0 40px',
     display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  bottomControlBar: {
+    flex: '0 0 40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+  },
+  userFilter: {
+    flex: '0 0 40px'
+  },
+  detailBox: {
+    flex: '1 1 auto',
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    marginLeft: '10px',
+    marginRight: '10px',
+    boxShadow: 'inset 3px 3px 5px 0px rgba(0,0,0,0.75)'
+  },
+  topPanel: {    
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    transition: 'flex 0.3s ease-out',
+    overflowX: 'auto',
+    borderBottom: '2px dashed black',
+  },
+  bottomPanel: {    
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    transition: 'flex 0.3s ease-out',
     overflowX: 'auto'
   },
-  slider: {
-    flex: '1 1 auto',
-    display: 'flex',
+  topSummaryMode: {
+    flex: '1 1 100px',
   },
-  historySection: {
-    flex: '1 1 30%',
-    display: 'flex',
-    flexDirection: 'column',
-    marginRight: '5px',
-    height: '100%'
+  bottomSummaryMode: {
+    flex: '1 1 100px',
+  },
+  topTakeMode: {
+    flex: '0 0 170px',
+  },
+  bottomTakeMode: {
+    flex: '1 1 100px',
+    justifyContent: 'flex-start',
+  },
+  topOfferMode: {
+    flex: '1 1 100px',
+    justifyContent: 'flex-end',
+  },
+  bottomOfferMode: {
+    flex: '0 0 170px',
   },
   thingsSection: {
-    flex: '1 1 70%',
+    flex: '1 1 auto',
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
+    overflowX: 'hidden'
   },
   nChangers: {
     flex: '0 0 auto',
@@ -139,9 +179,11 @@ const styles = {
 class NChangeDetail extends Component {
 
   state = {
-    selectedNchanger: Meteor.userId(),
+    selectedNChangerId: 'world',
     showActivity: false,
-    openMenu: false
+    openMenu: false,
+    tagsFilter: {},
+    mode: 'summary'
   }
 
   constructor() {
@@ -157,13 +199,9 @@ class NChangeDetail extends Component {
       });
   }
 
-  sendMessage = (message) => {
-    Meteor.call('nchanges.new_chat_message', this.props.nchange._id, message);
-  }
-
-  handleNchangerClick = (nchanger_id) => {
+  handleNchangerSelect = (nchanger_id) => {
     this.setState({
-      selectedNchanger: nchanger_id
+      selectedNChangerId: nchanger_id
     });
   }
 
@@ -192,9 +230,121 @@ class NChangeDetail extends Component {
     });
   }
 
+  setTagsFilter = (filter) => {
+    this.setState({ tagsFilter: filter });
+  }
+
+  setMode = (mode) => {    
+    const { nChange } = this.props;
+    const new_state = {
+      mode: mode
+    }
+    if (mode == 'offer') {
+      new_state.selectedNChangerId = nChange.nChangers.length > 1 ? 
+        nChange.getOtherNchangersId(Meteor.userId())[0] :
+        'no_selection'
+    }
+    this.setState(new_state);
+  }
+
   render() {
     const { nChange, loading, classes, history } = this.props;
-    const { selectedNchanger, smallScreen, showActivity } = this.state;
+    const { mode, tagsFilter, smallScreen, showActivity, selectedNChangerId } = this.state;
+
+    // if (loading) return <div>Loading...</div>
+    const user_id = Meteor.userId();
+    
+    return (
+      <div className={classes.root } ref={this.rootRef}>
+        <div className={classes.topControlBar}>
+          {(mode != 'offer') && <div className={classes.titleOfThingsSection}> Entrada </div> }
+          {(mode == 'take') && 
+            <IconButton onClick={() => this.setMode('summary')}>
+              <ArrowBackIosIcon fontSize= 'small'/>
+            </IconButton> 
+          }          
+          {(mode == 'summary') && 
+            <IconButton onClick={() => this.setMode('take')}>
+              <AddIcon fontSize= 'small'/>
+            </IconButton>
+          }
+          {(mode == 'offer') && 
+            <NThingFilterBar filter={tagsFilter} onFilterChange={this.setTagsFilter} />
+          }
+          {(mode == 'offer') &&  
+            <NChangerSelector classes={{root:classes.userFilter}} 
+              selectedNChangerId={selectedNChangerId}
+              nChange={nChange} onSelect={this.handleNchangerSelect}/>
+          }
+        </div>
+        <div className={classes.detailBox}>
+          <div className={classnames(classes.topPanel, 
+              (mode == 'summary') && classes.topSummaryMode,
+              (mode == 'take') && classes.topTakeMode,
+              (mode == 'offer') && classes.topOfferMode,
+            )}>
+            {!loading && (mode != 'offer') && this.renderInputThings()}
+            {!loading && (mode == 'offer') && this.renderThingsToOffer()}
+          </div>
+          <div className={classnames(classes.bottomPanel, 
+              (mode == 'summary') && classes.bottomSummaryMode,
+              (mode == 'take') && classes.bottomTakeMode,
+              (mode == 'offer') && classes.bottomOfferMode,
+            )}>
+            {!loading && (mode != 'take') && this.renderOutputThings()}
+            {!loading && (mode == 'take') && this.renderThingsToPick()}
+          </div>
+        </div>
+        <div className={classes.bottomControlBar}>
+          {(mode != 'take') && <div className={classes.titleOfThingsSection}> Salida </div> }
+          {(mode == 'offer') && 
+            <IconButton onClick={() => this.setMode('summary')}>
+              <ArrowBackIosIcon fontSize= 'small'/>
+            </IconButton> 
+          }   
+          {(mode == 'summary') && 
+            <IconButton onClick={() => this.setMode('offer')}>
+              <AddIcon fontSize= 'small'/>
+            </IconButton>
+          }
+          {(mode == 'take') && 
+            <NThingFilterBar filter={tagsFilter} onFilterChange={this.setTagsFilter} />
+          }
+          {(mode == 'take') &&  
+            <NChangerSelector classes={{root:classes.userFilter}} 
+              selectedNChangerId={selectedNChangerId}
+              nChange={nChange} onSelect={this.handleNchangerSelect}
+              showWorldIcon showNChangeIcon/>
+          }
+        </div>
+        <ResizeDetector handleWidth onResize={this.onResize} targetDomEl={this.rootRef.current} />
+      </div>
+    );
+  }
+
+  renderInputThings() {
+    const { nChange, classes } = this.props;
+    return nChange.getNchangerInputActions(Meteor.userId()).map((input_action) => {
+      return (
+        <NThingInList key={input_action.nThing} nThingId={input_action.nThing}
+          nChange={nChange} nChangerId={Meteor.userId()}/>
+      );
+    });
+  }
+
+  renderOutputThings() {
+    const { nChange, classes } = this.props;
+    return nChange.getNchangerOutputActions(Meteor.userId()).map((input_action) => {
+      return (
+        <NThingInList key={input_action.nThing} nThingId={input_action.nThing}
+          nChange={nChange} nChangerId={Meteor.userId()}/>
+      );
+    });
+  }
+
+  oldRender() {
+    const { nChange, loading, classes, history } = this.props;
+    const { selectedNChangerId, smallScreen, showActivity } = this.state;
 
     if (loading) return <div>Loading...</div>
     const user_id = Meteor.userId();
@@ -202,60 +352,60 @@ class NChangeDetail extends Component {
     return (
       <div className={classes.root } ref={this.rootRef}>
         {this.renderNchangersSection()}
-        <NChangeInList
-          nChangerId={selectedNchanger} key={nChange._id} nChange={nChange}
-          classes={{root: classes.detailBar}} enableItemRemoving={true}
-        />
-        <div className={classes.bottomSection}>
-          {(!smallScreen || showActivity || nChange.approved) &&
-            this.renderActivitySection()}
-          {(!smallScreen || !showActivity) && !nChange.approved && this.renderThingsSection()}
-          { smallScreen && !nChange.approved &&
-            <IconButton className={classes.showActivityButton} onClick={this.showActivity}>
-              <ChatIcon fontSize= 'large'/>
-            </IconButton>
-          }
-        </div>
+        {(!smallScreen || !showActivity) && !nChange.approved && this.renderThingsSection()}
+        { smallScreen && !nChange.approved &&
+          <IconButton className={classes.showActivityButton} onClick={this.showActivity}>
+            <ChatIcon fontSize= 'large'/>
+          </IconButton>
+        }
         <ResizeDetector handleWidth onResize={this.onResize}
           targetDomEl={this.rootRef.current} />
       </div>
     );
   }
 
-  renderActivitySection = () => {
+  renderThingsToPick = () => {
     const { nChange, classes } = this.props;
+    const { tagsFilter, selectedNChangerId } = this.state;
+
+    const things_filter = tagsFilter;
+    if (selectedNChangerId == 'nchange') {
+      things_filter.owner = {
+        $in: nChange.getOtherNchangersId(Meteor.userId())
+      }
+    } else if (selectedNChangerId == 'world') {
+      things_filter.owner = {
+        $ne: Meteor.userId()
+      }
+    } else {
+      things_filter.owner = selectedNChangerId
+    }
     return (
-      <div className={classes.historySection}>
-        <NChangeActivity activity={nChange.activity}/>
-        <SendChatMessageBox onSend={this.sendMessage}/>
-      </div>
+      <NThingList filter={things_filter} renderThing={this.renderThingInList}
+          classes={{root: classes.listRoot}}/>
     );
   }
 
-  renderThingsSection = () => {
+  renderThingsToOffer = () => {
     const { nChange, classes } = this.props;
-    const { selectedNchanger } = this.state;
-    const user_id = Meteor.userId();
-    const thingsFilter = { owner:
-      { $in: nChange.getOtherNchangersId(selectedNchanger)}
-    }
+    const { tagsFilter, selectedNChangerId } = this.state;
+
+    const things_filter = tagsFilter;
+    things_filter.owner = selectedNChangerId;
+
     return (
-      <div className={classes.thingsSection}>
-        <div className={classes.nThings}>
-          <ItemList filter={thingsFilter} renderThing={this.renderThingInList}
-            classes={{root: classes.listRoot}}/>
-        </div>
-      </div>
+      <NThingList filter={things_filter} renderThing={this.renderThingInList}
+          classes={{root: classes.listRoot}}/>
     );
   }
 
   renderThingInList = (nthing) => {
     const { nChange, classes } = this.props;
-    const { selectedNchanger } = this.state;
+    const { selectedNChangerId } = this.state;
 
     return (
       <NThingInList key={nthing._id} nThing={nthing}
-        nChange={nChange} nChangerId={selectedNchanger}/>
+        nChange={nChange} nChangerId={Meteor.userId()}/>
     );
   }
 
@@ -308,13 +458,14 @@ class NChangeDetail extends Component {
       <NChangerAvatar nChangerId={nchanger_id} key={nchanger_id}
         thumbsUp={nChange.approvedBy(nchanger_id)}
         onClick={this.handleNchangerClick}
-        selected={this.state.selectedNchanger == nchanger_id}/>
+        selected={this.state.selectedNChangerId == nchanger_id}/>
     );
   }
 }
 
 export default withRouter(withTracker((props) => {
-  const nchange_id = props.match.params.id;
+  const nchange_id = props.nChangeId || props.match.params.id;
+
   const nchange_sub = Meteor.subscribe('nchange_detail', nchange_id);
   if (!nchange_sub.ready()) return { loading: true };
   const n_change = NChanges.findOne({_id: nchange_id});

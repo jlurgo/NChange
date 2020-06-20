@@ -22,18 +22,12 @@ const styles = {
   },
 };
 
-// ItemList component - receives a list of items and dislays them
-class ItemList extends Component {
+// NThingList component - receives a list of items and dislays them
+class NThingList extends Component {
 
   render() {
     const { classes, loading } = this.props;
-
-    if(loading) return <LoadingPane/>
-    return (
-      <div className={classes.root} id='drawer-container'>
-        { this.renderThings() }
-      </div>
-    );
+    return this.renderThings();
   }
 
   renderThings = () => {
@@ -58,7 +52,6 @@ export default withTracker((props) => {
     return new NThing(item);
   });
   return {
-    loading: !items_sub.ready(),
     items: items
   };
-})(withStyles(styles)(ItemList));
+})(withStyles(styles)(NThingList));

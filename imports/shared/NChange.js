@@ -31,17 +31,17 @@ export default class NChange {
     return current_take_action.qty
   }
 
-  getNchangerInputThings = (nchanger_id) => {
+  getNchangerInputActions = (nchanger_id) => {
     return _.where(this.detail, { action: 'take', user: nchanger_id});
   }
 
-  getNchangerOutputThings = (nchanger_id) => {
+  getNchangerOutputActions = (nchanger_id) => {
     return _.where(this.detail, { action: 'take', from: nchanger_id});
   }
 
   nChangerGivesAndReceives = (nchanger_id) => {
-    return this.getNchangerInputThings(nchanger_id).length > 0 &&
-      this.getNchangerOutputThings(nchanger_id).length > 0
+    return this.getNchangerInputActions(nchanger_id).length > 0 &&
+      this.getNchangerOutputActions(nchanger_id).length > 0
   }
 
   nchangerCanApprove = (nchanger_id) => {

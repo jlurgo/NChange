@@ -9,7 +9,7 @@ import { Route } from "react-router";
 
 import TopBar from './TopBar';
 import Login from './login/Login.jsx';
-import ItemExplorer from './ItemExplorer';
+import NThingsExplorer from './NThingsExplorer';
 import NChangesExplorer from './NChangesExplorer';
 import NThingDetail from './NThingDetail';
 import NChangeDetail from './NChangeDetail';
@@ -82,7 +82,7 @@ class App extends Component {
                   <NChangerDetail classes={{root: this.props.classes.section}}/>
                 </Route>
                 <Route path="/nthings">
-                  <ItemExplorer classes={{root: this.props.classes.section}}/>
+                  <NThingsExplorer classes={{root: this.props.classes.section}}/>
                 </Route>
                 <Route path="/nchanges">
                   <NChangesExplorer classes={{root: this.props.classes.section}}/>

@@ -7,8 +7,6 @@ import { _ } from 'meteor/underscore';
 
 import { Tags } from "./collections";
 
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import Chip from '@material-ui/core/Chip';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -17,9 +15,8 @@ import SearchIcon from '@material-ui/icons/Search';
 const styles = {
   root: {
     display: 'flex',
-    flex: '0 0 40px',
-    padding: '10px',
-    flexDirection: 'column'
+    flex: '1 1 40px',
+    overflowX: 'auto'
   },
   input: {
     display: 'inline',
@@ -81,8 +78,8 @@ class TagSelectBar extends Component {
   }
 
   handleKeyPress = (e) => {
-    const { selectedTags, classes } = this.props;
-    const { searching, searchText } = this.state;
+    const { selectedTags } = this.props;
+    const { searchText } = this.state;
 
     switch (e.keyCode) {
       case 27: // esc

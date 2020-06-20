@@ -14,7 +14,7 @@ import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 
-import ItemList from './ItemList';
+import NThingList from './NThingList';
 import EditableTextField from './EditableTextField';
 import SelectPicButton from "./SelectPicButton";
 import NThingDetail from "./NThingDetail";
@@ -131,7 +131,7 @@ class NChangerDetail extends Component {
             }
           </div>
         </div>
-        <ItemList filter={{$or: [{ owner: nChanger._id}, { guardian: nChanger._id}]}}
+        <NThingList filter={{$or: [{ owner: nChanger._id}, { guardian: nChanger._id}]}}
           showItemsNewNchangeButton
           classes={{root: classes.listRoot}}/>
         { inEditMode &&

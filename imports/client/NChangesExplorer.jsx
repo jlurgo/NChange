@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,18 +11,29 @@ import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
 import NChangesList from './NChangesList';
+import NChangeDetail from './NChangeDetail';
+import NChangeActivity from './NChangeActivity';
+import SendChatMessageBox from './SendChatMessageBox';
 
 const styles = {
   root: {
     display: 'flex',
-    flexDirection: 'column',
     paddingTop: '5px',
   },
-  listRoot: {
-    flexGrow: 1,
-    flexShrink: 1,
-    height: '100px',
-    overflowY: 'auto',
+  nChangesList: {
+    flex: '0 0 500px',
+    overflowX: 'hidden',
+    direction: 'rtl'
+  },
+  nChangeDetail: {
+    flex: '1 1 auto',
+    overflowX: 'hidden'
+  },
+  nChangeActivity: {
+    flex: '0 0 400px',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowX: 'hidden'
   },
   addButton: {
     position: 'absolute',
@@ -34,6 +44,17 @@ const styles = {
 
 // App component - represents the whole app
 class NChangesExplorer extends Component {
+  state = {
+
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!prevState.selectedNChangeId && !nextProps.loading) {
+      return {
+        selectedNChangeId: nextProps.nChanges[0]._id
+      };
+    }
+  }
 
   addNChange = () => {
     const { history } = this.props;
@@ -42,29 +63,52 @@ class NChangesExplorer extends Component {
         console.warn(error);
         return;
       }
-      history.push(`/nchangedetail/${nchange_id}`);
+      this.setState({
+        selectedNChangeId: nchange_id
+      });
     });
   }
+
+  sendMessage = (message) => {
+    Meteor.call('nchanges.new_chat_message', this.props.nchange._id, message);
+  }
+
+  handleNChangeSelect = (nchange) => {
+    this.setState({
+      selectedNChangeId: nchange._id
+    });
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, loading } = this.props;
+    const { selectedNChangeId } = this.state;
+
+    if (loading) return <div>Loading...</div>
     return (
-      <div className={this.props.classes.root}>
-        <NChangesList nChanges={this.props.nChanges}
-          classes={{root: this.props.classes.listRoot}}/>
-        <Fab onClick={this.addNChange} className={classes.addButton}
-          color="primary" aria-label="add">
-          <AddIcon />
-        </Fab>
+      <div className={classes.root}>
+        <div className={classes.nChangesList}>
+          <NChangesList nChanges={this.props.nChanges} selectedNChangeId={selectedNChangeId} 
+          onSelect={this.handleNChangeSelect}/>
+          <Fab onClick={this.addNChange} className={classes.addButton}
+            color="primary" aria-label="add">
+            <AddIcon />
+          </Fab>
+        </div>
+        <NChangeDetail classes={{root: classes.nChangeDetail}} nChangeId={selectedNChangeId}/>
+        <div className={classes.nChangeActivity}>
+          <NChangeActivity nChangeId={selectedNChangeId}/>
+          <SendChatMessageBox onSend={this.sendMessage}/>
+        </div>
       </div>
     );
   }
 }
 
-export default withTracker((props) => {
+export default withRouter(withTracker((props) => {
   const nchanges_sub = Meteor.subscribe('user_n_changes');
   return {
     loading: !nchanges_sub.ready(),
     nChanges: NChanges.find({}, {sort: { lastUpdated: -1 } }).map((nchange)=>{
       return new NChange(nchange)}),
   };
-})(withStyles(styles)(withRouter(NChangesExplorer)));
+})(withStyles(styles)(NChangesExplorer)));

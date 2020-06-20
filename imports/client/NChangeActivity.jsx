@@ -12,6 +12,8 @@ import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import NChangerAvatar from './NChangerAvatar';
 import NThingIcon from './NThingIcon';
 
+import { NChanges } from "../shared/collections";
+
 const styles = {
   root: {
     flex: '1 1 auto',
@@ -190,6 +192,10 @@ class NChangeActivity extends Component {
 
 
 export default withTracker((props) => {
-  return props;
+  if (props.activity) return props;
+  const nchange = NChanges.findOne({_id: props.nChangeId});
+  return {
+    activity: nchange.activity
+  };
 })
 (withRouter(withStyles(styles)(NChangeActivity)));

@@ -21,7 +21,7 @@ const styles = {
   }
 };
 
-// ItemList component - receives a list of items and dislays them
+// NThingList component - receives a list of items and dislays them
 class NChangerList extends Component {
 
   render() {

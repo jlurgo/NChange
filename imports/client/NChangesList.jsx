@@ -12,19 +12,26 @@ const styles = {
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    alignContent: 'flex-start'
+    alignContent: 'flex-start',
+    direction: 'ltr'
   }
 };
 
 // receives a list of nchanges and dislays them
 class NChangesList extends Component {
+  state = {
+  }
 
-  renderNChanges() {
-    const { classes } = this.props;
+  handleNChangeClick = (nchange) => {
+    this.props.onSelect && this.props.onSelect(nchange);
+  }
+
+  renderNChanges = () => {
+    const { selectedNChangeId, classes } = this.props;
     return this.props.nChanges.map((nchange) => {
       return (
-        <NChangeInList key={nchange._id} nChange={nchange}
-          nChangerId={Meteor.userId()}/>
+        <NChangeInList key={nchange._id} nChange={nchange} selected={selectedNChangeId==nchange._id}
+          nChangerId={Meteor.userId()} onClick={this.handleNChangeClick}/>
       );
     });
   }
