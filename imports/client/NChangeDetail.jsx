@@ -248,11 +248,8 @@ class NChangeDetail extends Component {
   }
 
   render() {
-    const { nChange, loading, classes, history } = this.props;
+    const { nChange, loading, classes } = this.props;
     const { mode, tagsFilter, smallScreen, showActivity, selectedNChangerId } = this.state;
-
-    // if (loading) return <div>Loading...</div>
-    const user_id = Meteor.userId();
     
     return (
       <div className={classes.root } ref={this.rootRef}>
@@ -391,7 +388,7 @@ class NChangeDetail extends Component {
     const { tagsFilter, selectedNChangerId } = this.state;
 
     const things_filter = tagsFilter;
-    things_filter.owner = selectedNChangerId;
+    things_filter.owner = Meteor.userId();
 
     return (
       <NThingList filter={things_filter} renderThing={this.renderThingInList}
@@ -401,11 +398,11 @@ class NChangeDetail extends Component {
 
   renderThingInList = (nthing) => {
     const { nChange, classes } = this.props;
-    const { selectedNChangerId } = this.state;
+    const { selectedNChangerId, mode } = this.state;
 
     return (
       <NThingInList key={nthing._id} nThing={nthing}
-        nChange={nChange} nChangerId={Meteor.userId()}/>
+        nChange={nChange} nChangerId={mode=='take' ? Meteor.userId() : selectedNChangerId}/>
     );
   }
 
