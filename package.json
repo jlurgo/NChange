@@ -17,7 +17,7 @@
     "classnames": "^2.2.6",
     "history": "^4.7.2",
     "jquery": "^3.5.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "meteor-node-stubs": "^0.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
